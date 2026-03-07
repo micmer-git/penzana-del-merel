@@ -4,6 +4,23 @@ import { MENU, SECTIONS, COPERTO, SECTION_QUOTES } from '../data/menu.js';
 import { WHATSAPP_NUMBER } from '../data/site.js';
 const base = '/penzana-del-merel';
 const waNumber = WHATSAPP_NUMBER;
+
+// Serialize menu data for client JS (ingredients editing)
+const menuDataJSON = JSON.stringify(
+  SECTIONS.map(s => ({
+    id: s.id,
+    categories: s.categories.map(c => ({
+      id: c.id,
+      items: c.items.map(i => ({
+        id: i.id,
+        name: i.nameIT,
+        price: i.price,
+        desc: i.descIT || '',
+        ingredients: (i.descIT || '').split(/,\s*| e /).map((x: string) => x.trim()).filter(Boolean),
+      })),
+    })),
+  }))
+);
 ---
 
 <BaseLayout
@@ -13,25 +30,39 @@ const waNumber = WHATSAPP_NUMBER;
   currentPath={`${base}/menu/`}
 >
 
-  <!-- Table banner (shown only when ?table= is present) -->
-  <div id="table-banner" class="table-banner" hidden aria-live="polite">
-    Stai ordinando dal <strong id="table-name-banner">tavolo</strong>. Aggiungi gli articoli e premi "Invia ordine".
+  <!-- Table selector banner -->
+  <div id="table-banner" class="table-banner-new">
+    <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap:0.75rem; flex-wrap:wrap;">
+      <div id="banner-text" style="font-size:0.9rem;">
+        <span id="banner-no-table">Seleziona il tuo tavolo per ordinare via WhatsApp</span>
+        <span id="banner-has-table" style="display:none;">Stai ordinando dal <strong id="table-name-display"></strong></span>
+      </div>
+      <div style="display:flex; gap:0.5rem; align-items:center;">
+        <select id="table-select" style="padding:0.4rem 0.6rem; border-radius:var(--radius); border:2px solid rgba(255,255,255,0.3); background:rgba(255,255,255,0.15); color:white; font-size:0.85rem; font-weight:700; cursor:pointer;">
+          <option value="" style="color:#333;">Tavolo...</option>
+          {Array.from({length: 20}, (_, i) => {
+            const id = `table-${String(i+1).padStart(2,'0')}`;
+            return <option value={id} style="color:#333;">Tavolo {String(i+1).padStart(2,'0')}</option>;
+          })}
+        </select>
+      </div>
+    </div>
   </div>
 
-  <section class="hero" style="padding-block:clamp(2.5rem,6vw,4rem);">
+  <section class="hero" style="padding-block:clamp(2rem,5vw,3rem);">
     <div class="container">
       <span class="hero-eyebrow">Menu 2026</span>
       <h1>Il nostro menu</h1>
-      <p>Pizze al forno a legna, cucina bergamasca, carta dei vini. Ingredienti selezionati, tradizione dal 1959.</p>
+      <p style="margin-bottom:0.5rem;">Pizze al forno a legna, cucina bergamasca, carta dei vini.</p>
     </div>
   </section>
 
-  <!-- Coperto note -->
-  <div style="background:var(--bg-warm); padding:0.6rem 1rem; text-align:center; font-size:0.85rem; color:var(--text-muted); border-bottom:1px solid var(--stone-xlight);">
+  <!-- Coperto -->
+  <div style="background:var(--bg-warm); padding:0.5rem 1rem; text-align:center; font-size:0.83rem; color:var(--text-muted); border-bottom:1px solid var(--stone-xlight);">
     Coperto: {COPERTO.toFixed(2).replace('.', ',')} &euro; per persona
   </div>
 
-  <!-- Section tabs -->
+  <!-- Tabs -->
   <div class="menu-tabs-wrapper" style="background:var(--white); border-bottom:1px solid var(--stone-xlight); position:sticky; top:56px; z-index:50;">
     <div class="container">
       <div class="menu-tabs" role="tablist" aria-label="Sezioni del menu">
@@ -50,344 +81,550 @@ const waNumber = WHATSAPP_NUMBER;
     </div>
   </div>
 
-  <section class="section" style="padding-top:2rem;">
-    <div class="container">
-      <div style="display:grid; grid-template-columns:1fr min(320px,35%); gap:2.5rem; align-items:start;" id="menu-layout">
+  <section class="section" style="padding-top:1.5rem; padding-bottom:6rem;">
+    <div class="container" style="max-width:800px;">
 
-        <!-- Menu content -->
-        <div>
-          {SECTIONS.map((section, si) => (
-            <div
-              id={`panel-${section.id}`}
-              role="tabpanel"
-              class="menu-panel"
-              style={si === 0 ? '' : 'display:none;'}
-              data-section={section.id}
-            >
-              {/* Section quote */}
-              {SECTION_QUOTES[section.id] && (
-                <blockquote class="pullquote" style="margin-bottom:2rem; font-size:1rem;">
-                  "{SECTION_QUOTES[section.id].text}"
-                  <span style="display:block; font-size:0.8rem; font-style:normal; color:var(--stone); margin-top:0.3rem;">— {SECTION_QUOTES[section.id].author}</span>
-                </blockquote>
+      {SECTIONS.map((section, si) => (
+        <div
+          id={`panel-${section.id}`}
+          role="tabpanel"
+          class="menu-panel"
+          style={si === 0 ? '' : 'display:none;'}
+          data-section={section.id}
+        >
+          {SECTION_QUOTES[section.id] && (
+            <blockquote class="pullquote" style="margin-bottom:2rem; font-size:0.95rem;">
+              "{SECTION_QUOTES[section.id].text}"
+              <span style="display:block; font-size:0.75rem; font-style:normal; color:var(--stone); margin-top:0.25rem;">— {SECTION_QUOTES[section.id].author}</span>
+            </blockquote>
+          )}
+
+          {section.categories.map(category => (
+            <div class="menu-section" id={`cat-${category.id}`}>
+              <h2 class="menu-section-title">
+                {category.labelIT}
+                <span class="label-en">/ {category.labelEN}</span>
+              </h2>
+              {category.subtitleIT && (
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-top:-0.75rem; margin-bottom:1rem; font-style:italic;">{category.subtitleIT}</p>
               )}
-
-              {section.categories.map(category => (
-                <div class="menu-section" id={`cat-${category.id}`}>
-                  <h2 class="menu-section-title">
-                    {category.labelIT}
-                    <span class="label-en">/ {category.labelEN}</span>
-                  </h2>
-                  {category.subtitleIT && (
-                    <p style="font-size:0.83rem; color:var(--text-muted); margin-top:-0.75rem; margin-bottom:1rem; font-style:italic;">{category.subtitleIT}</p>
-                  )}
-                  {category.items.map(item => (
-                    <div class="menu-item" data-item-id={item.id} data-item-price={item.price}>
-                      <div class="menu-item-info">
-                        <div class="menu-item-name">{item.nameIT}</div>
-                        {(item.descIT || '') !== '' && (
-                          <div class="menu-item-desc">{item.descIT}</div>
-                        )}
-                      </div>
-                      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.5rem; min-width:80px;">
-                        <div class="menu-item-price">
-                          {item.priceRange ? item.priceRange + ' \u20AC' : item.price.toFixed(2).replace('.', ',') + ' \u20AC'}
-                        </div>
-                        <div
-                          class="qty-control order-only"
-                          style="display:none;"
-                          aria-label={`Quantita per ${item.nameIT}`}
-                        >
-                          <button class="qty-btn qty-minus" aria-label="Rimuovi uno" data-id={item.id}>&#8722;</button>
-                          <span class="qty-num" id={`qty-${item.id}`}>0</span>
-                          <button class="qty-btn qty-plus" aria-label="Aggiungi uno" data-id={item.id} data-name={item.nameIT} data-price={item.price}>+</button>
-                        </div>
-                      </div>
+              {category.items.map(item => (
+                <div class="menu-card" data-item-id={item.id} data-item-name={item.nameIT} data-item-price={item.price} data-item-desc={item.descIT || ''}>
+                  <div class="menu-card-main">
+                    <div class="menu-card-info">
+                      <div class="menu-card-name">{item.nameIT}</div>
+                      {(item.descIT || '') !== '' && (
+                        <div class="menu-card-desc">{item.descIT}</div>
+                      )}
                     </div>
-                  ))}
+                    <div class="menu-card-right">
+                      <div class="menu-card-price">
+                        {item.priceRange ? item.priceRange + ' \u20AC' : item.price.toFixed(2).replace('.', ',') + ' \u20AC'}
+                      </div>
+                      <button class="add-btn" aria-label={`Aggiungi ${item.nameIT}`} data-id={item.id}>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v8M6 10h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Expand panel (hidden by default) -->
+                  <div class="menu-card-expand" style="display:none;">
+                    <div class="ingredient-chips"></div>
+                    <div style="margin-top:0.5rem; display:flex; gap:0.5rem; align-items:center;">
+                      <input type="text" class="add-ingredient-input" placeholder="+ aggiungi ingrediente..." style="flex:1; padding:0.35rem 0.6rem; border:1px solid var(--stone-xlight); border-radius:var(--radius); font-size:0.8rem; background:var(--white);" />
+                    </div>
+                    <div style="margin-top:0.5rem;">
+                      <input type="text" class="item-note-input" placeholder="Note (es. ben cotta, senza lattosio...)" style="width:100%; padding:0.35rem 0.6rem; border:1px solid var(--stone-xlight); border-radius:var(--radius); font-size:0.8rem; background:var(--white);" />
+                    </div>
+                    <div style="margin-top:0.6rem; display:flex; align-items:center; justify-content:space-between;">
+                      <div class="qty-row">
+                        <button class="qty-btn-new qty-dec" data-id={item.id} aria-label="Rimuovi">&#8722;</button>
+                        <span class="qty-val" data-id={item.id}>1</span>
+                        <button class="qty-btn-new qty-inc" data-id={item.id} aria-label="Aggiungi">+</button>
+                      </div>
+                      <button class="confirm-add-btn" data-id={item.id}>Aggiungi al carrello</button>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           ))}
-
-          <div style="margin-top:2rem; padding:1.25rem; background:var(--bg-warm); border-radius:var(--radius); font-size:0.83rem; color:var(--text-muted);">
-            <strong>Nota:</strong> I prezzi indicati possono subire variazioni stagionali. Per gli allergeni, contattare il personale.
-          </div>
         </div>
+      ))}
 
-        <!-- Order sidebar -->
-        <div class="order-sidebar" id="order-sidebar" style="display:none;" aria-label="Carrello ordine">
-          <div class="order-widget" role="region" aria-live="polite" aria-label="Riepilogo ordine">
-            <h3>Il tuo ordine</h3>
-            <div class="table-badge" id="sidebar-table-badge">Tavolo —</div>
-            <div class="order-count" id="order-count">Nessun articolo</div>
-            <div class="order-total" id="order-total">Totale: 0,00 &euro;</div>
-
-            <div style="margin-bottom:0.75rem;">
-              <label for="order-notes" style="font-size:0.8rem; color:rgba(255,255,255,0.7); display:block; margin-bottom:0.3rem;">Note / allergie:</label>
-              <textarea
-                id="order-notes"
-                rows="2"
-                style="width:100%; border-radius:var(--radius); border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white; font-size:0.85rem; padding:0.4rem 0.6rem; resize:vertical;"
-                placeholder="Intolleranze, preferenze..."
-                aria-label="Note per l'ordine"
-              ></textarea>
-            </div>
-
-            <button id="btn-send-order" class="btn btn-wa" style="width:100%;" disabled aria-disabled="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-              </svg>
-              Invia ordine via WhatsApp
-            </button>
-          </div>
-        </div>
+      <div style="margin-top:2rem; padding:1rem; background:var(--bg-warm); border-radius:var(--radius); font-size:0.8rem; color:var(--text-muted);">
+        <strong>Nota:</strong> I prezzi possono variare stagionalmente. Per allergeni, contattare il personale.
       </div>
     </div>
   </section>
 
-  <!-- Mobile sticky order bar -->
-  <div id="mobile-order-bar" class="mobile-order-bar" hidden>
-    <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap:1rem;">
-      <div>
-        <span id="mob-order-count" style="font-weight:700;">0 articoli</span>
-        <span id="mob-order-total" style="margin-left:0.5rem; color:var(--accent-gold);"></span>
-      </div>
-      <button id="mob-btn-send" class="btn btn-wa" style="padding:0.5rem 1rem; font-size:0.85rem;" disabled>Invia ordine</button>
-    </div>
+  <!-- Floating cart button -->
+  <div id="cart-fab" class="cart-fab" style="display:none;">
+    <button id="cart-fab-btn" class="cart-fab-btn" aria-label="Apri carrello">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span id="cart-fab-count" class="cart-fab-count">0</span>
+    </button>
   </div>
 
-  <!-- Confirm modal -->
-  <div class="modal-overlay" id="confirm-modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-box">
-      <h2 id="modal-title">Conferma ordine</h2>
-      <p>Controlla il tuo ordine prima di inviarlo via WhatsApp. Verra aperta l'app WhatsApp con il messaggio precompilato.</p>
-      <div class="modal-order-summary" id="modal-summary" aria-label="Riepilogo ordine da confermare"></div>
-      <div class="modal-actions">
-        <button id="btn-confirm-wa" class="btn btn-wa">Apri WhatsApp e invia</button>
-        <button id="btn-cancel" class="btn btn-outline" style="color:var(--text-muted); border-color:var(--stone-xlight);">Modifica ordine</button>
+  <!-- Cart drawer -->
+  <div id="cart-overlay" class="cart-overlay" style="display:none;"></div>
+  <div id="cart-drawer" class="cart-drawer" aria-label="Carrello">
+    <div class="cart-drawer-header">
+      <h3>Il tuo ordine</h3>
+      <button id="cart-close" class="cart-close" aria-label="Chiudi carrello">&times;</button>
+    </div>
+    <div id="cart-items" class="cart-items">
+      <div class="cart-empty">Nessun articolo nel carrello</div>
+    </div>
+    <div class="cart-footer">
+      <div style="margin-bottom:0.5rem;">
+        <label for="order-notes-global" style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.2rem;">Note generali:</label>
+        <textarea id="order-notes-global" rows="2" placeholder="Intolleranze, richieste particolari..." style="width:100%; padding:0.4rem 0.6rem; border:1px solid var(--stone-xlight); border-radius:var(--radius); font-size:0.8rem; resize:none;"></textarea>
       </div>
+      <div class="cart-total">
+        <span>Totale</span>
+        <strong id="cart-total-price">0,00 &euro;</strong>
+      </div>
+      <button id="cart-send-btn" class="btn btn-wa" style="width:100%; justify-content:center;" disabled>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Invia ordine via WhatsApp
+      </button>
     </div>
   </div>
 
 </BaseLayout>
 
-<script define:vars={{ waNumber }}>
+<style>
+/* ---- New Menu Card ---- */
+.menu-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 1px 3px rgba(30,26,22,0.06);
+  transition: box-shadow 0.2s, transform 0.2s;
+  border-left: 3px solid transparent;
+}
+.menu-card:hover { box-shadow: var(--shadow-sm); }
+.menu-card.in-cart { border-left-color: #25d366; background: #f0fdf4; }
+.menu-card-main {
+  display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer;
+}
+.menu-card-info { flex: 1; min-width: 0; }
+.menu-card-name { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+.menu-card-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.35; margin-top: 0.15rem; }
+.menu-card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; flex-shrink: 0; }
+.menu-card-price { font-family: var(--font-display); font-weight: 700; font-size: 1rem; color: var(--green-deep); white-space: nowrap; }
+.add-btn {
+  width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--green-mid); color: white;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: background 0.2s, transform 0.15s; min-width: 44px; min-height: 44px;
+}
+.add-btn:hover { background: var(--green-deep); transform: scale(1.08); }
+.add-btn:active { transform: scale(0.95); }
+
+/* Expand panel */
+.menu-card-expand {
+  margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--stone-xlight);
+}
+.ingredient-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.ing-chip {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; border: 1.5px solid var(--stone-xlight);
+  background: var(--bg-warm); color: var(--text);
+  user-select: none; min-height: 32px;
+}
+.ing-chip.removed {
+  background: #fef2f2; border-color: #fca5a5; color: #dc2626;
+  text-decoration: line-through;
+}
+.ing-chip.added {
+  background: #f0fdf4; border-color: #86efac; color: #16a34a;
+}
+.ing-chip .chip-x { font-size: 0.9rem; line-height: 1; margin-left: 0.1rem; }
+
+/* Qty row */
+.qty-row { display: flex; align-items: center; gap: 0.5rem; }
+.qty-btn-new {
+  width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--stone-xlight);
+  background: var(--white); color: var(--text); font-size: 1.1rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: all 0.15s; min-width: 44px; min-height: 44px;
+}
+.qty-btn-new:hover { border-color: var(--green-mid); color: var(--green-mid); }
+.qty-val { font-weight: 700; font-size: 1.05rem; min-width: 24px; text-align: center; }
+.confirm-add-btn {
+  padding: 0.5rem 1rem; border-radius: var(--radius); border: none;
+  background: var(--green-mid); color: white; font-weight: 700; font-size: 0.85rem;
+  cursor: pointer; transition: background 0.15s; min-height: 44px;
+}
+.confirm-add-btn:hover { background: var(--green-deep); }
+
+/* ---- Table Banner ---- */
+.table-banner-new {
+  background: var(--green-deep); color: white; padding: 0.6rem 0;
+}
+.table-banner-new select option { color: #333; }
+
+/* ---- Cart FAB ---- */
+.cart-fab {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 80;
+}
+.cart-fab-btn {
+  width: 60px; height: 60px; border-radius: 50%; border: none;
+  background: #25d366; color: white; box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s; position: relative;
+}
+.cart-fab-btn:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(37,211,102,0.5); }
+.cart-fab-btn:active { transform: scale(0.95); }
+.cart-fab-count {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--accent-gold); color: var(--text); font-size: 0.7rem; font-weight: 800;
+  width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+
+/* ---- Cart Drawer ---- */
+.cart-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300;
+  opacity: 0; transition: opacity 0.3s;
+}
+.cart-overlay.open { opacity: 1; }
+.cart-drawer {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 310;
+  background: var(--white); border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 30px rgba(0,0,0,0.15);
+  max-height: 85vh; display: flex; flex-direction: column;
+  transform: translateY(100%); transition: transform 0.35s cubic-bezier(.32,.72,.37,1.02);
+}
+.cart-drawer.open { transform: translateY(0); }
+.cart-drawer-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem 0.5rem; border-bottom: 1px solid var(--stone-xlight);
+}
+.cart-drawer-header h3 { margin: 0; font-size: 1.1rem; }
+.cart-close {
+  width: 36px; height: 36px; border: none; background: var(--bg-warm); border-radius: 50%;
+  font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); min-width: 44px; min-height: 44px;
+}
+.cart-items {
+  flex: 1; overflow-y: auto; padding: 0.75rem 1.25rem; -webkit-overflow-scrolling: touch;
+}
+.cart-empty { text-align: center; color: var(--stone); padding: 2rem 0; font-size: 0.9rem; }
+.cart-item {
+  display: flex; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--stone-xlight);
+  align-items: flex-start;
+}
+.cart-item:last-child { border-bottom: none; }
+.cart-item-info { flex: 1; min-width: 0; }
+.cart-item-name { font-weight: 700; font-size: 0.9rem; }
+.cart-item-mods { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.15rem; }
+.cart-item-mods .mod-remove { color: #dc2626; }
+.cart-item-mods .mod-add { color: #16a34a; }
+.cart-item-note { font-size: 0.72rem; color: var(--accent-violet); font-style: italic; margin-top: 0.1rem; }
+.cart-item-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; }
+.cart-item-price { font-weight: 700; font-size: 0.9rem; color: var(--green-deep); white-space: nowrap; }
+.cart-item-qty { display: flex; align-items: center; gap: 0.3rem; }
+.cart-item-qty button {
+  width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--stone-xlight);
+  background: var(--white); font-size: 0.9rem; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; min-width: 36px; min-height: 36px; transition: border-color 0.15s;
+}
+.cart-item-qty button:hover { border-color: var(--green-mid); }
+.cart-item-qty button.cart-remove-btn { border-color: #fca5a5; color: #dc2626; }
+.cart-item-qty button.cart-remove-btn:hover { background: #fef2f2; }
+.cart-item-qty span { font-weight: 700; min-width: 18px; text-align: center; font-size: 0.85rem; }
+.cart-footer { padding: 0.75rem 1.25rem 1rem; border-top: 1px solid var(--stone-xlight); background: var(--bg-warm); }
+.cart-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; font-size: 1rem; }
+
+@media (min-width: 600px) {
+  .cart-drawer { max-width: 440px; left: auto; }
+}
+</style>
+
+<script define:vars={{ waNumber, menuDataJSON }}>
   window.__WA_NUMBER = waNumber;
+  window.__MENU_DATA = menuDataJSON;
 </script>
 
 <script>
 const WHATSAPP_NUMBER = (window as any).__WA_NUMBER || '393487024985';
-const BASE = '/penzana-del-merel';
+const MENU_DATA: Array<{id:string, categories:Array<{id:string, items:Array<{id:string, name:string, price:number, desc:string, ingredients:string[]}>}>}> = JSON.parse((window as any).__MENU_DATA || '[]');
 
-// Tab switching
-document.querySelectorAll('.menu-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    const section = (tab as HTMLElement).dataset.section!;
-    document.querySelectorAll('.menu-tab').forEach(t => {
-      t.classList.remove('active');
-      t.setAttribute('aria-selected', 'false');
-    });
-    tab.classList.add('active');
-    tab.setAttribute('aria-selected', 'true');
-    document.querySelectorAll('.menu-panel').forEach(p => {
-      (p as HTMLElement).style.display = (p as HTMLElement).dataset.section === section ? '' : 'none';
-    });
-  });
-});
+// Build lookup
+const itemLookup = new Map<string, {name:string, price:number, ingredients:string[]}>();
+MENU_DATA.forEach(s => s.categories.forEach(c => c.items.forEach(i => itemLookup.set(i.id, i))));
 
-interface OrderItem {
+// ---- State ----
+interface CartEntry {
   id: string;
   name: string;
   price: number;
   qty: number;
+  removed: string[];     // removed ingredients
+  added: string[];       // added ingredients
+  note: string;
 }
 
-const order: Map<string, OrderItem> = new Map();
+let cart: CartEntry[] = [];
+let tableId: string | null = new URLSearchParams(window.location.search).get('table');
 
-function getTableId(): string | null {
-  return new URLSearchParams(window.location.search).get('table');
+// ---- Tab switching ----
+document.querySelectorAll('.menu-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const section = (tab as HTMLElement).dataset.section!;
+    document.querySelectorAll('.menu-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+    tab.classList.add('active'); tab.setAttribute('aria-selected', 'true');
+    document.querySelectorAll('.menu-panel').forEach(p => { (p as HTMLElement).style.display = (p as HTMLElement).dataset.section === section ? '' : 'none'; });
+  });
+});
+
+// ---- Table selection ----
+const tableSelect = document.getElementById('table-select') as HTMLSelectElement;
+const bannerNoTable = document.getElementById('banner-no-table')!;
+const bannerHasTable = document.getElementById('banner-has-table')!;
+const tableNameDisplay = document.getElementById('table-name-display')!;
+
+function setTable(id: string | null) {
+  tableId = id;
+  if (id) {
+    const label = id.replace('table-', 'Tavolo ');
+    bannerNoTable.style.display = 'none';
+    bannerHasTable.style.display = '';
+    tableNameDisplay.textContent = label;
+    tableSelect.value = id;
+    // Update URL without reload
+    const url = new URL(window.location.href);
+    url.searchParams.set('table', id);
+    window.history.replaceState({}, '', url.toString());
+  } else {
+    bannerNoTable.style.display = '';
+    bannerHasTable.style.display = 'none';
+  }
 }
 
-function tableLabel(id: string): string {
-  return id.replace('table-', 'Tavolo ').replace(/-/g, ' ').toUpperCase();
-}
+if (tableId) setTable(tableId);
+tableSelect.addEventListener('change', () => setTable(tableSelect.value || null));
 
-function formatPrice(n: number): string {
-  return n.toFixed(2).replace('.', ',') + ' \u20AC';
-}
+// ---- Menu card expand ----
+document.querySelectorAll('.menu-card').forEach(card => {
+  const expandPanel = card.querySelector('.menu-card-expand') as HTMLElement;
+  const addBtn = card.querySelector('.add-btn') as HTMLElement;
+  const itemId = (card as HTMLElement).dataset.itemId!;
+  const itemData = itemLookup.get(itemId);
+  let tempQty = 1;
+  let tempRemoved: Set<string> = new Set();
+  let tempAdded: string[] = [];
 
-function totalItems(): number {
-  let t = 0;
-  order.forEach(i => (t += i.qty));
-  return t;
-}
-
-function totalPrice(): number {
-  let t = 0;
-  order.forEach(i => (t += i.price * i.qty));
-  return t;
-}
-
-function updateSidebar(): void {
-  const count = totalItems();
-  const total = totalPrice();
-  const countEl = document.getElementById('order-count');
-  const totalEl = document.getElementById('order-total');
-  const btn = document.getElementById('btn-send-order') as HTMLButtonElement;
-
-  if (countEl) countEl.textContent = count === 0 ? 'Nessun articolo' : `${count} articolo${count !== 1 ? 'i' : ''}`;
-  if (totalEl) totalEl.textContent = `Totale: ${formatPrice(total)}`;
-  if (btn) {
-    btn.disabled = count === 0;
-    btn.setAttribute('aria-disabled', String(count === 0));
+  function renderChips() {
+    const container = expandPanel.querySelector('.ingredient-chips')!;
+    container.innerHTML = '';
+    // Original ingredients
+    (itemData?.ingredients || []).forEach(ing => {
+      const chip = document.createElement('span');
+      chip.className = 'ing-chip' + (tempRemoved.has(ing) ? ' removed' : '');
+      chip.innerHTML = `${ing} <span class="chip-x">${tempRemoved.has(ing) ? '+' : '\u00D7'}</span>`;
+      chip.addEventListener('click', () => {
+        if (tempRemoved.has(ing)) tempRemoved.delete(ing);
+        else tempRemoved.add(ing);
+        renderChips();
+      });
+      container.appendChild(chip);
+    });
+    // Added ingredients
+    tempAdded.forEach((ing, idx) => {
+      const chip = document.createElement('span');
+      chip.className = 'ing-chip added';
+      chip.innerHTML = `+ ${ing} <span class="chip-x">\u00D7</span>`;
+      chip.addEventListener('click', () => {
+        tempAdded.splice(idx, 1);
+        renderChips();
+      });
+      container.appendChild(chip);
+    });
   }
 
-  // Mobile bar
-  const mobCount = document.getElementById('mob-order-count');
-  const mobTotal = document.getElementById('mob-order-total');
-  const mobBtn = document.getElementById('mob-btn-send') as HTMLButtonElement;
-  if (mobCount) mobCount.textContent = `${count} articol${count !== 1 ? 'i' : 'o'}`;
-  if (mobTotal) mobTotal.textContent = formatPrice(total);
-  if (mobBtn) mobBtn.disabled = count === 0;
+  function openExpand() {
+    // Close all others
+    document.querySelectorAll('.menu-card-expand').forEach(p => (p as HTMLElement).style.display = 'none');
+    document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('expanding'));
+    // Reset temp state
+    tempQty = 1;
+    tempRemoved = new Set();
+    tempAdded = [];
+    // Show
+    expandPanel.style.display = '';
+    card.classList.add('expanding');
+    renderChips();
+    // Update qty display
+    const qtyEl = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement;
+    if (qtyEl) qtyEl.textContent = '1';
+    // Clear note
+    const noteInput = expandPanel.querySelector('.item-note-input') as HTMLInputElement;
+    if (noteInput) noteInput.value = '';
+    // Clear add ingredient input
+    const addInput = expandPanel.querySelector('.add-ingredient-input') as HTMLInputElement;
+    if (addInput) addInput.value = '';
+    // Scroll into view
+    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+
+  // Click on add button or card main area
+  addBtn?.addEventListener('click', (e) => { e.stopPropagation(); openExpand(); });
+  card.querySelector('.menu-card-main')?.addEventListener('click', () => openExpand());
+
+  // Add ingredient input
+  const addIngInput = expandPanel.querySelector('.add-ingredient-input') as HTMLInputElement;
+  addIngInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && addIngInput.value.trim()) {
+      tempAdded.push(addIngInput.value.trim());
+      addIngInput.value = '';
+      renderChips();
+    }
+  });
+
+  // Qty buttons
+  expandPanel.querySelector('.qty-dec')?.addEventListener('click', () => {
+    if (tempQty > 1) { tempQty--; const el = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement; if (el) el.textContent = String(tempQty); }
+  });
+  expandPanel.querySelector('.qty-inc')?.addEventListener('click', () => {
+    tempQty++;
+    const el = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement;
+    if (el) el.textContent = String(tempQty);
+  });
+
+  // Confirm add to cart
+  expandPanel.querySelector('.confirm-add-btn')?.addEventListener('click', () => {
+    const noteInput = expandPanel.querySelector('.item-note-input') as HTMLInputElement;
+    const entry: CartEntry = {
+      id: itemId + '_' + Date.now(),
+      name: itemData?.name || itemId,
+      price: itemData?.price || 0,
+      qty: tempQty,
+      removed: Array.from(tempRemoved),
+      added: [...tempAdded],
+      note: noteInput?.value?.trim() || '',
+    };
+    cart.push(entry);
+    expandPanel.style.display = 'none';
+    card.classList.remove('expanding');
+    card.classList.add('in-cart');
+    // Brief pulse animation
+    card.animate([{transform:'scale(0.98)'},{transform:'scale(1)'}], {duration:200});
+    updateCartUI();
+  });
+});
+
+// ---- Cart UI ----
+const cartFab = document.getElementById('cart-fab')!;
+const cartFabCount = document.getElementById('cart-fab-count')!;
+const cartDrawer = document.getElementById('cart-drawer')!;
+const cartOverlay = document.getElementById('cart-overlay')!;
+const cartItemsEl = document.getElementById('cart-items')!;
+const cartTotalPrice = document.getElementById('cart-total-price')!;
+const cartSendBtn = document.getElementById('cart-send-btn') as HTMLButtonElement;
+
+function formatPrice(n: number): string { return n.toFixed(2).replace('.', ',') + ' \u20AC'; }
+
+function totalQty(): number { return cart.reduce((s, e) => s + e.qty, 0); }
+function totalPrice(): number { return cart.reduce((s, e) => s + e.price * e.qty, 0); }
+
+function updateCartUI() {
+  const count = totalQty();
+  // FAB
+  if (count > 0) { cartFab.style.display = ''; cartFabCount.textContent = String(count); }
+  else { cartFab.style.display = 'none'; }
+  // Drawer items
+  if (cart.length === 0) {
+    cartItemsEl.innerHTML = '<div class="cart-empty">Nessun articolo nel carrello</div>';
+  } else {
+    cartItemsEl.innerHTML = cart.map((entry, idx) => {
+      let modsHtml = '';
+      if (entry.removed.length) modsHtml += entry.removed.map(r => `<span class="mod-remove">senza ${r}</span>`).join(', ');
+      if (entry.added.length) modsHtml += (modsHtml ? ', ' : '') + entry.added.map(a => `<span class="mod-add">+ ${a}</span>`).join(', ');
+      return `<div class="cart-item" data-idx="${idx}">
+        <div class="cart-item-info">
+          <div class="cart-item-name">${entry.name}</div>
+          ${modsHtml ? `<div class="cart-item-mods">${modsHtml}</div>` : ''}
+          ${entry.note ? `<div class="cart-item-note">"${entry.note}"</div>` : ''}
+        </div>
+        <div class="cart-item-actions">
+          <div class="cart-item-price">${formatPrice(entry.price * entry.qty)}</div>
+          <div class="cart-item-qty">
+            <button class="cart-remove-btn" data-idx="${idx}" aria-label="Rimuovi">\u{1F5D1}</button>
+            <button data-action="dec" data-idx="${idx}">\u2212</button>
+            <span>${entry.qty}</span>
+            <button data-action="inc" data-idx="${idx}">+</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    // Bind buttons
+    cartItemsEl.querySelectorAll('[data-action="dec"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt((btn as HTMLElement).dataset.idx!);
+        if (cart[idx].qty > 1) cart[idx].qty--;
+        else cart.splice(idx, 1);
+        updateCartUI();
+      });
+    });
+    cartItemsEl.querySelectorAll('[data-action="inc"]').forEach(btn => {
+      btn.addEventListener('click', () => { cart[parseInt((btn as HTMLElement).dataset.idx!)].qty++; updateCartUI(); });
+    });
+    cartItemsEl.querySelectorAll('.cart-remove-btn').forEach(btn => {
+      btn.addEventListener('click', () => { cart.splice(parseInt((btn as HTMLElement).dataset.idx!), 1); updateCartUI(); });
+    });
+  }
+  cartTotalPrice.textContent = formatPrice(totalPrice());
+  cartSendBtn.disabled = cart.length === 0 || !tableId;
+  // Update in-cart marks
+  document.querySelectorAll('.menu-card').forEach(c => {
+    const id = (c as HTMLElement).dataset.itemId!;
+    const inCart = cart.some(e => e.id.startsWith(id + '_'));
+    c.classList.toggle('in-cart', inCart);
+  });
 }
 
-function updateQtyDisplay(id: string): void {
-  const el = document.getElementById(`qty-${id}`);
-  if (el) el.textContent = String(order.get(id)?.qty ?? 0);
+// Cart open/close
+function openCart() {
+  cartOverlay.style.display = ''; cartDrawer.style.display = '';
+  requestAnimationFrame(() => { cartOverlay.classList.add('open'); cartDrawer.classList.add('open'); });
+  document.body.style.overflow = 'hidden';
+}
+function closeCart() {
+  cartOverlay.classList.remove('open'); cartDrawer.classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => { cartOverlay.style.display = 'none'; }, 350);
 }
 
-function buildOrderMessage(tableId: string): string {
-  const now = new Date();
-  const ts = now.toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' });
-  const notes = (document.getElementById('order-notes') as HTMLTextAreaElement)?.value?.trim();
+document.getElementById('cart-fab-btn')?.addEventListener('click', openCart);
+document.getElementById('cart-close')?.addEventListener('click', closeCart);
+cartOverlay.addEventListener('click', closeCart);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCart(); });
 
-  let msg = `*ORDINE — ${tableLabel(tableId)}*\n`;
-  msg += `Data: ${ts}\n\n`;
-  msg += `*Articoli:*\n`;
-  order.forEach(item => {
-    msg += `\u2022 ${item.name} x${item.qty} — ${formatPrice(item.price * item.qty)}\n`;
+// ---- Send order ----
+cartSendBtn.addEventListener('click', () => {
+  if (!tableId || cart.length === 0) return;
+  const label = tableId.replace('table-', 'Tavolo ');
+  const ts = new Date().toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' });
+  const globalNotes = (document.getElementById('order-notes-global') as HTMLTextAreaElement)?.value?.trim();
+
+  let msg = `*ORDINE \u2014 ${label}*\nData: ${ts}\n\n*Articoli:*\n`;
+  cart.forEach(entry => {
+    msg += `\u2022 ${entry.name} x${entry.qty} \u2014 ${formatPrice(entry.price * entry.qty)}`;
+    const mods: string[] = [];
+    if (entry.removed.length) mods.push('SENZA: ' + entry.removed.join(', '));
+    if (entry.added.length) mods.push('CON: ' + entry.added.join(', '));
+    if (mods.length) msg += `\n  _${mods.join(' | ')}_`;
+    if (entry.note) msg += `\n  _Nota: ${entry.note}_`;
+    msg += '\n';
   });
   msg += `\n*TOTALE STIMATO: ${formatPrice(totalPrice())}*`;
-  if (notes) msg += `\n\n*Note:* ${notes}`;
-  return msg;
-}
+  if (globalNotes) msg += `\n\n*Note generali:* ${globalNotes}`;
 
-function openConfirmModal(tableId: string): void {
-  if (!tableId || totalItems() === 0) return;
-  const msg = buildOrderMessage(tableId);
-  const summaryEl = document.getElementById('modal-summary');
-  if (summaryEl) summaryEl.textContent = msg;
-  const modal = document.getElementById('confirm-modal');
-  if (modal) modal.removeAttribute('hidden');
-  document.getElementById('btn-confirm-wa')?.focus();
-}
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
+});
 
-function init(): void {
-  const tableId = getTableId();
-
-  if (tableId) {
-    const banner = document.getElementById('table-banner');
-    const nameBanner = document.getElementById('table-name-banner');
-    if (banner) banner.removeAttribute('hidden');
-    if (nameBanner) nameBanner.textContent = tableLabel(tableId);
-
-    const sidebar = document.getElementById('order-sidebar');
-    if (sidebar) sidebar.style.display = 'block';
-
-    const badge = document.getElementById('sidebar-table-badge');
-    if (badge) badge.textContent = tableLabel(tableId);
-
-    document.querySelectorAll('.order-only').forEach(el => {
-      (el as HTMLElement).style.display = 'inline-flex';
-    });
-
-    // Show mobile order bar
-    const mobBar = document.getElementById('mobile-order-bar');
-    if (mobBar) mobBar.removeAttribute('hidden');
-  }
-
-  // Qty plus buttons
-  document.querySelectorAll('.qty-plus').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = (btn as HTMLElement).dataset.id!;
-      const name = (btn as HTMLElement).dataset.name!;
-      const price = parseFloat((btn as HTMLElement).dataset.price!);
-      const cur = order.get(id) ?? { id, name, price, qty: 0 };
-      cur.qty++;
-      order.set(id, cur);
-      updateQtyDisplay(id);
-      updateSidebar();
-    });
-  });
-
-  // Qty minus buttons
-  document.querySelectorAll('.qty-minus').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = (btn as HTMLElement).dataset.id!;
-      const cur = order.get(id);
-      if (!cur || cur.qty === 0) return;
-      cur.qty--;
-      if (cur.qty === 0) order.delete(id);
-      else order.set(id, cur);
-      updateQtyDisplay(id);
-      updateSidebar();
-    });
-  });
-
-  // Send order buttons
-  const sendBtn = document.getElementById('btn-send-order');
-  sendBtn?.addEventListener('click', () => openConfirmModal(tableId!));
-  document.getElementById('mob-btn-send')?.addEventListener('click', () => openConfirmModal(tableId!));
-
-  // Confirm WA send
-  document.getElementById('btn-confirm-wa')?.addEventListener('click', () => {
-    if (!tableId) return;
-    const msg = buildOrderMessage(tableId);
-    const encoded = encodeURIComponent(msg);
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, '_blank', 'noopener,noreferrer');
-    document.getElementById('confirm-modal')?.setAttribute('hidden', '');
-  });
-
-  // Cancel modal
-  document.getElementById('btn-cancel')?.addEventListener('click', () => {
-    document.getElementById('confirm-modal')?.setAttribute('hidden', '');
-  });
-
-  // Close modal on overlay click
-  document.getElementById('confirm-modal')?.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).id === 'confirm-modal') {
-      document.getElementById('confirm-modal')?.setAttribute('hidden', '');
-    }
-  });
-
-  // Escape key closes modal
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      document.getElementById('confirm-modal')?.setAttribute('hidden', '');
-    }
-  });
-
-  // Responsive: collapse sidebar on mobile
-  const mq = window.matchMedia('(max-width: 768px)');
-  function handleMQ(e: MediaQueryListEvent | MediaQueryList): void {
-    const layout = document.getElementById('menu-layout');
-    if (!layout) return;
-    if (e.matches) {
-      layout.style.gridTemplateColumns = '1fr';
-      const sidebar = document.getElementById('order-sidebar');
-      if (sidebar && tableId) sidebar.style.display = 'none';
-    } else {
-      layout.style.gridTemplateColumns = tableId ? '1fr min(320px,35%)' : '1fr';
-      const sidebar = document.getElementById('order-sidebar');
-      if (sidebar && tableId) sidebar.style.display = 'block';
-    }
-  }
-  mq.addEventListener('change', handleMQ as (e: MediaQueryListEvent) => void);
-  handleMQ(mq);
-
-  updateSidebar();
-}
-
-document.addEventListener('DOMContentLoaded', init);
+updateCartUI();
 </script>
