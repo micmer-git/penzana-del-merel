@@ -1,0 +1,108 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: 'it' | 'en';
+  canonical?: string;
+  ogImage?: string;
+  pageType?: 'website' | 'restaurant';
+  currentPath?: string;
+}
+
+const {
+  title,
+  description,
+  lang = 'it',
+  canonical,
+  ogImage = '/og/default.jpg',
+  pageType = 'website',
+  currentPath = Astro.url.pathname,
+} = Astro.props;
+
+const siteName = 'La Penzana del Merel';
+const siteUrl = 'https://micmer-git.github.io/penzana-del-merel';
+const fullTitle = title === siteName ? title : `${title} — ${siteName}`;
+const canonicalUrl = canonical ?? `${siteUrl}${currentPath}`;
+const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`;
+
+// hreflang alternates
+const itPath = currentPath.replace(/^\/penzana-del-merel\/en(\/.*)?$/, '/penzana-del-merel$1').replace(/\/\/$/, '/') || '/penzana-del-merel/';
+const enPath = currentPath.startsWith('/penzana-del-merel/en')
+  ? currentPath
+  : currentPath.replace(/^\/penzana-del-merel(\/?.*)$/, '/penzana-del-merel/en$1').replace(/\/\/$/, '/');
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalUrl} />
+
+  <!-- hreflang -->
+  <link rel="alternate" hreflang="it" href={`${siteUrl}${itPath}`} />
+  <link rel="alternate" hreflang="en" href={`${siteUrl}${enPath}`} />
+  <link rel="alternate" hreflang="x-default" href={`${siteUrl}${itPath}`} />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content={pageType === 'restaurant' ? 'restaurant.restaurant' : 'website'} />
+  <meta property="og:site_name" content={siteName} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:image" content={ogImageUrl} />
+  <meta property="og:locale" content={lang === 'it' ? 'it_IT' : 'en_US'} />
+  {lang === 'it' && <meta property="og:locale:alternate" content="en_US" />}
+  {lang === 'en' && <meta property="og:locale:alternate" content="it_IT" />}
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={fullTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImageUrl} />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/penzana-del-merel/favicon.svg" />
+
+  <!-- Schema.org Restaurant JSON-LD -->
+  {pageType === 'restaurant' && (
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Restaurant",
+      "name": "La Penzana del Merel",
+      "description": "Pizzeria di famiglia nel cuore della Valle Seriana, aperta dal 1959.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Via alla Chiesa, 4",
+        "addressLocality": "Orezzo",
+        "addressRegion": "BG",
+        "postalCode": "24025",
+        "addressCountry": "IT"
+      },
+      "telephone": "+39 035 712021",
+      "url": "https://micmer-git.github.io/penzana-del-merel/",
+      "servesCuisine": ["Pizza", "Italian"],
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 45.806,
+        "longitude": 9.823
+      },
+      "sameAs": ["https://www.facebook.com/LaPenzanaDelMerel/"]
+    })} />
+  )}
+</head>
+<body>
+  <a href="#main-content" class="sr-only" style="position:fixed;top:0;left:0;z-index:9999;background:var(--accent-gold);padding:0.5rem 1rem;">Skip to content</a>
+  <Header lang={lang} currentPath={currentPath} />
+  <main id="main-content">
+    <slot />
+  </main>
+  <Footer lang={lang} />
+</body>
+</html>

@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const base = '/penzana-del-merel';
+---
+
+<BaseLayout
+  title="La nostra storia — La Penzana del Merel"
+  description="La storia della Penzana del Merel: dalla Trattoria Cima Verde del 1959 alla pizzeria di famiglia oggi. Radici bergamasche, tre generazioni, un ippocastano centenario."
+  lang="it"
+  pageType="website"
+  currentPath={`${base}/storia/`}
+>
+
+  <section class="hero" aria-labelledby="storia-heading" style="padding-block:clamp(3rem,8vw,5rem);">
+    <div class="container">
+      <span class="hero-eyebrow">Storia</span>
+      <h1 id="storia-heading">Le radici del Merel</h1>
+      <p>Dall'acquisizione nel 1936 alla pizzeria di oggi: tre generazioni, un ippocastano centenario e l'orgoglio di restare noi stessi.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container" style="max-width:780px;">
+
+      <div style="display:flex; gap:0.75rem; margin-bottom:2.5rem; flex-wrap:wrap;">
+        {[
+          { year: '1936', label: 'Acquisizione' },
+          { year: '1959', label: 'Apertura locanda' },
+          { year: '1989', label: 'Finalista pizza Napoli' },
+          { year: "Anni '90", label: 'Trasformazione in pizzeria' },
+          { year: 'Oggi', label: 'Terza generazione' },
+        ].map(ev => (
+          <div style="background:var(--bg-warm); border-radius:var(--radius); padding:0.6rem 1rem; border-left:3px solid var(--accent-gold);">
+            <div style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--stone);">{ev.label}</div>
+            <div style="font-family:var(--font-display); font-weight:700; font-size:1.05rem; color:var(--green-deep);">{ev.year}</div>
+          </div>
+        ))}
+      </div>
+
+      <h2>1936 — L'edificio</h2>
+      <p>L'edificio viene acquisito nel 1936 da <strong>Merelli Alessandro</strong>. Ceduto poi in affitto per qualche decade, rimane un punto di riferimento nel borgo di Orezzo.</p>
+
+      <h2 style="margin-top:2rem;">31 dicembre 1959 — Nasce la locanda</h2>
+      <p>È l'ultimo giorno dell'anno quando <strong>Tarcisio</strong>, figlio di Alessandro, inaugura la locanda con il nome di <em>Trattoria Cima Verde</em>. Sin da subito il locale si contraddistingue per la sua <strong>genuinità</strong>: un luogo dove trascorrere rilassanti pomeriggi estivi tra calici di rosso al banco e partite di bocce, all'ombra del secolare <strong>ippocastano</strong>.</p>
+
+      <blockquote class="pullquote">
+        Calici di rosso al banco, partite di bocce, l'ombra del secolare ippocastano. Un posto dove il tempo aveva ancora il diritto di rallentare.
+      </blockquote>
+
+      <h2 style="margin-top:2rem;">1989 — La passione per il forno</h2>
+      <p>Tarcisio si appassiona alla costruzione di <strong>forni alimentari</strong>. La svolta arriva nel 1989, quando è <strong>finalista pizzaiolo al Centenario della pizza Margherita a Napoli</strong> — un riconoscimento straordinario per un artigiano bergamasco.</p>
+
+      <h2 style="margin-top:2rem;">Anni '90 — La Penzana del Merel</h2>
+      <p>Con l'aiuto del figlio <strong>Efrem</strong> e della moglie <strong>Laura</strong>, Tarcisio trasforma la trattoria in <strong>pizzeria</strong>. Il nuovo nome scelto dai tre è <em>La Penzana del Merel</em>: un richiamo alle semplici costruzioni in lamiera sotto le quali i contadini della zona solevano riporre <em>rastei e furchine</em> (rastrelli e forconi). Radici, umiltà, territorio.</p>
+      <p>Sin dai primi anni le pizze, curate in tutti gli aspetti, <em>incuriosiscono e allietano</em> serate di molti bergamaschi: chi cerca un posto fresco nelle torride estati, chi cerca una cornice collinare e rustica per giorni festivi o serate in compagnia.</p>
+
+      <blockquote class="pullquote">
+        "La Penzana del Merel" — le costruzioni in lamiera dove i contadini riponevano rastei e furchine. Un nome che odora di terra e di vera bergamasca.
+      </blockquote>
+
+      <h2 style="margin-top:2rem;">Oggi</h2>
+      <p>Credendo che il presente sia ciò che domani sarà storia, la famiglia vuole continuare questo racconto in modo altrettanto positivo a quanto fatto negli ultimi cinquant'anni.</p>
+      <p style="font-style:italic; font-family:var(--font-display); font-size:1.1rem; color:var(--green-deep);">"Vogliamo cambiare per rimanere noi stessi, rimanere con voi."<br/><span style="font-size:0.85rem; font-style:normal; font-family:var(--font-body); color:var(--stone);">— La famiglia Merel</span></p>
+
+      <div style="margin-top:3rem; display:flex; gap:1rem; flex-wrap:wrap;">
+        <a href={`${base}/famiglia/`} class="btn btn-green">La famiglia oggi</a>
+        <a href={`${base}/menu/`} class="btn btn-outline" style="color:var(--green-deep); border-color:var(--stone-xlight);">Scopri il menù</a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

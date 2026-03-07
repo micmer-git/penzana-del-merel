@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://micmer-git.github.io/penzana-del-merel/sitemap-index.xml

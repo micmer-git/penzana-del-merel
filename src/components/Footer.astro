@@ -1,0 +1,67 @@
+---
+interface Props {
+  lang: 'it' | 'en';
+}
+const { lang } = Astro.props;
+const base = '/penzana-del-merel';
+const year = new Date().getFullYear();
+
+const t = {
+  it: {
+    info: 'Informazioni',
+    links: [
+      { href: `${base}/storia/`, label: 'La nostra storia' },
+      { href: `${base}/famiglia/`, label: 'La famiglia' },
+      { href: `${base}/menu/`, label: 'Menù' },
+      { href: `${base}/contatti/`, label: 'Contatti' },
+    ],
+    address: 'Via alla Chiesa, 4 — 24025 Orezzo (BG)',
+    phone: '+39 035 712021',
+    credits: `© ${year} La Penzana del Merel. Tutti i diritti riservati.`,
+    tagline: 'Pizzeria di famiglia nel cuore della Valle Seriana, dal 1959.',
+  },
+  en: {
+    info: 'Information',
+    links: [
+      { href: `${base}/en/history/`, label: 'Our Story' },
+      { href: `${base}/en/family/`, label: 'The Family' },
+      { href: `${base}/en/menu/`, label: 'Menu' },
+      { href: `${base}/en/contact/`, label: 'Contact' },
+    ],
+    address: 'Via alla Chiesa, 4 — 24025 Orezzo (BG), Italy',
+    phone: '+39 035 712021',
+    credits: `© ${year} La Penzana del Merel. All rights reserved.`,
+    tagline: 'A family pizzeria in the heart of Valle Seriana, since 1959.',
+  },
+};
+const c = t[lang];
+---
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">La Penzana del Merel</div>
+        <p style="font-size:0.85rem; margin-bottom:0.75rem;">{c.tagline}</p>
+        <a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer"
+           style="color:rgba(255,255,255,0.6); font-size:0.8rem; text-decoration:underline;">Facebook</a>
+      </div>
+
+      <div>
+        <div class="footer-heading">{c.info}</div>
+        <ul class="footer-links">
+          {c.links.map(l => <li><a href={l.href}>{l.label}</a></li>)}
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-heading">Contatti</div>
+        <p style="font-size:0.85rem; line-height:1.6;">
+          {c.address}<br />
+          <a href={`tel:${c.phone.replace(/\s/g,'')}`} style="color:rgba(255,255,255,0.7);">{c.phone}</a>
+        </p>
+      </div>
+    </div>
+    <div class="footer-copy">{c.credits}</div>
+  </div>
+</footer>

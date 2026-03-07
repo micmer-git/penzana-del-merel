@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const base = '/penzana-del-merel';
+---
+
+<BaseLayout
+  title="The Family — La Penzana del Merel"
+  description="The Merelli family: Alessandro, Tarcisio, Efrem, and Laura. Three generations of Bergamo passion for pizza, the oven, and genuine hospitality."
+  lang="en"
+  currentPath={`${base}/en/family/`}
+>
+  <section class="hero" style="padding-block:clamp(3rem,8vw,5rem);">
+    <div class="container">
+      <span class="hero-eyebrow">Family</span>
+      <h1>The Merelli Family</h1>
+      <p>Three generations united by one passion: an oven, a pizza, and a place in Valle Seriana where people keep coming back.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container" style="max-width:900px;">
+      <div class="grid-2" style="gap:3rem; align-items:start;">
+        <div>
+          <h2>Alessandro Merelli</h2>
+          <span class="card-label" style="display:inline-block; margin-bottom:0.5rem;">The founder · 1936</span>
+          <p>Alessandro acquired the building in 1936, laying the first stone of what would become a landmark for Orezzo and the Valle Seriana. His intuition — recognising the potential of the place — is where everything began.</p>
+        </div>
+        <div>
+          <h2>Tarcisio Merelli</h2>
+          <span class="card-label" style="display:inline-block; margin-bottom:0.5rem;">Master pizza maker · 1959–present</span>
+          <p>Tarcisio opens the inn on 31 December 1959. His passion for bread ovens leads him to build them himself — and in 1989 he reaches the <strong>final of the Naples Centenary of the Margherita pizza</strong>. A rare achievement for a Bergamo craftsman, still a point of pride for the family.</p>
+          <p>In the 1990s he transforms the inn into a pizzeria, together with his family, inventing the name still used today.</p>
+        </div>
+        <div>
+          <h2>Efrem Merelli</h2>
+          <span class="card-label" style="display:inline-block; margin-bottom:0.5rem;">Second generation</span>
+          <p>Tarcisio's son, Efrem supports his father in the transformation into a pizzeria. He carries on the family tradition with careful attention to ingredient quality and customer care. <span style="color:var(--stone); font-size:0.85rem;">// TODO: add updated details about Efrem if available.</span></p>
+        </div>
+        <div>
+          <h2>Laura</h2>
+          <span class="card-label" style="display:inline-block; margin-bottom:0.5rem;">The heart of the family</span>
+          <p>Tarcisio's wife, Laura has been an integral part of running the place since the pizzeria's early days. Her presence contributes to the genuine warmth that customers remember. <span style="color:var(--stone); font-size:0.85rem;">// TODO: add surname / details if available.</span></p>
+        </div>
+      </div>
+
+      <blockquote class="pullquote" style="margin-top:3rem;">
+        The Merelli family never stopped believing that the place mattered as much as the pizza. And perhaps that is why people keep coming back.
+      </blockquote>
+
+      <div style="margin-top:2rem; display:flex; gap:1rem; flex-wrap:wrap;">
+        <a href={`${base}/en/history/`} class="btn btn-green">Full history</a>
+        <a href={`${base}/en/contact/`} class="btn btn-outline" style="color:var(--green-deep); border-color:var(--stone-xlight);">Contact us</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

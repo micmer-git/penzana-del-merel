@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const base = '/penzana-del-merel';
+---
+
+<BaseLayout
+  title="Il territorio — Orezzo e la Valle Seriana"
+  description="Orezzo è una piccola frazione di Gazzaniga a 380 metri sul mare, nella Valle Seriana a 18 km da Bergamo. Un angolo alpino e collinare, ideale per una gita fuori porta."
+  lang="it"
+  currentPath={`${base}/territorio/`}
+>
+
+  <section class="hero" style="padding-block:clamp(3rem,8vw,5rem);">
+    <div class="container">
+      <span class="hero-eyebrow">Territorio</span>
+      <h1>Orezzo e la Valle Seriana</h1>
+      <p>A 18 km da Bergamo, a 380 metri d'altitudine, sul fianco destro del Serio. Una cornice collinare e alpina, perfetta per una serata fuori porta.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid-2" style="gap:3rem; align-items:start;">
+        <div>
+          <h2>Orezzo</h2>
+          <p>Orezzo è una frazione del comune di <strong>Gazzaniga</strong>, nel cuore della <strong>Valle Seriana</strong>. Il paese si affaccia sul fianco orografico destro del fiume Serio, a circa <strong>380 metri sul livello del mare</strong>.</p>
+          <p>Piccolo, tranquillo, circondato da boschi e prati — Orezzo è il tipo di posto che i bergamaschi cercano quando vogliono staccare dal ritmo della città senza andare troppo lontano.</p>
+
+          <div style="margin-top:1.5rem;">
+            <div class="card card-body">
+              <div class="grid" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                {[
+                  { label: 'Altitudine', val: '~380 m s.l.m.' },
+                  { label: 'Comune', val: 'Gazzaniga (BG)' },
+                  { label: 'Distanza da BG', val: '~18 km' },
+                  { label: 'Valle', val: 'Valle Seriana' },
+                ].map(item => (
+                  <div>
+                    <div class="card-label">{item.label}</div>
+                    <div style="font-weight:700; color:var(--green-deep);">{item.val}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2>Come raggiungerci</h2>
+          <p><strong>In auto:</strong> Dalla A4 (autostrada dei laghi), uscita Seriate o Nembro, poi seguire per Gazzaniga–Orezzo lungo la SP35. Circa 25–30 minuti da Bergamo.</p>
+          <p><strong>Con i mezzi:</strong> <span style="color:var(--stone); font-size:0.875rem;">// TODO: verificare linee autobus SAB o altri collegamenti da Bergamo/Gazzaniga.</span></p>
+          <p><strong>Parcheggio:</strong> <span style="color:var(--stone); font-size:0.875rem;">// TODO: aggiungere indicazioni parcheggio locale.</span></p>
+
+          <div style="margin-top:1.5rem;">
+            <a
+              href="https://www.google.com/maps/search/La+Penzana+del+Merel+Via+alla+Chiesa+4+Orezzo+BG"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-green"
+            >Apri in Google Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:3rem;">
+        <h2>Il contesto alpino</h2>
+        <p>La Valle Seriana è una delle valli più importanti della provincia di Bergamo: si estende per oltre 70 km dalle porte della città fino alle cime dell'Orobie. È una valle industriale ma anche naturalistica — con boschi, sentieri, borghi storici e una tradizione culinaria che mescola montagna e pianura.</p>
+        <p>Orezzo si trova in un tratto intermedio della valle, dove le colline si aprono su viste ampie e il ritmo della vita è ancora legato alla terra e alle stagioni. È il contesto ideale per una pizzeria che porta il nome degli attrezzi agricoli che i contadini riponevano sotto la penzana.</p>
+      </div>
+
+      <!-- Map embed placeholder -->
+      <div class="map-embed" style="margin-top:2rem;">
+        <iframe
+          title="Mappa La Penzana del Merel"
+          src="https://www.openstreetmap.org/export/embed.html?bbox=9.79%2C45.78%2C9.86%2C45.83&layer=mapnik&marker=45.806%2C9.823"
+          width="100%"
+          height="350"
+          style="border:0; display:block;"
+          loading="lazy"
+          aria-label="Mappa OpenStreetMap di Orezzo"
+        ></iframe>
+      </div>
+      <p style="font-size:0.75rem; color:var(--stone); margin-top:0.5rem;">Mappa: OpenStreetMap contributors. Posizione approssimativa — verificare via Google Maps.</p>
+    </div>
+  </section>
+
+</BaseLayout>

@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const base = '/penzana-del-merel';
+---
+
+<BaseLayout
+  title="Contact and How to Get Here — La Penzana del Merel"
+  description="Contact details and directions to La Penzana del Merel in Orezzo (BG). Via alla Chiesa 4, phone +39 035 712021, Valle Seriana, Bergamo, Italy."
+  lang="en"
+  currentPath={`${base}/en/contact/`}
+>
+  <section class="hero" style="padding-block:clamp(3rem,8vw,5rem);">
+    <div class="container">
+      <span class="hero-eyebrow">Contact</span>
+      <h1>Where We Are and How to Book</h1>
+      <p>We are in Orezzo, Valle Seriana. 18km from Bergamo, under the century-old chestnut tree.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="contact-grid" style="margin-bottom:3rem;">
+        <div class="contact-item">
+          <div class="contact-item-icon" aria-hidden="true">📍</div>
+          <div class="contact-item-label">Address</div>
+          <div class="contact-item-value">Via alla Chiesa, 4</div>
+          <div class="contact-item-note">24025 Orezzo (Gazzaniga), Bergamo, Italy</div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon" aria-hidden="true">📞</div>
+          <div class="contact-item-label">Phone</div>
+          <div class="contact-item-value"><a href="tel:+390357121021">+39 035 712021</a></div>
+          <div class="contact-item-note">For reservations and info</div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon" aria-hidden="true">🕐</div>
+          <div class="contact-item-label">Opening Hours</div>
+          <div class="contact-item-value" style="color:var(--stone);">TODO</div>
+          <div class="contact-item-note"><!-- TODO: Insert opening hours --> Please call for up-to-date hours. Hours may vary by season.</div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon" aria-hidden="true">📅</div>
+          <div class="contact-item-label">Reservations</div>
+          <div class="contact-item-value" style="color:var(--stone);">On request</div>
+          <div class="contact-item-note"><!-- TODO: Confirm reservation method --> Please call to book your table.</div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon" aria-hidden="true">📘</div>
+          <div class="contact-item-label">Facebook</div>
+          <div class="contact-item-value"><a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer">LaPenzanaDelMerel</a></div>
+          <div class="contact-item-note">Updates and photos</div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon" aria-hidden="true">🍕</div>
+          <div class="contact-item-label">Table Ordering</div>
+          <div class="contact-item-value">QR code</div>
+          <div class="contact-item-note">Scan the QR on your table to order via WhatsApp</div>
+        </div>
+      </div>
+
+      <h2 style="margin-bottom:1.5rem;">How to Get Here</h2>
+      <div class="grid-2" style="gap:2rem; margin-bottom:2rem;">
+        <div>
+          <h3>By Car</h3>
+          <p>A4 motorway (Milan–Venice), exit <strong>Seriate</strong> or <strong>Nembro</strong>, then follow the SP35 towards Gazzaniga–Orezzo. About 25–30 minutes from the motorway.</p>
+          <a href="https://www.google.com/maps/dir//Via+alla+Chiesa,+4,+24025+Orezzo+BG" target="_blank" rel="noopener noreferrer" class="btn btn-green mt-2" style="display:inline-flex;">Driving directions (Google Maps)</a>
+        </div>
+        <div>
+          <h3>By Public Transport</h3>
+          <p style="color:var(--stone);"><!-- TODO: verify connections --> Check connections from Bergamo at <a href="https://www.bergamotrasporti.it" target="_blank" rel="noopener noreferrer">bergamotrasporti.it</a>. Valle Seriana is served by SAB bus lines.</p>
+        </div>
+      </div>
+
+      <div class="map-embed">
+        <iframe
+          title="Map showing La Penzana del Merel location"
+          src="https://www.openstreetmap.org/export/embed.html?bbox=9.79%2C45.78%2C9.86%2C45.83&layer=mapnik&marker=45.806%2C9.823"
+          width="100%" height="400" style="border:0; display:block;" loading="lazy"
+          aria-label="Map of Orezzo (BG), Italy"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

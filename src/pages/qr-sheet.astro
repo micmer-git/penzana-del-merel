@@ -1,0 +1,68 @@
+---
+// Printable QR code sheet for all tables (table-01 to table-20)
+// Access at /penzana-del-merel/qr-sheet/
+// Print via browser (Ctrl+P / Cmd+P) — only QR cards visible in print mode
+const tables = Array.from({ length: 20 }, (_, i) => ({
+  id: `table-${String(i + 1).padStart(2, '0')}`,
+  label: `Tavolo ${String(i + 1).padStart(2, '0')}`,
+}));
+
+const BASE_URL = 'https://micmer-git.github.io/penzana-del-merel';
+const MENU_PATH = '/menu/';
+---
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Foglio QR Tavoli — La Penzana del Merel</title>
+  <meta name="robots" content="noindex" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f5f5f5; padding: 1rem; }
+    h1 { text-align: center; margin-bottom: 0.5rem; font-size: 1.4rem; }
+    p.subtitle { text-align: center; color: #666; font-size: 0.85rem; margin-bottom: 1.5rem; }
+    .btn-print { display: block; margin: 0 auto 1.5rem; padding: 0.6rem 1.5rem; background: #1a3c28; color: white; border: none; border-radius: 6px; font-size: 0.9rem; cursor: pointer; }
+    .qr-sheet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; max-width: 1100px; margin: 0 auto; }
+    .qr-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; text-align: center; page-break-inside: avoid; }
+    .qr-card img { width: 150px; height: 150px; margin: 0 auto 0.6rem; display: block; }
+    .table-name { font-weight: 700; font-size: 1rem; color: #1a3c28; margin-bottom: 0.3rem; }
+    .restaurant-name { font-size: 0.7rem; color: #888; margin-bottom: 0.2rem; }
+    .scan-hint { font-size: 0.7rem; color: #aaa; }
+    @media print {
+      body { background: white; padding: 0; }
+      .no-print { display: none !important; }
+      .qr-sheet-grid { gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="no-print">
+    <h1>Foglio QR — La Penzana del Merel</h1>
+    <p class="subtitle">20 QR code per i tavoli 01–20. Stampa questa pagina e ritaglia i cartoncini.</p>
+    <button class="btn-print" onclick="window.print()">Stampa foglio QR</button>
+  </div>
+
+  <div class="qr-sheet-grid">
+    {tables.map(table => {
+      const url = `${BASE_URL}${MENU_PATH}?table=${table.id}`;
+      const qrSrc = `/penzana-del-merel/qr/${table.id}.svg`;
+      return (
+        <div class="qr-card">
+          <img
+            src={qrSrc}
+            alt={`QR code per ${table.label} — scansiona per vedere il menù e ordinare`}
+            width="150"
+            height="150"
+            loading="lazy"
+          />
+          <div class="table-name">{table.label}</div>
+          <div class="restaurant-name">La Penzana del Merel</div>
+          <div class="scan-hint">Scansiona per ordinare</div>
+        </div>
+      );
+    })}
+  </div>
+</body>
+</html>

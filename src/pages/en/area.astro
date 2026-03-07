@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const base = '/penzana-del-merel';
+---
+
+<BaseLayout
+  title="The Area — Orezzo and Valle Seriana"
+  description="Orezzo is a hamlet of Gazzaniga at 380m above sea level in the Valle Seriana, 18km from Bergamo. An alpine and hilly setting, perfect for a day out."
+  lang="en"
+  currentPath={`${base}/en/area/`}
+>
+  <section class="hero" style="padding-block:clamp(3rem,8vw,5rem);">
+    <div class="container">
+      <span class="hero-eyebrow">The Area</span>
+      <h1>Orezzo and Valle Seriana</h1>
+      <p>18km from Bergamo, at 380m altitude, on the right bank of the Serio. A hilly and alpine setting, perfect for an evening out.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid-2" style="gap:3rem; align-items:start;">
+        <div>
+          <h2>Orezzo</h2>
+          <p>Orezzo is a hamlet of the municipality of <strong>Gazzaniga</strong>, in the heart of the <strong>Valle Seriana</strong>. The village sits on the right bank of the Serio river, at approximately <strong>380 metres above sea level</strong>.</p>
+          <p>Small, quiet, surrounded by woods and meadows — Orezzo is exactly the kind of place people from Bergamo seek when they want to slow down without travelling too far.</p>
+          <div style="margin-top:1.5rem;">
+            <div class="card card-body">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                {[
+                  { label: 'Altitude', val: '~380m a.s.l.' },
+                  { label: 'Municipality', val: 'Gazzaniga (BG)' },
+                  { label: 'Distance from BG', val: '~18km' },
+                  { label: 'Valley', val: 'Valle Seriana' },
+                ].map(item => (
+                  <div>
+                    <div class="card-label">{item.label}</div>
+                    <div style="font-weight:700; color:var(--green-deep);">{item.val}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h2>How to get here</h2>
+          <p><strong>By car:</strong> A4 motorway (Milan–Venice), exit Seriate or Nembro, then follow the SP35 towards Gazzaniga–Orezzo. About 25–30 minutes from the motorway.</p>
+          <p><strong>By public transport:</strong> <span style="color:var(--stone);">// TODO: confirm bus lines from Bergamo/Gazzaniga.</span></p>
+          <a href="https://www.google.com/maps/search/La+Penzana+del+Merel+Via+alla+Chiesa+4+Orezzo+BG" target="_blank" rel="noopener noreferrer" class="btn btn-green mt-2">Open in Google Maps</a>
+        </div>
+      </div>
+
+      <div style="margin-top:3rem;">
+        <h2>The Alpine Context</h2>
+        <p>Valle Seriana is one of the most important valleys in the Bergamo province, stretching over 70km from the city gates to the peaks of the Orobie. It is both an industrial and a nature valley — with forests, hiking trails, historic villages, and a culinary tradition that blends mountain and plain.</p>
+        <p>Orezzo sits at an intermediate point in the valley, where the hills open onto wide views and life still follows the rhythm of land and seasons — the perfect setting for a pizzeria that takes its name from the farmers' tools shed.</p>
+      </div>
+
+      <div class="map-embed">
+        <iframe
+          title="Map of Orezzo, Valle Seriana"
+          src="https://www.openstreetmap.org/export/embed.html?bbox=9.79%2C45.78%2C9.86%2C45.83&layer=mapnik&marker=45.806%2C9.823"
+          width="100%" height="350" style="border:0; display:block;" loading="lazy"
+          aria-label="OpenStreetMap showing Orezzo (BG)"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,77 @@
+---
+interface Props {
+  lang: 'it' | 'en';
+  currentPath: string;
+}
+const { lang, currentPath } = Astro.props;
+const base = '/penzana-del-merel';
+
+const navIT = [
+  { href: `${base}/`, label: 'Home' },
+  { href: `${base}/storia/`, label: 'Storia' },
+  { href: `${base}/famiglia/`, label: 'Famiglia' },
+  { href: `${base}/territorio/`, label: 'Territorio' },
+  { href: `${base}/menu/`, label: 'Menù' },
+  { href: `${base}/galleria/`, label: 'Galleria' },
+  { href: `${base}/contatti/`, label: 'Contatti' },
+];
+
+const navEN = [
+  { href: `${base}/en/`, label: 'Home' },
+  { href: `${base}/en/history/`, label: 'History' },
+  { href: `${base}/en/family/`, label: 'Family' },
+  { href: `${base}/en/area/`, label: 'Area' },
+  { href: `${base}/en/menu/`, label: 'Menu' },
+  { href: `${base}/en/gallery/`, label: 'Gallery' },
+  { href: `${base}/en/contact/`, label: 'Contact' },
+];
+
+const nav = lang === 'it' ? navIT : navEN;
+
+// Language switch targets
+const itTarget = currentPath.replace(`${base}/en`, base).replace(/\/$/, '') + '/';
+const enTarget = currentPath.startsWith(`${base}/en`)
+  ? currentPath
+  : `${base}/en/`;
+---
+
+<header class="site-header" role="banner">
+  <div class="container">
+    <div class="inner">
+      <a href={lang === 'it' ? `${base}/` : `${base}/en/`} class="site-logo" aria-label="La Penzana del Merel — Home">
+        La Penzana del Merel
+        <span>Orezzo · Valle Seriana</span>
+      </a>
+
+      <button class="nav-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Apri menu di navigazione">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+
+      <nav class="main-nav" id="main-nav" role="navigation" aria-label="Navigazione principale">
+        {nav.map(link => (
+          <a
+            href={link.href}
+            aria-current={currentPath === link.href || currentPath === link.href.replace(/\/$/, '') ? 'page' : undefined}
+          >{link.label}</a>
+        ))}
+        <span class="nav-lang">
+          <a href={itTarget} class={lang === 'it' ? 'active' : ''} aria-label="Italiano" hreflang="it">IT</a>
+          <a href={enTarget} class={lang === 'en' ? 'active' : ''} aria-label="English" hreflang="en">EN</a>
+        </span>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle') as HTMLButtonElement;
+  const nav = document.querySelector('#main-nav') as HTMLElement;
+  if (toggle && nav) {
+    toggle.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+  }
+</script>

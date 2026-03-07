@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const base = '/penzana-del-merel';
+---
+
+<BaseLayout
+  title="La Penzana del Merel — Family Pizzeria in Orezzo, Valle Seriana"
+  description="La Penzana del Merel is a family-run pizzeria in Orezzo (BG), in the heart of Valle Seriana near Bergamo. Tradition, wood-fired oven, genuine flavours since 1959."
+  lang="en"
+  pageType="restaurant"
+  currentPath={`${base}/en/`}
+>
+
+  <section class="hero">
+    <div class="container">
+      <span class="hero-eyebrow">Orezzo · Valle Seriana · Bergamo, Italy</span>
+      <h1>La Penzana del Merel</h1>
+      <p>A family pizzeria in the Bergamo hills. Cool in summer, rustic on festive days, genuine every evening. Since 1959.</p>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <a href={`${base}/en/menu/`} class="btn btn-primary">See the Menu</a>
+        <a href={`${base}/en/history/`} class="btn btn-outline">Our Story</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="info-strip">
+    <div class="container">
+      <div class="grid">
+        <div><div class="item-label">Since</div><div class="item-value">1959</div></div>
+        <div><div class="item-label">Location</div><div class="item-value">Orezzo (BG)</div></div>
+        <div><div class="item-label">Phone</div><div class="item-value"><a href="tel:+390357121021" style="color:inherit;">035 712021</a></div></div>
+        <div><div class="item-label">Speciality</div><div class="item-value">Wood-fired pizza</div></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid-2" style="align-items:center; gap:3rem;">
+        <div>
+          <div class="section-header" style="text-align:left; margin-bottom:1.5rem;">
+            <span class="kicker">The Story</span>
+            <h2>A place where time slows down</h2>
+            <hr class="divider" style="margin:1rem 0;" />
+          </div>
+          <p>Under the century-old chestnut tree in Orezzo, the Merelli family built something rare: a place of genuine authenticity. Glasses of red wine, bowls, pizzas crafted with care.</p>
+          <p>What was once the "Trattoria Cima Verde" became La Penzana del Merel — the name echoes the simple tin-roofed shelters where farmers kept their rakes and pitchforks. A sign of roots.</p>
+          <a href={`${base}/en/history/`} class="btn btn-green mt-2">Read the full story</a>
+        </div>
+        <div style="background:var(--bg-warm); border-radius:var(--radius-lg); padding:2.5rem; box-shadow:var(--shadow-sm);">
+          <blockquote class="pullquote" style="margin:0;">
+            "We want to change in order to remain ourselves, to remain with you."
+          </blockquote>
+          <p style="margin-top:1rem; color:var(--text-muted); font-size:0.875rem;">— The Merel family</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--bg-warm);">
+    <div class="container">
+      <div class="section-header">
+        <span class="kicker">Menu 2026</span>
+        <h2>Our pizzas</h2>
+        <hr class="divider" />
+        <p>Classic, special, fun pizzas and focaccia. Every pizza is crafted with care using selected ingredients.</p>
+      </div>
+      <div class="grid-3">
+        {[
+          { label: 'Classic', desc: 'Margherita, Marinara, Prosciutto, 4 Cheeses…', from: '€5.50' },
+          { label: 'Specials', desc: 'Amatriciana, Donizetti, Merel, Paradise, Seafood…', from: '€9.00' },
+          { label: 'Fun', desc: 'Americana, Heidi, Peppa Pig, Tom & Jerry…', from: '€8.50' },
+          { label: 'Focaccia', desc: 'Plain, Porcini, Vegetables, Salmon…', from: '€5.00' },
+        ].map(cat => (
+          <div class="card card-body">
+            <div class="card-label">{cat.label}</div>
+            <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:0.5rem;">{cat.desc}</p>
+            <div style="font-family:var(--font-display); font-weight:700; color:var(--green-deep); font-size:1.1rem;">from {cat.from}</div>
+          </div>
+        ))}
+      </div>
+      <div class="text-center mt-3">
+        <a href={`${base}/en/menu/`} class="btn btn-green">Full menu + Order from table</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid-2" style="align-items:center; gap:3rem;">
+        <div style="background:var(--green-deep); border-radius:var(--radius-lg); padding:2.5rem; color:white;">
+          <span class="kicker" style="color:var(--accent-gold);">Location</span>
+          <h2 style="color:white; margin-bottom:1rem;">Valle Seriana,<br/>Bergamo hills</h2>
+          <p style="color:rgba(255,255,255,0.75);">Orezzo is a small hamlet of Gazzaniga, on the right bank of the Serio river, at ~380m above sea level, 18km from Bergamo. Perfect for an evening out or a rustic festive lunch.</p>
+          <a href={`${base}/en/area/`} class="btn btn-outline mt-2">Discover the area</a>
+        </div>
+        <div>
+          <div class="contact-grid" style="display:grid; gap:1rem;">
+            <div class="contact-item">
+              <div class="contact-item-icon" aria-hidden="true">📍</div>
+              <div class="contact-item-label">Address</div>
+              <div class="contact-item-value">Via alla Chiesa, 4</div>
+              <div class="contact-item-note">24025 Orezzo (BG), Italy</div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-item-icon" aria-hidden="true">📞</div>
+              <div class="contact-item-label">Phone</div>
+              <div class="contact-item-value"><a href="tel:+390357121021">+39 035 712021</a></div>
+            </div>
+          </div>
+          <a href={`${base}/en/contact/`} class="btn btn-green mt-2">How to get here</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

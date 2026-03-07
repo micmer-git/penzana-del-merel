@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const base = '/penzana-del-merel';
+---
+
+<BaseLayout
+  title="Contatti e come arrivare — La Penzana del Merel"
+  description="Contatti e indicazioni per raggiungere La Penzana del Merel a Orezzo (BG). Via alla Chiesa 4, telefono 035 712021, Valle Seriana."
+  lang="it"
+  currentPath={`${base}/contatti/`}
+>
+
+  <section class="hero" style="padding-block:clamp(3rem,8vw,5rem);">
+    <div class="container">
+      <span class="hero-eyebrow">Contatti</span>
+      <h1>Dove siamo e come prenotare</h1>
+      <p>Siamo ad Orezzo, nella Valle Seriana. A 18 km da Bergamo, all'ombra del secolare ippocastano.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+
+      <div class="contact-grid" style="margin-bottom:3rem;">
+        <div class="contact-item">
+          <div class="contact-item-icon" aria-hidden="true">📍</div>
+          <div class="contact-item-label">Indirizzo</div>
+          <div class="contact-item-value">Via alla Chiesa, 4</div>
+          <div class="contact-item-note">24025 Orezzo (Gazzaniga), Bergamo, Italia</div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-item-icon" aria-hidden="true">📞</div>
+          <div class="contact-item-label">Telefono</div>
+          <div class="contact-item-value">
+            <a href="tel:+390357121021">035 712021</a>
+          </div>
+          <div class="contact-item-note">Per prenotazioni e informazioni</div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-item-icon" aria-hidden="true">🕐</div>
+          <div class="contact-item-label">Orari di apertura</div>
+          <div class="contact-item-value" style="color:var(--stone);">TODO</div>
+          <div class="contact-item-note">
+            <!-- TODO: Insert official opening hours -->
+            Contattare per gli orari aggiornati. Gli orari possono variare in base alla stagione.
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-item-icon" aria-hidden="true">📅</div>
+          <div class="contact-item-label">Prenotazioni</div>
+          <div class="contact-item-value" style="color:var(--stone);">Su richiesta</div>
+          <div class="contact-item-note">
+            <!-- TODO: Confirm reservation method -->
+            Contattare telefonicamente per prenotare il tavolo.
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-item-icon" aria-hidden="true">📘</div>
+          <div class="contact-item-label">Facebook</div>
+          <div class="contact-item-value">
+            <a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer">
+              LaPenzanaDelMerel
+            </a>
+          </div>
+          <div class="contact-item-note">Aggiornamenti e foto</div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-item-icon" aria-hidden="true">🍕</div>
+          <div class="contact-item-label">Ordine dal tavolo</div>
+          <div class="contact-item-value">QR code</div>
+          <div class="contact-item-note">Scansiona il QR sul tavolo per ordinare via WhatsApp</div>
+        </div>
+      </div>
+
+      <h2 style="margin-bottom:1.5rem;">Come raggiungerci</h2>
+      <div class="grid-2" style="gap:2rem; margin-bottom:2rem;">
+        <div>
+          <h3>In auto</h3>
+          <p>Autostrada A4 Milano–Venezia, uscita <strong>Seriate</strong> o <strong>Nembro</strong>, poi seguire la SP35 verso Gazzaniga–Orezzo. Circa 25–30 minuti dal casello.</p>
+          <a
+            href="https://www.google.com/maps/dir//Via+alla+Chiesa,+4,+24025+Orezzo+BG"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-green mt-2"
+            style="display:inline-flex;"
+          >Indicazioni stradali (Google Maps)</a>
+        </div>
+        <div>
+          <h3>Con i mezzi pubblici</h3>
+          <p style="color:var(--stone);">
+            <!-- TODO: verify public transport options -->
+            Verificare i collegamenti da Bergamo su <a href="https://www.bergamotrasporti.it" target="_blank" rel="noopener noreferrer">bergamotrasporti.it</a>. La Valle Seriana è servita da linee autobus SAB.
+          </p>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="map-embed">
+        <iframe
+          title="Posizione La Penzana del Merel su mappa"
+          src="https://www.openstreetmap.org/export/embed.html?bbox=9.79%2C45.78%2C9.86%2C45.83&layer=mapnik&marker=45.806%2C9.823"
+          width="100%"
+          height="400"
+          style="border:0; display:block;"
+          loading="lazy"
+          aria-label="Mappa di Orezzo (BG)"
+        ></iframe>
+      </div>
+      <p style="font-size:0.75rem; color:var(--stone); margin-top:0.5rem;">
+        Mappa: OpenStreetMap contributors. Posizione indicativa — coordinate: 45.806, 9.823.
+      </p>
+
+    </div>
+  </section>
+
+</BaseLayout>
