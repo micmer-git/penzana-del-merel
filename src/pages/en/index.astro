@@ -21,6 +21,7 @@ const base = '/penzana-del-merel';
         <a href={`${base}/en/history/`} class="btn btn-outline">Our Story</a>
       </div>
     </div>
+    <div class="hero-mountains"></div>
   </section>
 
   <div class="info-strip">
@@ -28,13 +29,35 @@ const base = '/penzana-del-merel';
       <div class="grid">
         <div><div class="item-label">Since</div><div class="item-value">1959</div></div>
         <div><div class="item-label">Location</div><div class="item-value">Orezzo (BG)</div></div>
-        <div><div class="item-label">Phone</div><div class="item-value"><a href="tel:+390357121021" style="color:inherit;">035 712021</a></div></div>
+        <div><div class="item-label">Phone</div><div class="item-value"><a href="tel:+39035712021" style="color:inherit;">035 712021</a></div></div>
         <div><div class="item-label">Speciality</div><div class="item-value">Wood-fired pizza</div></div>
       </div>
     </div>
   </div>
 
-  <section class="section">
+  <section class="section-sm" style="background:var(--bg-warm);">
+    <div class="container">
+      <div class="grid-3">
+        <div class="feature-card reveal">
+          <div class="feature-icon">🔥</div>
+          <h3 style="font-size:1.1rem; margin-bottom:0.5rem;">Wood-fired oven</h3>
+          <p style="font-size:0.875rem; color:var(--text-muted);">Pizzas baked in the oven hand-built by master pizzaiolo Tarcisio Merelli.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">🌿</div>
+          <h3 style="font-size:1.1rem; margin-bottom:0.5rem;">Selected ingredients</h3>
+          <p style="font-size:0.875rem; color:var(--text-muted);">From mozzarella to porcini mushrooms, every ingredient is carefully chosen.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">👨‍👩‍👦</div>
+          <h3 style="font-size:1.1rem; margin-bottom:0.5rem;">Family since 1959</h3>
+          <p style="font-size:0.875rem; color:var(--text-muted);">Three generations of Bergamo passion for pizza and genuine hospitality.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section reveal">
     <div class="container">
       <div class="grid-2" style="align-items:center; gap:3rem;">
         <div>
@@ -57,25 +80,24 @@ const base = '/penzana-del-merel';
     </div>
   </section>
 
-  <section class="section" style="background:var(--bg-warm);">
+  <section class="section reveal" style="background:var(--bg-warm);">
     <div class="container">
       <div class="section-header">
         <span class="kicker">Menu 2026</span>
-        <h2>Our pizzas</h2>
+        <h2>Our menu</h2>
         <hr class="divider" />
-        <p>Classic, special, fun pizzas and focaccia. Every pizza is crafted with care using selected ingredients.</p>
+        <p>Pizzas, Bergamo cuisine, desserts and wine list. Every dish is crafted with selected ingredients.</p>
       </div>
       <div class="grid-3">
         {[
-          { label: 'Classic', desc: 'Margherita, Marinara, Prosciutto, 4 Cheeses…', from: '€5.50' },
-          { label: 'Specials', desc: 'Amatriciana, Donizetti, Merel, Paradise, Seafood…', from: '€9.00' },
-          { label: 'Fun', desc: 'Americana, Heidi, Peppa Pig, Tom & Jerry…', from: '€8.50' },
-          { label: 'Focaccia', desc: 'Plain, Porcini, Vegetables, Salmon…', from: '€5.00' },
+          { label: 'The Pizzeria', desc: 'Classic, special, fun pizzas and focaccia — 31 wood-fired pizzas.', from: 'from \u20AC5.50' },
+          { label: 'The Kitchen', desc: 'Casoncelli, risottos, beechwood grills and homemade desserts.', from: 'from \u20AC4.50' },
+          { label: 'The Bar', desc: 'Draught beers, coffee, selected red and white wines.', from: 'from \u20AC1.40' },
         ].map(cat => (
           <div class="card card-body">
             <div class="card-label">{cat.label}</div>
             <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:0.5rem;">{cat.desc}</p>
-            <div style="font-family:var(--font-display); font-weight:700; color:var(--green-deep); font-size:1.1rem;">from {cat.from}</div>
+            <div style="font-family:var(--font-display); font-weight:700; color:var(--green-deep); font-size:1.1rem;">{cat.from}</div>
           </div>
         ))}
       </div>
@@ -85,7 +107,7 @@ const base = '/penzana-del-merel';
     </div>
   </section>
 
-  <section class="section">
+  <section class="section reveal">
     <div class="container">
       <div class="grid-2" style="align-items:center; gap:3rem;">
         <div style="background:var(--green-deep); border-radius:var(--radius-lg); padding:2.5rem; color:white;">
@@ -105,7 +127,7 @@ const base = '/penzana-del-merel';
             <div class="contact-item">
               <div class="contact-item-icon" aria-hidden="true">📞</div>
               <div class="contact-item-label">Phone</div>
-              <div class="contact-item-value"><a href="tel:+390357121021">+39 035 712021</a></div>
+              <div class="contact-item-value"><a href="tel:+39035712021">+39 035 712021</a></div>
             </div>
           </div>
           <a href={`${base}/en/contact/`} class="btn btn-green mt-2">How to get here</a>

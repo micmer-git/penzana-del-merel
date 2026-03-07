@@ -1,10 +1,12 @@
 ---
+import { WHATSAPP_NUMBER } from '../data/site.js';
 interface Props {
   lang: 'it' | 'en';
 }
 const { lang } = Astro.props;
 const base = '/penzana-del-merel';
 const year = new Date().getFullYear();
+const waLink = `https://wa.me/${WHATSAPP_NUMBER}`;
 
 const t = {
   it: {
@@ -12,13 +14,15 @@ const t = {
     links: [
       { href: `${base}/storia/`, label: 'La nostra storia' },
       { href: `${base}/famiglia/`, label: 'La famiglia' },
-      { href: `${base}/menu/`, label: 'Menù' },
+      { href: `${base}/menu/`, label: 'Menu' },
       { href: `${base}/contatti/`, label: 'Contatti' },
     ],
     address: 'Via alla Chiesa, 4 — 24025 Orezzo (BG)',
     phone: '+39 035 712021',
-    credits: `© ${year} La Penzana del Merel. Tutti i diritti riservati.`,
+    credits: `\u00A9 ${year} La Penzana del Merel. Tutti i diritti riservati.`,
     tagline: 'Pizzeria di famiglia nel cuore della Valle Seriana, dal 1959.',
+    orderLabel: 'Ordina dal tavolo',
+    waLabel: 'Scrivici su WhatsApp',
   },
   en: {
     info: 'Information',
@@ -30,11 +34,14 @@ const t = {
     ],
     address: 'Via alla Chiesa, 4 — 24025 Orezzo (BG), Italy',
     phone: '+39 035 712021',
-    credits: `© ${year} La Penzana del Merel. All rights reserved.`,
+    credits: `\u00A9 ${year} La Penzana del Merel. All rights reserved.`,
     tagline: 'A family pizzeria in the heart of Valle Seriana, since 1959.',
+    orderLabel: 'Order from table',
+    waLabel: 'Message us on WhatsApp',
   },
 };
 const c = t[lang];
+const menuPath = lang === 'it' ? `${base}/menu/` : `${base}/en/menu/`;
 ---
 
 <footer class="site-footer" role="contentinfo">
@@ -43,14 +50,19 @@ const c = t[lang];
       <div>
         <div class="footer-brand">La Penzana del Merel</div>
         <p style="font-size:0.85rem; margin-bottom:0.75rem;">{c.tagline}</p>
-        <a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer"
-           style="color:rgba(255,255,255,0.6); font-size:0.8rem; text-decoration:underline;">Facebook</a>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
+          <a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer"
+             style="color:rgba(255,255,255,0.6); font-size:0.8rem; text-decoration:underline;">Facebook</a>
+          <a href={waLink} target="_blank" rel="noopener noreferrer"
+             style="color:#25d366; font-size:0.8rem; text-decoration:underline;">{c.waLabel}</a>
+        </div>
       </div>
 
       <div>
         <div class="footer-heading">{c.info}</div>
         <ul class="footer-links">
           {c.links.map(l => <li><a href={l.href}>{l.label}</a></li>)}
+          <li><a href={menuPath} style="color:#25d366;">{c.orderLabel}</a></li>
         </ul>
       </div>
 

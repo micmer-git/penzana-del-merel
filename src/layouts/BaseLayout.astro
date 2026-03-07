@@ -29,7 +29,6 @@ const fullTitle = title === siteName ? title : `${title} — ${siteName}`;
 const canonicalUrl = canonical ?? `${siteUrl}${currentPath}`;
 const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`;
 
-// hreflang alternates
 const itPath = currentPath.replace(/^\/penzana-del-merel\/en(\/.*)?$/, '/penzana-del-merel$1').replace(/\/\/$/, '/') || '/penzana-del-merel/';
 const enPath = currentPath.startsWith('/penzana-del-merel/en')
   ? currentPath
@@ -45,12 +44,10 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
   <meta name="description" content={description} />
   <link rel="canonical" href={canonicalUrl} />
 
-  <!-- hreflang -->
   <link rel="alternate" hreflang="it" href={`${siteUrl}${itPath}`} />
   <link rel="alternate" hreflang="en" href={`${siteUrl}${enPath}`} />
   <link rel="alternate" hreflang="x-default" href={`${siteUrl}${itPath}`} />
 
-  <!-- Open Graph -->
   <meta property="og:type" content={pageType === 'restaurant' ? 'restaurant.restaurant' : 'website'} />
   <meta property="og:site_name" content={siteName} />
   <meta property="og:title" content={fullTitle} />
@@ -61,16 +58,13 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
   {lang === 'it' && <meta property="og:locale:alternate" content="en_US" />}
   {lang === 'en' && <meta property="og:locale:alternate" content="it_IT" />}
 
-  <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={fullTitle} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={ogImageUrl} />
 
-  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/penzana-del-merel/favicon.svg" />
 
-  <!-- Schema.org Restaurant JSON-LD -->
   {pageType === 'restaurant' && (
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
@@ -87,7 +81,9 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
       },
       "telephone": "+39 035 712021",
       "url": "https://micmer-git.github.io/penzana-del-merel/",
-      "servesCuisine": ["Pizza", "Italian"],
+      "menu": "https://micmer-git.github.io/penzana-del-merel/menu/",
+      "servesCuisine": ["Pizza", "Italian", "Bergamasca"],
+      "acceptsReservations": true,
       "geo": {
         "@type": "GeoCoordinates",
         "latitude": 45.806,
@@ -104,5 +100,19 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
     <slot />
   </main>
   <Footer lang={lang} />
+
+  <!-- Scroll reveal -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>

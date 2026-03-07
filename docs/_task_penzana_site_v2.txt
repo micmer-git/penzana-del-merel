@@ -1,0 +1,44 @@
+Proceed without asking questions. Use these fixed decisions:
+- Purpose: all of the above (promotion + cultural heritage + practical info)
+- Tech stack: Astro static site for GitHub Pages
+- Language: bilingual IT/EN
+- Repo name: micmer/penzana-del-merel
+
+Primary objective:
+Create and publish a polished, SEO-optimized bilingual website for Penzana del Merel / Orezzo with a sleek menu section, rural-alpine typographic identity, and strong information architecture.
+
+Mandatory source workflow:
+1) Research current web presence and authoritative sources.
+2) Use local primary source file:
+   C:\Users\micme\Desktop\micmer\penzana_menu_story_source_2026.md
+3) If data is missing, use clear placeholders; do not invent facts.
+
+Site requirements:
+- Sections: Home, Storia/History, Famiglia/Family, Territorio/Area, Menù, Galleria, Contatti.
+- Include a modern, elegant Menu section (prices/categories from source file).
+- Palette: rural/alpine (deep green/blue, stone neutrals) + subtle light-violet accent.
+- Typography: premium editorial + modern readability.
+- Mobile-first, accessible, semantic.
+
+SEO requirements:
+- per-page title/meta description
+- OpenGraph/Twitter
+- sitemap.xml + robots.txt
+- schema.org structured data where valid
+- canonical URLs
+- image alt/lazy loading/perf basics
+
+Deliverables:
+- New repo under micmer and push code
+- GitHub Pages live deployment
+- README with edit instructions + content governance
+- sources.md listing factual sources and confidence
+
+Final report (strict):
+- repo URL
+- live URL
+- what shipped (architecture/design/seo)
+- files created
+- open TODO placeholders
+
+Do the full implementation end-to-end now.

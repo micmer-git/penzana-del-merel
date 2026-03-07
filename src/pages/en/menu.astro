@@ -1,12 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { MENU } from '../../data/menu.js';
+import { MENU, SECTIONS, COPERTO, SECTION_QUOTES } from '../../data/menu.js';
+import { WHATSAPP_NUMBER } from '../../data/site.js';
 const base = '/penzana-del-merel';
+const waNumber = WHATSAPP_NUMBER;
 ---
 
 <BaseLayout
   title="Menu 2026 — La Penzana del Merel"
-  description="Full menu of La Penzana del Merel: classic, special and fun pizzas, plus focaccia. Order directly from your table via WhatsApp."
+  description="Full menu of La Penzana del Merel: classic, special and fun pizzas, focaccia, Bergamo cuisine, desserts and wine list. Order directly from your table via WhatsApp."
   lang="en"
   currentPath={`${base}/en/menu/`}
 >
@@ -18,42 +20,89 @@ const base = '/penzana-del-merel';
   <section class="hero" style="padding-block:clamp(2.5rem,6vw,4rem);">
     <div class="container">
       <span class="hero-eyebrow">Menu 2026</span>
-      <h1>Our Pizzas</h1>
-      <p>Crafted with care. Selected ingredients, wood-fired oven, Bergamo tradition.</p>
+      <h1>Our Menu</h1>
+      <p>Wood-fired pizzas, Bergamo cuisine, wine list. Selected ingredients, tradition since 1959.</p>
     </div>
   </section>
+
+  <div style="background:var(--bg-warm); padding:0.6rem 1rem; text-align:center; font-size:0.85rem; color:var(--text-muted); border-bottom:1px solid var(--stone-xlight);">
+    Cover charge: &euro;{COPERTO.toFixed(2)} per person
+  </div>
+
+  <div class="menu-tabs-wrapper" style="background:var(--white); border-bottom:1px solid var(--stone-xlight); position:sticky; top:56px; z-index:50;">
+    <div class="container">
+      <div class="menu-tabs" role="tablist" aria-label="Menu sections">
+        {SECTIONS.map((section, i) => (
+          <button
+            role="tab"
+            class={`menu-tab ${i === 0 ? 'active' : ''}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            aria-controls={`panel-${section.id}`}
+            data-section={section.id}
+          >
+            {section.labelEN}
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
 
   <section class="section" style="padding-top:2rem;">
     <div class="container">
       <div style="display:grid; grid-template-columns:1fr min(320px,35%); gap:2.5rem; align-items:start;" id="menu-layout">
 
         <div>
-          {MENU.map(category => (
-            <div class="menu-section" id={`cat-${category.id}`}>
-              <h2 class="menu-section-title">
-                {category.labelEN}
-                <span class="label-en">/ {category.labelIT}</span>
-              </h2>
-              {category.items.map(item => (
-                <div class="menu-item" data-item-id={item.id} data-item-price={item.price}>
-                  <div class="menu-item-info">
-                    <div class="menu-item-name">{item.nameEN}</div>
-                    <div class="menu-item-desc">{item.descEN}</div>
-                  </div>
-                  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.5rem; min-width:80px;">
-                    <div class="menu-item-price">€{item.price.toFixed(2)}</div>
-                    <div class="qty-control order-only" style="display:none;" aria-label={`Quantity for ${item.nameEN}`}>
-                      <button class="qty-btn qty-minus" aria-label="Remove one" data-id={item.id}>−</button>
-                      <span class="qty-num" id={`qty-${item.id}`}>0</span>
-                      <button class="qty-btn qty-plus" aria-label="Add one" data-id={item.id} data-name={item.nameEN} data-price={item.price}>+</button>
+          {SECTIONS.map((section, si) => (
+            <div
+              id={`panel-${section.id}`}
+              role="tabpanel"
+              class="menu-panel"
+              style={si === 0 ? '' : 'display:none;'}
+              data-section={section.id}
+            >
+              {SECTION_QUOTES[section.id] && (
+                <blockquote class="pullquote" style="margin-bottom:2rem; font-size:1rem;">
+                  "{SECTION_QUOTES[section.id].text}"
+                  <span style="display:block; font-size:0.8rem; font-style:normal; color:var(--stone); margin-top:0.3rem;">— {SECTION_QUOTES[section.id].author}</span>
+                </blockquote>
+              )}
+
+              {section.categories.map(category => (
+                <div class="menu-section" id={`cat-${category.id}`}>
+                  <h2 class="menu-section-title">
+                    {category.labelEN}
+                    <span class="label-en">/ {category.labelIT}</span>
+                  </h2>
+                  {category.subtitleEN && (
+                    <p style="font-size:0.83rem; color:var(--text-muted); margin-top:-0.75rem; margin-bottom:1rem; font-style:italic;">{category.subtitleEN}</p>
+                  )}
+                  {category.items.map(item => (
+                    <div class="menu-item" data-item-id={item.id} data-item-price={item.price}>
+                      <div class="menu-item-info">
+                        <div class="menu-item-name">{item.nameEN}</div>
+                        {(item.descEN || '') !== '' && (
+                          <div class="menu-item-desc">{item.descEN}</div>
+                        )}
+                      </div>
+                      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.5rem; min-width:80px;">
+                        <div class="menu-item-price">
+                          {item.priceRange ? '\u20AC' + item.priceRange.replace(/,/g, '.') : '\u20AC' + item.price.toFixed(2)}
+                        </div>
+                        <div class="qty-control order-only" style="display:none;" aria-label={`Quantity for ${item.nameEN}`}>
+                          <button class="qty-btn qty-minus" aria-label="Remove one" data-id={item.id}>&#8722;</button>
+                          <span class="qty-num" id={`qty-${item.id}`}>0</span>
+                          <button class="qty-btn qty-plus" aria-label="Add one" data-id={item.id} data-name={item.nameEN} data-price={item.price}>+</button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               ))}
             </div>
           ))}
+
           <div style="margin-top:2rem; padding:1.25rem; background:var(--bg-warm); border-radius:var(--radius); font-size:0.83rem; color:var(--text-muted);">
-            <strong>Note:</strong> Prices may vary seasonally. Please inform staff of any allergies. Items marked "TODO" are pending confirmation from management.
+            <strong>Note:</strong> Prices may vary seasonally. Please inform staff of any allergies.
           </div>
         </div>
 
@@ -62,10 +111,10 @@ const base = '/penzana-del-merel';
             <h3>Your Order</h3>
             <div class="table-badge" id="sidebar-table-badge">Table —</div>
             <div class="order-count" id="order-count">No items</div>
-            <div class="order-total" id="order-total">Total: €0.00</div>
+            <div class="order-total" id="order-total">Total: &euro;0.00</div>
             <div style="margin-bottom:0.75rem;">
               <label for="order-notes" style="font-size:0.8rem; color:rgba(255,255,255,0.7); display:block; margin-bottom:0.3rem;">Notes / allergies:</label>
-              <textarea id="order-notes" rows="2" style="width:100%; border-radius:var(--radius); border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white; font-size:0.85rem; padding:0.4rem 0.6rem; resize:vertical;" placeholder="Intolerances, preferences…"></textarea>
+              <textarea id="order-notes" rows="2" style="width:100%; border-radius:var(--radius); border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white; font-size:0.85rem; padding:0.4rem 0.6rem; resize:vertical;" placeholder="Intolerances, preferences..."></textarea>
             </div>
             <button id="btn-send-order" class="btn btn-wa" style="width:100%;" disabled>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -76,6 +125,16 @@ const base = '/penzana-del-merel';
       </div>
     </div>
   </section>
+
+  <div id="mobile-order-bar" class="mobile-order-bar" hidden>
+    <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+      <div>
+        <span id="mob-order-count" style="font-weight:700;">0 items</span>
+        <span id="mob-order-total" style="margin-left:0.5rem; color:var(--accent-gold);"></span>
+      </div>
+      <button id="mob-btn-send" class="btn btn-wa" style="padding:0.5rem 1rem; font-size:0.85rem;" disabled>Send order</button>
+    </div>
+  </div>
 
   <div class="modal-overlay" id="confirm-modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-box">
@@ -91,15 +150,27 @@ const base = '/penzana-del-merel';
 
 </BaseLayout>
 
+<script define:vars={{ waNumber }}>
+  window.__WA_NUMBER = waNumber;
+</script>
+
 <script>
-const WHATSAPP_NUMBER = 'TODO_INSERT_WHATSAPP_NUMBER';
+const WHATSAPP_NUMBER = (window as any).__WA_NUMBER || '393487024985';
+
+document.querySelectorAll('.menu-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const section = (tab as HTMLElement).dataset.section!;
+    document.querySelectorAll('.menu-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+    tab.classList.add('active'); tab.setAttribute('aria-selected', 'true');
+    document.querySelectorAll('.menu-panel').forEach(p => { (p as HTMLElement).style.display = (p as HTMLElement).dataset.section === section ? '' : 'none'; });
+  });
+});
 
 interface OrderItem { id: string; name: string; price: number; qty: number; }
 const order: Map<string, OrderItem> = new Map();
-
 function getTableId(): string | null { return new URLSearchParams(window.location.search).get('table'); }
 function tableLabel(id: string): string { return 'Table ' + id.replace('table-', '').replace(/-/g,' ').toUpperCase(); }
-function formatPrice(n: number): string { return '€' + n.toFixed(2); }
+function formatPrice(n: number): string { return '\u20AC' + n.toFixed(2); }
 function totalItems(): number { let t = 0; order.forEach(i => t += i.qty); return t; }
 function totalPrice(): number { let t = 0; order.forEach(i => t += i.price * i.qty); return t; }
 
@@ -111,18 +182,30 @@ function updateSidebar(): void {
   if (countEl) countEl.textContent = count === 0 ? 'No items' : `${count} item${count !== 1 ? 's' : ''}`;
   if (totalEl) totalEl.textContent = `Total: ${formatPrice(totalPrice())}`;
   if (btn) { btn.disabled = count === 0; btn.setAttribute('aria-disabled', String(count === 0)); }
+  const mobCount = document.getElementById('mob-order-count');
+  const mobTotal = document.getElementById('mob-order-total');
+  const mobBtn = document.getElementById('mob-btn-send') as HTMLButtonElement;
+  if (mobCount) mobCount.textContent = `${count} item${count !== 1 ? 's' : ''}`;
+  if (mobTotal) mobTotal.textContent = formatPrice(totalPrice());
+  if (mobBtn) mobBtn.disabled = count === 0;
 }
 function updateQtyDisplay(id: string): void { const el = document.getElementById(`qty-${id}`); if (el) el.textContent = String(order.get(id)?.qty ?? 0); }
 function buildOrderMessage(tableId: string): string {
   const ts = new Date().toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' });
   const notes = (document.getElementById('order-notes') as HTMLTextAreaElement)?.value?.trim();
   let msg = `*ORDER — ${tableLabel(tableId)}*\nDate: ${ts}\n\n*Items:*\n`;
-  order.forEach(item => { msg += `• ${item.name} x${item.qty} — ${formatPrice(item.price * item.qty)}\n`; });
+  order.forEach(item => { msg += `\u2022 ${item.name} x${item.qty} — ${formatPrice(item.price * item.qty)}\n`; });
   msg += `\n*ESTIMATED TOTAL: ${formatPrice(totalPrice())}*`;
   if (notes) msg += `\n\n*Notes:* ${notes}`;
   return msg;
 }
-
+function openConfirmModal(tableId: string): void {
+  if (!tableId || totalItems() === 0) return;
+  const summaryEl = document.getElementById('modal-summary');
+  if (summaryEl) summaryEl.textContent = buildOrderMessage(tableId);
+  document.getElementById('confirm-modal')?.removeAttribute('hidden');
+  document.getElementById('btn-confirm-wa')?.focus();
+}
 function init(): void {
   const tableId = getTableId();
   if (tableId) {
@@ -131,31 +214,23 @@ function init(): void {
     const sidebar = document.getElementById('order-sidebar'); if (sidebar) sidebar.style.display = 'block';
     const badge = document.getElementById('sidebar-table-badge'); if (badge) badge.textContent = tableLabel(tableId);
     document.querySelectorAll('.order-only').forEach(el => (el as HTMLElement).style.display = 'inline-flex');
+    const mobBar = document.getElementById('mobile-order-bar'); if (mobBar) mobBar.removeAttribute('hidden');
   }
   document.querySelectorAll('.qty-plus').forEach(btn => {
     btn.addEventListener('click', () => {
-      const id = (btn as HTMLElement).dataset.id!;
-      const name = (btn as HTMLElement).dataset.name!;
+      const id = (btn as HTMLElement).dataset.id!; const name = (btn as HTMLElement).dataset.name!;
       const price = parseFloat((btn as HTMLElement).dataset.price!);
-      const cur = order.get(id) ?? { id, name, price, qty: 0 };
-      cur.qty++; order.set(id, cur); updateQtyDisplay(id); updateSidebar();
+      const cur = order.get(id) ?? { id, name, price, qty: 0 }; cur.qty++; order.set(id, cur); updateQtyDisplay(id); updateSidebar();
     });
   });
   document.querySelectorAll('.qty-minus').forEach(btn => {
     btn.addEventListener('click', () => {
-      const id = (btn as HTMLElement).dataset.id!;
-      const cur = order.get(id); if (!cur || cur.qty === 0) return;
-      cur.qty--; if (cur.qty === 0) order.delete(id); else order.set(id, cur);
-      updateQtyDisplay(id); updateSidebar();
+      const id = (btn as HTMLElement).dataset.id!; const cur = order.get(id); if (!cur || cur.qty === 0) return;
+      cur.qty--; if (cur.qty === 0) order.delete(id); else order.set(id, cur); updateQtyDisplay(id); updateSidebar();
     });
   });
-  document.getElementById('btn-send-order')?.addEventListener('click', () => {
-    if (!tableId || totalItems() === 0) return;
-    const msg = buildOrderMessage(tableId);
-    const summaryEl = document.getElementById('modal-summary'); if (summaryEl) summaryEl.textContent = msg;
-    document.getElementById('confirm-modal')?.removeAttribute('hidden');
-    document.getElementById('btn-confirm-wa')?.focus();
-  });
+  document.getElementById('btn-send-order')?.addEventListener('click', () => openConfirmModal(tableId!));
+  document.getElementById('mob-btn-send')?.addEventListener('click', () => openConfirmModal(tableId!));
   document.getElementById('btn-confirm-wa')?.addEventListener('click', () => {
     if (!tableId) return;
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildOrderMessage(tableId))}`, '_blank', 'noopener,noreferrer');
@@ -163,8 +238,13 @@ function init(): void {
   });
   document.getElementById('btn-cancel')?.addEventListener('click', () => document.getElementById('confirm-modal')?.setAttribute('hidden', ''));
   document.getElementById('confirm-modal')?.addEventListener('click', e => { if ((e.target as HTMLElement).id === 'confirm-modal') document.getElementById('confirm-modal')?.setAttribute('hidden', ''); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('confirm-modal')?.setAttribute('hidden', ''); });
   const mq = window.matchMedia('(max-width: 768px)');
-  function handleMQ(e: MediaQueryListEvent | MediaQueryList): void { const layout = document.getElementById('menu-layout'); if (!layout) return; layout.style.gridTemplateColumns = e.matches ? '1fr' : (tableId ? '1fr min(320px,35%)' : '1fr'); }
+  function handleMQ(e: MediaQueryListEvent | MediaQueryList): void {
+    const layout = document.getElementById('menu-layout'); if (!layout) return;
+    if (e.matches) { layout.style.gridTemplateColumns = '1fr'; const s = document.getElementById('order-sidebar'); if (s && tableId) s.style.display = 'none'; }
+    else { layout.style.gridTemplateColumns = tableId ? '1fr min(320px,35%)' : '1fr'; const s = document.getElementById('order-sidebar'); if (s && tableId) s.style.display = 'block'; }
+  }
   mq.addEventListener('change', handleMQ as (e: MediaQueryListEvent) => void); handleMQ(mq);
   updateSidebar();
 }

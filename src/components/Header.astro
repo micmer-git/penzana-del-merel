@@ -11,7 +11,7 @@ const navIT = [
   { href: `${base}/storia/`, label: 'Storia' },
   { href: `${base}/famiglia/`, label: 'Famiglia' },
   { href: `${base}/territorio/`, label: 'Territorio' },
-  { href: `${base}/menu/`, label: 'Menù' },
+  { href: `${base}/menu/`, label: 'Menu' },
   { href: `${base}/galleria/`, label: 'Galleria' },
   { href: `${base}/contatti/`, label: 'Contatti' },
 ];
@@ -28,7 +28,6 @@ const navEN = [
 
 const nav = lang === 'it' ? navIT : navEN;
 
-// Language switch targets
 const itTarget = currentPath.replace(`${base}/en`, base).replace(/\/$/, '') + '/';
 const enTarget = currentPath.startsWith(`${base}/en`)
   ? currentPath
@@ -43,11 +42,16 @@ const enTarget = currentPath.startsWith(`${base}/en`)
         <span>Orezzo · Valle Seriana</span>
       </a>
 
-      <button class="nav-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Apri menu di navigazione">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <button class="nav-toggle" id="nav-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Apri menu di navigazione">
+        <svg class="icon-menu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
+        <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" style="display:none;">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
       </button>
+
+      <div class="nav-overlay" id="nav-overlay"></div>
 
       <nav class="main-nav" id="main-nav" role="navigation" aria-label="Navigazione principale">
         {nav.map(link => (
@@ -66,12 +70,49 @@ const enTarget = currentPath.startsWith(`${base}/en`)
 </header>
 
 <script>
-  const toggle = document.querySelector('.nav-toggle') as HTMLButtonElement;
-  const nav = document.querySelector('#main-nav') as HTMLElement;
-  if (toggle && nav) {
+  const toggle = document.getElementById('nav-toggle') as HTMLButtonElement;
+  const nav = document.getElementById('main-nav') as HTMLElement;
+  const overlay = document.getElementById('nav-overlay') as HTMLElement;
+  const iconMenu = toggle?.querySelector('.icon-menu') as HTMLElement;
+  const iconClose = toggle?.querySelector('.icon-close') as HTMLElement;
+
+  function openNav() {
+    nav.classList.add('open');
+    overlay.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    if (iconMenu) iconMenu.style.display = 'none';
+    if (iconClose) iconClose.style.display = 'block';
+  }
+
+  function closeNav() {
+    nav.classList.remove('open');
+    overlay.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    if (iconMenu) iconMenu.style.display = 'block';
+    if (iconClose) iconClose.style.display = 'none';
+  }
+
+  if (toggle && nav && overlay) {
     toggle.addEventListener('click', () => {
-      const open = nav.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', String(open));
+      const isOpen = nav.classList.contains('open');
+      isOpen ? closeNav() : openNav();
+    });
+
+    overlay.addEventListener('click', closeNav);
+
+    // Close on link click
+    nav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', closeNav);
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('open')) {
+        closeNav();
+        toggle.focus();
+      }
     });
   }
 </script>

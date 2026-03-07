@@ -1,12 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { MENU } from '../data/menu.js';
+import { MENU, SECTIONS, COPERTO, SECTION_QUOTES } from '../data/menu.js';
+import { WHATSAPP_NUMBER } from '../data/site.js';
 const base = '/penzana-del-merel';
+const waNumber = WHATSAPP_NUMBER;
 ---
 
 <BaseLayout
-  title="Menù 2026 — La Penzana del Merel"
-  description="Il menù completo della Penzana del Merel: pizze classiche, sfiziose, giocose e focacce. Ordina direttamente dal tuo tavolo via WhatsApp."
+  title="Menu 2026 — La Penzana del Merel"
+  description="Il menu completo della Penzana del Merel: pizze classiche, sfiziose, giocose, focacce, cucina bergamasca, dolci e carta dei vini. Ordina direttamente dal tuo tavolo via WhatsApp."
   lang="it"
   currentPath={`${base}/menu/`}
 >
@@ -18,49 +20,98 @@ const base = '/penzana-del-merel';
 
   <section class="hero" style="padding-block:clamp(2.5rem,6vw,4rem);">
     <div class="container">
-      <span class="hero-eyebrow">Menù 2026</span>
-      <h1>Le nostre pizze</h1>
-      <p>Curate in ogni aspetto. Ingredienti selezionati, forno a legna, tradizione bergamasca.</p>
+      <span class="hero-eyebrow">Menu 2026</span>
+      <h1>Il nostro menu</h1>
+      <p>Pizze al forno a legna, cucina bergamasca, carta dei vini. Ingredienti selezionati, tradizione dal 1959.</p>
     </div>
   </section>
+
+  <!-- Coperto note -->
+  <div style="background:var(--bg-warm); padding:0.6rem 1rem; text-align:center; font-size:0.85rem; color:var(--text-muted); border-bottom:1px solid var(--stone-xlight);">
+    Coperto: {COPERTO.toFixed(2).replace('.', ',')} &euro; per persona
+  </div>
+
+  <!-- Section tabs -->
+  <div class="menu-tabs-wrapper" style="background:var(--white); border-bottom:1px solid var(--stone-xlight); position:sticky; top:56px; z-index:50;">
+    <div class="container">
+      <div class="menu-tabs" role="tablist" aria-label="Sezioni del menu">
+        {SECTIONS.map((section, i) => (
+          <button
+            role="tab"
+            class={`menu-tab ${i === 0 ? 'active' : ''}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            aria-controls={`panel-${section.id}`}
+            data-section={section.id}
+          >
+            {section.labelIT}
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
 
   <section class="section" style="padding-top:2rem;">
     <div class="container">
       <div style="display:grid; grid-template-columns:1fr min(320px,35%); gap:2.5rem; align-items:start;" id="menu-layout">
 
-        <!-- Menu items -->
+        <!-- Menu content -->
         <div>
-          {MENU.map(category => (
-            <div class="menu-section" id={`cat-${category.id}`}>
-              <h2 class="menu-section-title">
-                {category.labelIT}
-                <span class="label-en">/ {category.labelEN}</span>
-              </h2>
-              {category.items.map(item => (
-                <div class="menu-item" data-item-id={item.id} data-item-price={item.price}>
-                  <div class="menu-item-info">
-                    <div class="menu-item-name">{item.nameIT}</div>
-                    <div class="menu-item-desc">{item.descIT}</div>
-                  </div>
-                  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.5rem; min-width:80px;">
-                    <div class="menu-item-price">{item.price.toFixed(2).replace('.', ',')} €</div>
-                    <div
-                      class="qty-control order-only"
-                      style="display:none;"
-                      aria-label={`Quantità per ${item.nameIT}`}
-                    >
-                      <button class="qty-btn qty-minus" aria-label="Rimuovi uno" data-id={item.id}>−</button>
-                      <span class="qty-num" id={`qty-${item.id}`}>0</span>
-                      <button class="qty-btn qty-plus" aria-label="Aggiungi uno" data-id={item.id} data-name={item.nameIT} data-price={item.price}>+</button>
+          {SECTIONS.map((section, si) => (
+            <div
+              id={`panel-${section.id}`}
+              role="tabpanel"
+              class="menu-panel"
+              style={si === 0 ? '' : 'display:none;'}
+              data-section={section.id}
+            >
+              {/* Section quote */}
+              {SECTION_QUOTES[section.id] && (
+                <blockquote class="pullquote" style="margin-bottom:2rem; font-size:1rem;">
+                  "{SECTION_QUOTES[section.id].text}"
+                  <span style="display:block; font-size:0.8rem; font-style:normal; color:var(--stone); margin-top:0.3rem;">— {SECTION_QUOTES[section.id].author}</span>
+                </blockquote>
+              )}
+
+              {section.categories.map(category => (
+                <div class="menu-section" id={`cat-${category.id}`}>
+                  <h2 class="menu-section-title">
+                    {category.labelIT}
+                    <span class="label-en">/ {category.labelEN}</span>
+                  </h2>
+                  {category.subtitleIT && (
+                    <p style="font-size:0.83rem; color:var(--text-muted); margin-top:-0.75rem; margin-bottom:1rem; font-style:italic;">{category.subtitleIT}</p>
+                  )}
+                  {category.items.map(item => (
+                    <div class="menu-item" data-item-id={item.id} data-item-price={item.price}>
+                      <div class="menu-item-info">
+                        <div class="menu-item-name">{item.nameIT}</div>
+                        {(item.descIT || '') !== '' && (
+                          <div class="menu-item-desc">{item.descIT}</div>
+                        )}
+                      </div>
+                      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.5rem; min-width:80px;">
+                        <div class="menu-item-price">
+                          {item.priceRange ? item.priceRange + ' \u20AC' : item.price.toFixed(2).replace('.', ',') + ' \u20AC'}
+                        </div>
+                        <div
+                          class="qty-control order-only"
+                          style="display:none;"
+                          aria-label={`Quantita per ${item.nameIT}`}
+                        >
+                          <button class="qty-btn qty-minus" aria-label="Rimuovi uno" data-id={item.id}>&#8722;</button>
+                          <span class="qty-num" id={`qty-${item.id}`}>0</span>
+                          <button class="qty-btn qty-plus" aria-label="Aggiungi uno" data-id={item.id} data-name={item.nameIT} data-price={item.price}>+</button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               ))}
             </div>
           ))}
 
           <div style="margin-top:2rem; padding:1.25rem; background:var(--bg-warm); border-radius:var(--radius); font-size:0.83rem; color:var(--text-muted);">
-            <strong>Nota:</strong> I prezzi indicati possono subire variazioni stagionali. Per gli allergeni, contattare il personale. I dettagli delle singole pizze marcati "TODO" verranno confermati dal gestore.
+            <strong>Nota:</strong> I prezzi indicati possono subire variazioni stagionali. Per gli allergeni, contattare il personale.
           </div>
         </div>
 
@@ -70,7 +121,7 @@ const base = '/penzana-del-merel';
             <h3>Il tuo ordine</h3>
             <div class="table-badge" id="sidebar-table-badge">Tavolo —</div>
             <div class="order-count" id="order-count">Nessun articolo</div>
-            <div class="order-total" id="order-total">Totale: 0,00 €</div>
+            <div class="order-total" id="order-total">Totale: 0,00 &euro;</div>
 
             <div style="margin-bottom:0.75rem;">
               <label for="order-notes" style="font-size:0.8rem; color:rgba(255,255,255,0.7); display:block; margin-bottom:0.3rem;">Note / allergie:</label>
@@ -78,7 +129,7 @@ const base = '/penzana-del-merel';
                 id="order-notes"
                 rows="2"
                 style="width:100%; border-radius:var(--radius); border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white; font-size:0.85rem; padding:0.4rem 0.6rem; resize:vertical;"
-                placeholder="Intolleranze, preferenze…"
+                placeholder="Intolleranze, preferenze..."
                 aria-label="Note per l'ordine"
               ></textarea>
             </div>
@@ -95,11 +146,22 @@ const base = '/penzana-del-merel';
     </div>
   </section>
 
+  <!-- Mobile sticky order bar -->
+  <div id="mobile-order-bar" class="mobile-order-bar" hidden>
+    <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+      <div>
+        <span id="mob-order-count" style="font-weight:700;">0 articoli</span>
+        <span id="mob-order-total" style="margin-left:0.5rem; color:var(--accent-gold);"></span>
+      </div>
+      <button id="mob-btn-send" class="btn btn-wa" style="padding:0.5rem 1rem; font-size:0.85rem;" disabled>Invia ordine</button>
+    </div>
+  </div>
+
   <!-- Confirm modal -->
   <div class="modal-overlay" id="confirm-modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-box">
       <h2 id="modal-title">Conferma ordine</h2>
-      <p>Controlla il tuo ordine prima di inviarlo via WhatsApp. Verrà aperta l'app WhatsApp con il messaggio precompilato.</p>
+      <p>Controlla il tuo ordine prima di inviarlo via WhatsApp. Verra aperta l'app WhatsApp con il messaggio precompilato.</p>
       <div class="modal-order-summary" id="modal-summary" aria-label="Riepilogo ordine da confermare"></div>
       <div class="modal-actions">
         <button id="btn-confirm-wa" class="btn btn-wa">Apri WhatsApp e invia</button>
@@ -110,14 +172,29 @@ const base = '/penzana-del-merel';
 
 </BaseLayout>
 
-<script>
-// =============================================
-// Penzana del Merel — Table Ordering Script
-// =============================================
+<script define:vars={{ waNumber }}>
+  window.__WA_NUMBER = waNumber;
+</script>
 
-// Config — also set in src/data/site.js
-const WHATSAPP_NUMBER = 'TODO_INSERT_WHATSAPP_NUMBER'; // e.g. '393351234567'
+<script>
+const WHATSAPP_NUMBER = (window as any).__WA_NUMBER || '393487024985';
 const BASE = '/penzana-del-merel';
+
+// Tab switching
+document.querySelectorAll('.menu-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const section = (tab as HTMLElement).dataset.section!;
+    document.querySelectorAll('.menu-tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+    document.querySelectorAll('.menu-panel').forEach(p => {
+      (p as HTMLElement).style.display = (p as HTMLElement).dataset.section === section ? '' : 'none';
+    });
+  });
+});
 
 interface OrderItem {
   id: string;
@@ -128,10 +205,8 @@ interface OrderItem {
 
 const order: Map<string, OrderItem> = new Map();
 
-// Parse table from URL
 function getTableId(): string | null {
-  const p = new URLSearchParams(window.location.search);
-  return p.get('table');
+  return new URLSearchParams(window.location.search).get('table');
 }
 
 function tableLabel(id: string): string {
@@ -139,7 +214,7 @@ function tableLabel(id: string): string {
 }
 
 function formatPrice(n: number): string {
-  return n.toFixed(2).replace('.', ',') + ' €';
+  return n.toFixed(2).replace('.', ',') + ' \u20AC';
 }
 
 function totalItems(): number {
@@ -167,6 +242,14 @@ function updateSidebar(): void {
     btn.disabled = count === 0;
     btn.setAttribute('aria-disabled', String(count === 0));
   }
+
+  // Mobile bar
+  const mobCount = document.getElementById('mob-order-count');
+  const mobTotal = document.getElementById('mob-order-total');
+  const mobBtn = document.getElementById('mob-btn-send') as HTMLButtonElement;
+  if (mobCount) mobCount.textContent = `${count} articol${count !== 1 ? 'i' : 'o'}`;
+  if (mobTotal) mobTotal.textContent = formatPrice(total);
+  if (mobBtn) mobBtn.disabled = count === 0;
 }
 
 function updateQtyDisplay(id: string): void {
@@ -183,35 +266,45 @@ function buildOrderMessage(tableId: string): string {
   msg += `Data: ${ts}\n\n`;
   msg += `*Articoli:*\n`;
   order.forEach(item => {
-    msg += `• ${item.name} x${item.qty} — ${formatPrice(item.price * item.qty)}\n`;
+    msg += `\u2022 ${item.name} x${item.qty} — ${formatPrice(item.price * item.qty)}\n`;
   });
   msg += `\n*TOTALE STIMATO: ${formatPrice(totalPrice())}*`;
   if (notes) msg += `\n\n*Note:* ${notes}`;
   return msg;
 }
 
+function openConfirmModal(tableId: string): void {
+  if (!tableId || totalItems() === 0) return;
+  const msg = buildOrderMessage(tableId);
+  const summaryEl = document.getElementById('modal-summary');
+  if (summaryEl) summaryEl.textContent = msg;
+  const modal = document.getElementById('confirm-modal');
+  if (modal) modal.removeAttribute('hidden');
+  document.getElementById('btn-confirm-wa')?.focus();
+}
+
 function init(): void {
   const tableId = getTableId();
 
   if (tableId) {
-    // Show table banner
     const banner = document.getElementById('table-banner');
     const nameBanner = document.getElementById('table-name-banner');
     if (banner) banner.removeAttribute('hidden');
     if (nameBanner) nameBanner.textContent = tableLabel(tableId);
 
-    // Show sidebar
     const sidebar = document.getElementById('order-sidebar');
     if (sidebar) sidebar.style.display = 'block';
 
-    // Update table badge
     const badge = document.getElementById('sidebar-table-badge');
     if (badge) badge.textContent = tableLabel(tableId);
 
-    // Show qty controls
     document.querySelectorAll('.order-only').forEach(el => {
       (el as HTMLElement).style.display = 'inline-flex';
     });
+
+    // Show mobile order bar
+    const mobBar = document.getElementById('mobile-order-bar');
+    if (mobBar) mobBar.removeAttribute('hidden');
   }
 
   // Qty plus buttons
@@ -242,26 +335,17 @@ function init(): void {
     });
   });
 
-  // Send order button
+  // Send order buttons
   const sendBtn = document.getElementById('btn-send-order');
-  sendBtn?.addEventListener('click', () => {
-    if (!tableId || totalItems() === 0) return;
-    const msg = buildOrderMessage(tableId);
-    const summaryEl = document.getElementById('modal-summary');
-    if (summaryEl) summaryEl.textContent = msg;
-    const modal = document.getElementById('confirm-modal');
-    if (modal) modal.removeAttribute('hidden');
-    document.getElementById('btn-confirm-wa')?.focus();
-  });
+  sendBtn?.addEventListener('click', () => openConfirmModal(tableId!));
+  document.getElementById('mob-btn-send')?.addEventListener('click', () => openConfirmModal(tableId!));
 
   // Confirm WA send
-  const confirmBtn = document.getElementById('btn-confirm-wa');
-  confirmBtn?.addEventListener('click', () => {
+  document.getElementById('btn-confirm-wa')?.addEventListener('click', () => {
     if (!tableId) return;
     const msg = buildOrderMessage(tableId);
     const encoded = encodeURIComponent(msg);
-    const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
-    window.open(waUrl, '_blank', 'noopener,noreferrer');
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, '_blank', 'noopener,noreferrer');
     document.getElementById('confirm-modal')?.setAttribute('hidden', '');
   });
 
@@ -277,6 +361,13 @@ function init(): void {
     }
   });
 
+  // Escape key closes modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.getElementById('confirm-modal')?.setAttribute('hidden', '');
+    }
+  });
+
   // Responsive: collapse sidebar on mobile
   const mq = window.matchMedia('(max-width: 768px)');
   function handleMQ(e: MediaQueryListEvent | MediaQueryList): void {
@@ -284,8 +375,12 @@ function init(): void {
     if (!layout) return;
     if (e.matches) {
       layout.style.gridTemplateColumns = '1fr';
+      const sidebar = document.getElementById('order-sidebar');
+      if (sidebar && tableId) sidebar.style.display = 'none';
     } else {
       layout.style.gridTemplateColumns = tableId ? '1fr min(320px,35%)' : '1fr';
+      const sidebar = document.getElementById('order-sidebar');
+      if (sidebar && tableId) sidebar.style.display = 'block';
     }
   }
   mq.addEventListener('change', handleMQ as (e: MediaQueryListEvent) => void);

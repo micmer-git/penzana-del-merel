@@ -1,0 +1,53 @@
+Super-plan mode website project.
+
+Goal:
+Create a NEW GitHub repo under account/org `micmer` for a fully updated website about "Penzana del Merel / Orezzo".
+
+Requirements:
+1) Research phase (mandatory)
+- Find and analyze the current site and any authoritative sources about Penzana del Merel / Orezzo.
+- Extract factual content only (history, location, family context, services/ospitalità if present, contact/location details, highlights).
+- Keep a sources file with URLs and short verification notes.
+
+2) Information architecture + content
+- Build a modern bilingual website: Italian + English.
+- Include sections: Home, Storia/History, Famiglia/Family, Territorio/Area (rural alpine identity), Galleria, Contatti.
+- Include a sleek menu (desktop+mobile) and clear language switcher.
+- Tone: typographic, rural, alpine, elegant family-owned.
+
+3) Design system
+- Create a custom palette inspired by alpine+rural tones (deep greens/blues, stone neutrals, light violet accent per brand elegance).
+- Strong typography system (premium readable, editorial but modern).
+- Add subtle motif styling (non-kitsch) appropriate for mountain family hospitality.
+
+4) Technical implementation
+- Static site suitable for GitHub Pages.
+- SEO optimization:
+  - semantic HTML
+  - titles/meta descriptions per page
+  - Open Graph/Twitter cards
+  - sitemap.xml and robots.txt
+  - structured data where useful (organization/local business if valid)
+  - performance-friendly assets and lazy-loading.
+- Accessibility baseline (contrast, keyboard nav, landmarks, alt text).
+
+5) Repo and deploy
+- Create repo under `micmer` (name sensible, e.g. `penzana-orezzo-site`).
+- Commit cleanly, push, enable GitHub Pages.
+- Add README with setup/editing instructions and content governance notes.
+
+6) Deliverable report
+Return:
+- repo URL
+- live Pages URL
+- architecture summary
+- SEO checklist done
+- files changed/created
+- open questions for Michele (if any factual fields missing)
+
+Constraints:
+- Do not invent factual claims if unverifiable; mark placeholders clearly.
+- Keep design polished and production-looking.
+- Work autonomously end-to-end.
+
+When done, print a concise FINAL REPORT.
