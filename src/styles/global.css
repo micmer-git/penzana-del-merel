@@ -91,6 +91,14 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
+}
+
+/* Scroll lock — used when drawers/modals are open */
+body.scroll-locked {
+  overflow: hidden;
+  touch-action: none;
+  -webkit-overflow-scrolling: none;
 }
 
 body {

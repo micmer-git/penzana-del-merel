@@ -5,7 +5,6 @@ import { WHATSAPP_NUMBER } from '../data/site.js';
 const base = '/penzana-del-merel';
 const waNumber = WHATSAPP_NUMBER;
 
-// Serialize menu data for client JS (ingredients editing)
 const menuDataJSON = JSON.stringify(
   SECTIONS.map(s => ({
     id: s.id,
@@ -82,21 +81,20 @@ const menuDataJSON = JSON.stringify(
     </div>
   </div>
 
-  <section class="section" style="padding-top:1.5rem; padding-bottom:6rem;">
-    <div class="container" style="max-width:800px;">
+  <section class="section menu-section-wrap">
+    <div class="container menu-container">
 
       {SECTIONS.map((section, si) => (
         <div
           id={`panel-${section.id}`}
           role="tabpanel"
-          class="menu-panel"
-          style={si === 0 ? '' : 'display:none;'}
+          class={`menu-panel ${si === 0 ? 'active' : ''}`}
           data-section={section.id}
         >
           {SECTION_QUOTES[section.id] && (
-            <blockquote class="pullquote" style="margin-bottom:2rem; font-size:0.95rem;">
+            <blockquote class="menu-quote">
               "{SECTION_QUOTES[section.id].text}"
-              <span style="display:block; font-size:0.75rem; font-style:normal; color:var(--stone); margin-top:0.25rem;">— {SECTION_QUOTES[section.id].author}</span>
+              <span class="menu-quote-author">— {SECTION_QUOTES[section.id].author}</span>
             </blockquote>
           )}
 
@@ -107,7 +105,7 @@ const menuDataJSON = JSON.stringify(
                 <span class="label-en">/ {category.labelEN}</span>
               </h2>
               {category.subtitleIT && (
-                <p style="font-size:0.8rem; color:var(--text-muted); margin-top:-0.75rem; margin-bottom:1rem; font-style:italic;">{category.subtitleIT}</p>
+                <p class="menu-section-subtitle">{category.subtitleIT}</p>
               )}
               {category.items.map(item => (
                 <div class="menu-card" data-item-id={item.id} data-item-name={item.nameIT} data-item-price={item.price} data-item-desc={item.descIT || ''}>
@@ -123,26 +121,28 @@ const menuDataJSON = JSON.stringify(
                         {item.priceRange ? item.priceRange + ' \u20AC' : item.price.toFixed(2).replace('.', ',') + ' \u20AC'}
                       </div>
                       <button class="add-btn" aria-label={`Aggiungi ${item.nameIT}`} data-id={item.id}>
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v8M6 10h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v8M6 10h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
                       </button>
                     </div>
                   </div>
-                  <!-- Expand panel (hidden by default) -->
-                  <div class="menu-card-expand" style="display:none;">
-                    <div class="ingredient-chips"></div>
-                    <div class="expand-input-row">
-                      <input type="text" class="add-ingredient-input expand-input" placeholder="+ aggiungi ingrediente..." aria-label={`Aggiungi ingrediente a ${item.nameIT}`} />
-                    </div>
-                    <div class="expand-input-row">
-                      <input type="text" class="item-note-input expand-input expand-input-full" placeholder="Note (es. ben cotta, senza lattosio...)" aria-label={`Note per ${item.nameIT}`} />
-                    </div>
-                    <div class="expand-actions">
-                      <div class="qty-row">
-                        <button class="qty-btn-new qty-dec" data-id={item.id} aria-label="Rimuovi">&#8722;</button>
-                        <span class="qty-val" data-id={item.id}>1</span>
-                        <button class="qty-btn-new qty-inc" data-id={item.id} aria-label="Aggiungi">+</button>
+                  <!-- Expand panel -->
+                  <div class="menu-card-expand">
+                    <div class="expand-inner">
+                      <div class="ingredient-chips"></div>
+                      <div class="expand-input-row">
+                        <input type="text" class="add-ingredient-input expand-input" placeholder="+ aggiungi ingrediente..." aria-label={`Aggiungi ingrediente a ${item.nameIT}`} />
                       </div>
-                      <button class="confirm-add-btn" data-id={item.id}>Aggiungi al carrello</button>
+                      <div class="expand-input-row">
+                        <input type="text" class="item-note-input expand-input expand-input-full" placeholder="Note (es. ben cotta, senza lattosio...)" aria-label={`Note per ${item.nameIT}`} />
+                      </div>
+                      <div class="expand-actions">
+                        <div class="qty-row">
+                          <button class="qty-btn-new qty-dec" data-id={item.id} aria-label="Rimuovi">&#8722;</button>
+                          <span class="qty-val" data-id={item.id}>1</span>
+                          <button class="qty-btn-new qty-inc" data-id={item.id} aria-label="Aggiungi">+</button>
+                        </div>
+                        <button class="confirm-add-btn" data-id={item.id}>Aggiungi al carrello</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -152,23 +152,23 @@ const menuDataJSON = JSON.stringify(
         </div>
       ))}
 
-      <div style="margin-top:2rem; padding:1rem; background:var(--bg-warm); border-radius:var(--radius); font-size:0.8rem; color:var(--text-muted);">
+      <div class="menu-note">
         <strong>Nota:</strong> I prezzi possono variare stagionalmente. Per allergeni, contattare il personale.
       </div>
     </div>
   </section>
 
   <!-- Floating cart button -->
-  <div id="cart-fab" class="cart-fab" style="display:none;">
+  <div id="cart-fab" class="cart-fab" aria-hidden="true">
     <button id="cart-fab-btn" class="cart-fab-btn" aria-label="Apri carrello">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
       <span id="cart-fab-count" class="cart-fab-count">0</span>
     </button>
   </div>
 
   <!-- Cart drawer -->
-  <div id="cart-overlay" class="cart-overlay"></div>
-  <div id="cart-drawer" class="cart-drawer" aria-label="Carrello">
+  <div id="cart-overlay" class="cart-overlay" aria-hidden="true"></div>
+  <div id="cart-drawer" class="cart-drawer" role="dialog" aria-label="Carrello" aria-hidden="true">
     <div class="cart-drawer-header">
       <h3>Il tuo ordine</h3>
       <button id="cart-close" class="cart-close" aria-label="Chiudi carrello">&times;</button>
@@ -177,15 +177,15 @@ const menuDataJSON = JSON.stringify(
       <div class="cart-empty">Nessun articolo nel carrello</div>
     </div>
     <div class="cart-footer">
-      <div style="margin-bottom:0.5rem;">
-        <label for="order-notes-global" style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.2rem;">Note generali:</label>
-        <textarea id="order-notes-global" rows="2" placeholder="Intolleranze, richieste particolari..." style="width:100%; padding:0.4rem 0.6rem; border:1px solid var(--stone-xlight); border-radius:var(--radius); font-size:0.8rem; resize:none;"></textarea>
+      <div class="cart-notes-wrap">
+        <label for="order-notes-global" class="cart-notes-label">Note generali:</label>
+        <textarea id="order-notes-global" class="cart-notes-input" rows="2" placeholder="Intolleranze, richieste particolari..."></textarea>
       </div>
       <div class="cart-total">
         <span>Totale</span>
         <strong id="cart-total-price">0,00 &euro;</strong>
       </div>
-      <button id="cart-send-btn" class="btn btn-wa" style="width:100%; justify-content:center;" disabled>
+      <button id="cart-send-btn" class="btn btn-wa cart-send-btn" disabled>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         Invia ordine via WhatsApp
       </button>
@@ -195,11 +195,13 @@ const menuDataJSON = JSON.stringify(
 </BaseLayout>
 
 <style>
-/* ---- Hero compact (menu page) ---- */
+/* ---- Menu page scoped styles ---- */
+
+/* Hero compact */
 .hero-compact { padding-block: clamp(2.5rem, 6vw, 4rem); }
 .hero-sub { margin-bottom: 0.5rem; }
 
-/* ---- Table Banner ---- */
+/* Table Banner */
 .table-banner-new {
   background: var(--blue-deep);
   color: white;
@@ -231,7 +233,7 @@ const menuDataJSON = JSON.stringify(
 .table-select-input:focus { border-color: rgba(255,255,255,0.5); }
 .table-select-input option { color: var(--text); background: var(--white); }
 
-/* ---- Coperto bar ---- */
+/* Coperto bar */
 .coperto-bar {
   background: var(--bg-warm);
   padding: 0.55rem 1rem;
@@ -242,7 +244,7 @@ const menuDataJSON = JSON.stringify(
   font-weight: 500;
 }
 
-/* ---- Menu tabs wrapper ---- */
+/* Tabs wrapper */
 .menu-tabs-wrapper {
   background: var(--white);
   border-bottom: 1px solid var(--slate-xlight);
@@ -251,16 +253,54 @@ const menuDataJSON = JSON.stringify(
   z-index: var(--z-sticky);
 }
 
-/* ---- Menu Card ---- */
+/* Section wrap */
+.menu-section-wrap { padding-top: 1.5rem; padding-bottom: 6rem; }
+.menu-container { max-width: 800px; }
+
+/* Panel visibility — class-driven, no inline styles */
+.menu-panel { display: none; }
+.menu-panel.active { display: block; }
+
+/* Quote */
+.menu-quote {
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+  border-left: 4px solid var(--blue-mid);
+  padding: 1rem 1.5rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--blue-deep);
+  background: var(--blue-xlight);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+.menu-quote-author {
+  display: block;
+  font-size: 0.75rem;
+  font-style: normal;
+  color: var(--slate);
+  margin-top: 0.25rem;
+}
+
+/* Section subtitle */
+.menu-section-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: -0.75rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+/* Menu Card */
 .menu-card {
   background: var(--white);
   border-radius: var(--radius-lg);
   padding: 1rem 1.15rem;
   margin-bottom: 0.6rem;
   box-shadow: var(--shadow-xs);
-  transition: all 0.25s var(--ease-out);
+  transition: box-shadow 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
   border: 1px solid var(--slate-xlight);
   border-left: 3px solid transparent;
+  -webkit-tap-highlight-color: transparent;
 }
 .menu-card:hover {
   box-shadow: var(--shadow-sm);
@@ -280,6 +320,7 @@ const menuDataJSON = JSON.stringify(
   align-items: flex-start;
   gap: 0.85rem;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 .menu-card-info { flex: 1; min-width: 0; }
 .menu-card-name {
@@ -324,6 +365,7 @@ const menuDataJSON = JSON.stringify(
   transition: all 0.2s var(--ease-out);
   min-width: 44px;
   min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
 }
 .add-btn:hover {
   background: var(--blue-mid);
@@ -331,15 +373,28 @@ const menuDataJSON = JSON.stringify(
   transform: scale(1.08);
   box-shadow: 0 2px 8px rgba(59,125,216,0.3);
 }
-.add-btn:active { transform: scale(0.95); }
+.add-btn:active { transform: scale(0.92); }
 
-/* ---- Expand panel ---- */
+/* ---- Expand panel — CSS grid collapse ---- */
 .menu-card-expand {
-  margin-top: 0.85rem;
-  padding-top: 0.85rem;
-  border-top: 1px solid var(--slate-xlight);
-  animation: fadeIn 0.2s var(--ease-out);
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.35s var(--ease-out), opacity 0.25s var(--ease-out);
 }
+.menu-card-expand.open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.expand-inner {
+  overflow: hidden;
+}
+.menu-card-expand.open .expand-inner {
+  padding-top: 0.85rem;
+  margin-top: 0.85rem;
+  border-top: 1px solid var(--slate-xlight);
+}
+
 .ingredient-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .ing-chip {
   display: inline-flex;
@@ -356,8 +411,10 @@ const menuDataJSON = JSON.stringify(
   color: var(--text);
   user-select: none;
   min-height: 36px;
+  -webkit-tap-highlight-color: transparent;
 }
 .ing-chip:hover { border-color: var(--slate-light); }
+.ing-chip:active { transform: scale(0.95); }
 .ing-chip.removed {
   background: var(--error-bg);
   border-color: var(--error-border);
@@ -383,19 +440,24 @@ const menuDataJSON = JSON.stringify(
   padding: 0.4rem 0.7rem;
   border: 1.5px solid var(--slate-xlight);
   border-radius: var(--radius);
-  font-size: 0.82rem;
+  font-size: 16px; /* prevents iOS zoom on focus */
   font-family: var(--font-body);
   background: var(--white);
   transition: border-color var(--transition);
   min-height: 40px;
 }
-.expand-input:focus { border-color: var(--blue-mid); }
+.expand-input:focus {
+  border-color: var(--blue-mid);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59,125,216,0.1);
+}
 .expand-input-full { width: 100%; }
 .expand-actions {
   margin-top: 0.7rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
 }
 
 /* Qty row */
@@ -416,8 +478,10 @@ const menuDataJSON = JSON.stringify(
   transition: all 0.15s var(--ease-out);
   min-width: 44px;
   min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
 }
 .qty-btn-new:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
+.qty-btn-new:active { transform: scale(0.92); }
 .qty-val { font-weight: 700; font-size: 1.1rem; min-width: 28px; text-align: center; }
 
 .confirm-add-btn {
@@ -432,20 +496,47 @@ const menuDataJSON = JSON.stringify(
   cursor: pointer;
   transition: all 0.2s var(--ease-out);
   min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
 }
 .confirm-add-btn:hover {
   background: var(--blue-deep);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
+.confirm-add-btn:active { transform: scale(0.97); }
 
-/* ---- Cart FAB ---- */
+/* Bottom note */
+.menu-note {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: var(--bg-warm);
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ---- Cart FAB — visibility-driven, no display:none ---- */
 .cart-fab {
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
   z-index: var(--z-fab);
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.6);
+  transition: opacity 0.3s var(--ease-out), transform 0.4s var(--ease-spring), visibility 0.3s;
+  pointer-events: none;
 }
+.cart-fab.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  pointer-events: auto;
+}
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .cart-fab { bottom: calc(1.5rem + env(safe-area-inset-bottom)); }
+}
+
 .cart-fab-btn {
   width: 62px;
   height: 62px;
@@ -461,6 +552,7 @@ const menuDataJSON = JSON.stringify(
   transition: all 0.25s var(--ease-out);
   position: relative;
   animation: fabPulse 2s infinite;
+  -webkit-tap-highlight-color: transparent;
 }
 @keyframes fabPulse {
   0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.35), 0 0 0 0 rgba(37,211,102,0.3); }
@@ -471,7 +563,7 @@ const menuDataJSON = JSON.stringify(
   box-shadow: 0 6px 28px rgba(37,211,102,0.45);
   animation: none;
 }
-.cart-fab-btn:active { transform: scale(0.95); }
+.cart-fab-btn:active { transform: scale(0.92); }
 .cart-fab-count {
   position: absolute;
   top: -5px;
@@ -490,19 +582,24 @@ const menuDataJSON = JSON.stringify(
   box-shadow: var(--shadow-sm);
 }
 
-/* ---- Cart Drawer ---- */
+/* ---- Cart Drawer — visibility + transform ---- */
 .cart-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15,23,42,0.45);
   z-index: var(--z-cart-overlay);
   opacity: 0;
-  transition: opacity 0.3s var(--ease-out);
+  visibility: hidden;
+  transition: opacity 0.3s var(--ease-out), visibility 0.3s;
   pointer-events: none;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
-.cart-overlay.open { opacity: 1; pointer-events: auto; }
+.cart-overlay.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
 
 .cart-drawer {
   position: fixed;
@@ -514,17 +611,18 @@ const menuDataJSON = JSON.stringify(
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   box-shadow: var(--shadow-xl);
   max-height: 85vh;
+  max-height: 85dvh;
   display: flex;
   flex-direction: column;
   transform: translateY(100%);
-  transition: transform 0.4s var(--ease-out);
-  pointer-events: none;
   visibility: hidden;
+  transition: transform 0.4s var(--ease-out), visibility 0.4s;
+  pointer-events: none;
 }
 .cart-drawer.open {
   transform: translateY(0);
-  pointer-events: auto;
   visibility: visible;
+  pointer-events: auto;
 }
 .cart-drawer-header {
   display: flex;
@@ -532,6 +630,7 @@ const menuDataJSON = JSON.stringify(
   justify-content: space-between;
   padding: 1.15rem 1.5rem 0.65rem;
   border-bottom: 1px solid var(--slate-xlight);
+  flex-shrink: 0;
 }
 .cart-drawer-header h3 { margin: 0; font-size: 1.15rem; }
 .cart-close {
@@ -549,11 +648,15 @@ const menuDataJSON = JSON.stringify(
   min-width: 44px;
   min-height: 44px;
   transition: all var(--transition);
+  -webkit-tap-highlight-color: transparent;
 }
 .cart-close:hover { background: var(--slate-xlight); color: var(--text); }
+.cart-close:active { transform: scale(0.92); }
+
 .cart-items {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 0.85rem 1.5rem;
   -webkit-overflow-scrolling: touch;
 }
@@ -594,16 +697,42 @@ const menuDataJSON = JSON.stringify(
   min-width: 38px;
   min-height: 38px;
   transition: all 0.15s var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
 }
 .cart-item-qty button:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
+.cart-item-qty button:active { transform: scale(0.9); }
 .cart-item-qty button.cart-remove-btn { border-color: var(--error-border); color: var(--error); }
 .cart-item-qty button.cart-remove-btn:hover { background: var(--error-bg); }
 .cart-item-qty span { font-weight: 700; min-width: 20px; text-align: center; font-size: 0.88rem; }
+
 .cart-footer {
-  padding: 0.85rem 1.5rem 1.15rem;
+  padding: 0.85rem 1.5rem;
+  padding-bottom: calc(0.85rem + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--slate-xlight);
   background: var(--bg-warm);
-  border-radius: 0 0 0 0;
+  flex-shrink: 0;
+}
+.cart-notes-wrap { margin-bottom: 0.5rem; }
+.cart-notes-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+.cart-notes-input {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--slate-xlight);
+  border-radius: var(--radius);
+  font-size: 16px; /* prevents iOS zoom */
+  font-family: var(--font-body);
+  resize: none;
+  transition: border-color var(--transition);
+}
+.cart-notes-input:focus {
+  border-color: var(--blue-mid);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59,125,216,0.1);
 }
 .cart-total {
   display: flex;
@@ -611,6 +740,10 @@ const menuDataJSON = JSON.stringify(
   align-items: center;
   margin-bottom: 0.85rem;
   font-size: 1.05rem;
+}
+.cart-send-btn {
+  width: 100%;
+  justify-content: center;
 }
 
 @media (min-width: 600px) {
@@ -637,8 +770,8 @@ interface CartEntry {
   name: string;
   price: number;
   qty: number;
-  removed: string[];     // removed ingredients
-  added: string[];       // added ingredients
+  removed: string[];
+  added: string[];
   note: string;
 }
 
@@ -646,12 +779,16 @@ let cart: CartEntry[] = [];
 let tableId: string | null = new URLSearchParams(window.location.search).get('table');
 
 // ---- Tab switching ----
-document.querySelectorAll('.menu-tab').forEach(tab => {
+const allTabs = document.querySelectorAll<HTMLElement>('.menu-tab');
+const allPanels = document.querySelectorAll<HTMLElement>('.menu-panel');
+
+allTabs.forEach(tab => {
   tab.addEventListener('click', () => {
-    const section = (tab as HTMLElement).dataset.section!;
-    document.querySelectorAll('.menu-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
-    tab.classList.add('active'); tab.setAttribute('aria-selected', 'true');
-    document.querySelectorAll('.menu-panel').forEach(p => { (p as HTMLElement).style.display = (p as HTMLElement).dataset.section === section ? '' : 'none'; });
+    const section = tab.dataset.section!;
+    allTabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+    allPanels.forEach(p => p.classList.toggle('active', p.dataset.section === section));
   });
 });
 
@@ -667,9 +804,9 @@ function setTable(id: string | null) {
     const label = id.replace('table-', 'Tavolo ');
     bannerNoTable.style.display = 'none';
     bannerHasTable.style.display = '';
+    bannerHasTable.classList.remove('banner-hidden');
     tableNameDisplay.textContent = label;
     tableSelect.value = id;
-    // Update URL without reload
     const url = new URL(window.location.href);
     url.searchParams.set('table', id);
     window.history.replaceState({}, '', url.toString());
@@ -677,16 +814,17 @@ function setTable(id: string | null) {
     bannerNoTable.style.display = '';
     bannerHasTable.style.display = 'none';
   }
+  updateCartUI();
 }
 
 if (tableId) setTable(tableId);
 tableSelect.addEventListener('change', () => setTable(tableSelect.value || null));
 
 // ---- Menu card expand ----
-document.querySelectorAll('.menu-card').forEach(card => {
+document.querySelectorAll<HTMLElement>('.menu-card').forEach(card => {
   const expandPanel = card.querySelector('.menu-card-expand') as HTMLElement;
   const addBtn = card.querySelector('.add-btn') as HTMLElement;
-  const itemId = (card as HTMLElement).dataset.itemId!;
+  const itemId = card.dataset.itemId!;
   const itemData = itemLookup.get(itemId);
   let tempQty = 1;
   let tempRemoved: Set<string> = new Set();
@@ -695,7 +833,6 @@ document.querySelectorAll('.menu-card').forEach(card => {
   function renderChips() {
     const container = expandPanel.querySelector('.ingredient-chips')!;
     container.innerHTML = '';
-    // Original ingredients
     (itemData?.ingredients || []).forEach(ing => {
       const chip = document.createElement('span');
       chip.className = 'ing-chip' + (tempRemoved.has(ing) ? ' removed' : '');
@@ -707,7 +844,6 @@ document.querySelectorAll('.menu-card').forEach(card => {
       });
       container.appendChild(chip);
     });
-    // Added ingredients
     tempAdded.forEach((ing, idx) => {
       const chip = document.createElement('span');
       chip.className = 'ing-chip added';
@@ -720,48 +856,49 @@ document.querySelectorAll('.menu-card').forEach(card => {
     });
   }
 
+  function closeAllExpands() {
+    document.querySelectorAll('.menu-card-expand.open').forEach(p => p.classList.remove('open'));
+    document.querySelectorAll('.menu-card.expanding').forEach(c => c.classList.remove('expanding'));
+  }
+
   function openExpand() {
-    // Close all others
-    document.querySelectorAll('.menu-card-expand').forEach(p => (p as HTMLElement).style.display = 'none');
-    document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('expanding'));
-    // Reset temp state
+    closeAllExpands();
     tempQty = 1;
     tempRemoved = new Set();
     tempAdded = [];
-    // Show
-    expandPanel.style.display = '';
+    expandPanel.classList.add('open');
     card.classList.add('expanding');
     renderChips();
-    // Update qty display
     const qtyEl = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement;
     if (qtyEl) qtyEl.textContent = '1';
-    // Clear note
     const noteInput = expandPanel.querySelector('.item-note-input') as HTMLInputElement;
     if (noteInput) noteInput.value = '';
-    // Clear add ingredient input
     const addInput = expandPanel.querySelector('.add-ingredient-input') as HTMLInputElement;
     if (addInput) addInput.value = '';
-    // Scroll into view
-    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    requestAnimationFrame(() => {
+      setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 150);
+    });
   }
 
-  // Click on add button or card main area
   addBtn?.addEventListener('click', (e) => { e.stopPropagation(); openExpand(); });
   card.querySelector('.menu-card-main')?.addEventListener('click', () => openExpand());
 
-  // Add ingredient input
   const addIngInput = expandPanel.querySelector('.add-ingredient-input') as HTMLInputElement;
   addIngInput?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && addIngInput.value.trim()) {
+      e.preventDefault();
       tempAdded.push(addIngInput.value.trim());
       addIngInput.value = '';
       renderChips();
     }
   });
 
-  // Qty buttons
   expandPanel.querySelector('.qty-dec')?.addEventListener('click', () => {
-    if (tempQty > 1) { tempQty--; const el = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement; if (el) el.textContent = String(tempQty); }
+    if (tempQty > 1) {
+      tempQty--;
+      const el = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement;
+      if (el) el.textContent = String(tempQty);
+    }
   });
   expandPanel.querySelector('.qty-inc')?.addEventListener('click', () => {
     tempQty++;
@@ -769,7 +906,6 @@ document.querySelectorAll('.menu-card').forEach(card => {
     if (el) el.textContent = String(tempQty);
   });
 
-  // Confirm add to cart
   expandPanel.querySelector('.confirm-add-btn')?.addEventListener('click', () => {
     const noteInput = expandPanel.querySelector('.item-note-input') as HTMLInputElement;
     const entry: CartEntry = {
@@ -782,11 +918,10 @@ document.querySelectorAll('.menu-card').forEach(card => {
       note: noteInput?.value?.trim() || '',
     };
     cart.push(entry);
-    expandPanel.style.display = 'none';
+    expandPanel.classList.remove('open');
     card.classList.remove('expanding');
     card.classList.add('in-cart');
-    // Brief pulse animation
-    card.animate([{transform:'scale(0.98)'},{transform:'scale(1)'}], {duration:200});
+    card.animate([{transform:'scale(0.97)'},{transform:'scale(1)'}], {duration:200, easing:'ease-out'});
     updateCartUI();
   });
 });
@@ -801,15 +936,22 @@ const cartTotalPrice = document.getElementById('cart-total-price')!;
 const cartSendBtn = document.getElementById('cart-send-btn') as HTMLButtonElement;
 
 function formatPrice(n: number): string { return n.toFixed(2).replace('.', ',') + ' \u20AC'; }
-
 function totalQty(): number { return cart.reduce((s, e) => s + e.qty, 0); }
 function totalPrice(): number { return cart.reduce((s, e) => s + e.price * e.qty, 0); }
 
 function updateCartUI() {
   const count = totalQty();
-  // FAB
-  if (count > 0) { cartFab.style.display = ''; cartFabCount.textContent = String(count); }
-  else { cartFab.style.display = 'none'; }
+
+  // FAB visibility via CSS class
+  if (count > 0) {
+    cartFab.classList.add('visible');
+    cartFab.setAttribute('aria-hidden', 'false');
+    cartFabCount.textContent = String(count);
+  } else {
+    cartFab.classList.remove('visible');
+    cartFab.setAttribute('aria-hidden', 'true');
+  }
+
   // Drawer items
   if (cart.length === 0) {
     cartItemsEl.innerHTML = '<div class="cart-empty">Nessun articolo nel carrello</div>';
@@ -827,15 +969,15 @@ function updateCartUI() {
         <div class="cart-item-actions">
           <div class="cart-item-price">${formatPrice(entry.price * entry.qty)}</div>
           <div class="cart-item-qty">
-            <button class="cart-remove-btn" data-idx="${idx}" aria-label="Rimuovi">\u{1F5D1}</button>
-            <button data-action="dec" data-idx="${idx}">\u2212</button>
+            <button class="cart-remove-btn" data-idx="${idx}" aria-label="Rimuovi articolo">\u{1F5D1}</button>
+            <button data-action="dec" data-idx="${idx}" aria-label="Diminuisci quantit\u00e0">\u2212</button>
             <span>${entry.qty}</span>
-            <button data-action="inc" data-idx="${idx}">+</button>
+            <button data-action="inc" data-idx="${idx}" aria-label="Aumenta quantit\u00e0">+</button>
           </div>
         </div>
       </div>`;
     }).join('');
-    // Bind buttons
+
     cartItemsEl.querySelectorAll('[data-action="dec"]').forEach(btn => {
       btn.addEventListener('click', () => {
         const idx = parseInt((btn as HTMLElement).dataset.idx!);
@@ -845,40 +987,61 @@ function updateCartUI() {
       });
     });
     cartItemsEl.querySelectorAll('[data-action="inc"]').forEach(btn => {
-      btn.addEventListener('click', () => { cart[parseInt((btn as HTMLElement).dataset.idx!)].qty++; updateCartUI(); });
+      btn.addEventListener('click', () => {
+        cart[parseInt((btn as HTMLElement).dataset.idx!)].qty++;
+        updateCartUI();
+      });
     });
     cartItemsEl.querySelectorAll('.cart-remove-btn').forEach(btn => {
-      btn.addEventListener('click', () => { cart.splice(parseInt((btn as HTMLElement).dataset.idx!), 1); updateCartUI(); });
+      btn.addEventListener('click', () => {
+        cart.splice(parseInt((btn as HTMLElement).dataset.idx!), 1);
+        updateCartUI();
+      });
     });
   }
+
   cartTotalPrice.textContent = formatPrice(totalPrice());
   cartSendBtn.disabled = cart.length === 0 || !tableId;
+
   // Update in-cart marks
-  document.querySelectorAll('.menu-card').forEach(c => {
-    const id = (c as HTMLElement).dataset.itemId!;
+  document.querySelectorAll<HTMLElement>('.menu-card').forEach(c => {
+    const id = c.dataset.itemId!;
     const inCart = cart.some(e => e.id.startsWith(id + '_'));
     c.classList.toggle('in-cart', inCart);
   });
 }
 
-// Cart open/close
+// Cart open/close — CSS class on body for scroll lock
 function openCart() {
-  requestAnimationFrame(() => { cartOverlay.classList.add('open'); cartDrawer.classList.add('open'); });
-  document.body.style.overflow = 'hidden';
+  cartOverlay.classList.add('open');
+  cartDrawer.classList.add('open');
+  cartDrawer.setAttribute('aria-hidden', 'false');
+  cartOverlay.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('scroll-locked');
+  requestAnimationFrame(() => {
+    (document.getElementById('cart-close') as HTMLElement)?.focus();
+  });
 }
+
 function closeCart() {
-  cartOverlay.classList.remove('open'); cartDrawer.classList.remove('open');
-  document.body.style.overflow = '';
+  cartOverlay.classList.remove('open');
+  cartDrawer.classList.remove('open');
+  cartDrawer.setAttribute('aria-hidden', 'true');
+  cartOverlay.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('scroll-locked');
 }
 
 document.getElementById('cart-fab-btn')?.addEventListener('click', openCart);
 document.getElementById('cart-close')?.addEventListener('click', closeCart);
 cartOverlay.addEventListener('click', closeCart);
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCart(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && cartDrawer.classList.contains('open')) closeCart();
+});
 
-// ---- Send order ----
+// ---- Send order via WhatsApp ----
 cartSendBtn.addEventListener('click', () => {
   if (!tableId || cart.length === 0) return;
+
   const label = tableId.replace('table-', 'Tavolo ');
   const ts = new Date().toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' });
   const globalNotes = (document.getElementById('order-notes-global') as HTMLTextAreaElement)?.value?.trim();
@@ -897,12 +1060,20 @@ cartSendBtn.addEventListener('click', () => {
   if (globalNotes) msg += `\n\n*Note generali:* ${globalNotes}`;
 
   const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+
+  // Must append to DOM for mobile Safari/Chrome to follow the click
   const a = document.createElement('a');
   a.href = waUrl;
   a.target = '_blank';
   a.rel = 'noopener noreferrer';
+  a.style.position = 'fixed';
+  a.style.opacity = '0';
+  a.style.pointerEvents = 'none';
+  document.body.appendChild(a);
   a.click();
+  setTimeout(() => a.remove(), 200);
 });
 
+// Initial render
 updateCartUI();
 </script>
