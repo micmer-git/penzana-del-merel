@@ -166,7 +166,7 @@ const menuDataJSON = JSON.stringify(
   </div>
 
   <!-- Cart drawer -->
-  <div id="cart-overlay" class="cart-overlay" style="display:none;"></div>
+  <div id="cart-overlay" class="cart-overlay"></div>
   <div id="cart-drawer" class="cart-drawer" aria-label="Carrello">
     <div class="cart-drawer-header">
       <h3>Il tuo ordine</h3>
@@ -287,17 +287,18 @@ const menuDataJSON = JSON.stringify(
 /* ---- Cart Drawer ---- */
 .cart-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300;
-  opacity: 0; transition: opacity 0.3s;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
 }
-.cart-overlay.open { opacity: 1; }
+.cart-overlay.open { opacity: 1; pointer-events: auto; }
 .cart-drawer {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 310;
   background: var(--white); border-radius: 20px 20px 0 0;
   box-shadow: 0 -4px 30px rgba(0,0,0,0.15);
   max-height: 85vh; display: flex; flex-direction: column;
   transform: translateY(100%); transition: transform 0.35s cubic-bezier(.32,.72,.37,1.02);
+  pointer-events: none; visibility: hidden;
 }
-.cart-drawer.open { transform: translateY(0); }
+.cart-drawer.open { transform: translateY(0); pointer-events: auto; visibility: visible; }
 .cart-drawer-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 1rem 1.25rem 0.5rem; border-bottom: 1px solid var(--stone-xlight);
@@ -588,14 +589,12 @@ function updateCartUI() {
 
 // Cart open/close
 function openCart() {
-  cartOverlay.style.display = ''; cartDrawer.style.display = '';
   requestAnimationFrame(() => { cartOverlay.classList.add('open'); cartDrawer.classList.add('open'); });
   document.body.style.overflow = 'hidden';
 }
 function closeCart() {
   cartOverlay.classList.remove('open'); cartDrawer.classList.remove('open');
   document.body.style.overflow = '';
-  setTimeout(() => { cartOverlay.style.display = 'none'; }, 350);
 }
 
 document.getElementById('cart-fab-btn')?.addEventListener('click', openCart);
@@ -623,7 +622,12 @@ cartSendBtn.addEventListener('click', () => {
   msg += `\n*TOTALE STIMATO: ${formatPrice(totalPrice())}*`;
   if (globalNotes) msg += `\n\n*Note generali:* ${globalNotes}`;
 
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
+  const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  const a = document.createElement('a');
+  a.href = waUrl;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  a.click();
 });
 
 updateCartUI();
