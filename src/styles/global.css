@@ -196,7 +196,7 @@ p:last-child { margin-bottom: 0; }
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--blue-mid);
+  color: var(--accent-gold);
 }
 
 /* ---- Decorative Section Dividers ---- */
@@ -391,10 +391,20 @@ nav.main-nav a[aria-current] {
     color: var(--accent-gold);
     background: rgba(255,255,255,0.08);
   }
-  /* Toggle button color when nav is open */
+  /* When nav open: toggle white, header transparent over the overlay */
   .nav-toggle { color: var(--blue-deep); }
+  body.scroll-locked .site-header {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom-color: transparent;
+  }
   body.scroll-locked .nav-toggle {
     color: white;
+  }
+  body.scroll-locked .site-logo {
+    opacity: 0;
+    pointer-events: none;
   }
 }
 
