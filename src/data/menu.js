@@ -180,11 +180,11 @@ export const MENU = {
         subtitleIT: '',
         subtitleEN: '',
         items: [
-          { id: 'acqua', nameIT: 'Acqua oligominerale', nameEN: 'Mineral water', price: 1.5, priceRange: '1,50 - 3,00', descIT: '', descEN: '' },
+          { id: 'acqua', nameIT: 'Acqua oligominerale', nameEN: 'Mineral water', price: 1.5, sizes: [{ labelIT: '0,5 L', labelEN: '0.5L', price: 1.5 }, { labelIT: '1 L', labelEN: '1L', price: 3.0 }], descIT: '', descEN: '' },
           { id: 'bibita-lattina', nameIT: 'Bibita in lattina', nameEN: 'Canned drink', price: 3.0, descIT: 'Aranciata, Coca-Cola, Sprite, te', descEN: 'Orangeade, Coca-Cola, Sprite, tea' },
-          { id: 'birra-bionda', nameIT: 'Birra bionda alla spina', nameEN: 'Draught lager', price: 3.5, priceRange: '3,50 - 5,50', descIT: '', descEN: '' },
-          { id: 'birra-panache', nameIT: 'Birra panache', nameEN: 'Shandy', price: 3.0, priceRange: '3,00 - 5,00', descIT: '', descEN: '' },
-          { id: 'birra-rossa', nameIT: 'Birra rossa alla spina', nameEN: 'Draught red ale', price: 4.0, priceRange: '4,00 - 6,00', descIT: '', descEN: '' },
+          { id: 'birra-bionda', nameIT: 'Birra bionda alla spina', nameEN: 'Draught lager', price: 3.5, sizes: [{ labelIT: 'Piccola 0,3L', labelEN: 'Small 0.3L', price: 3.5 }, { labelIT: 'Media 0,5L', labelEN: 'Medium 0.5L', price: 5.5 }], descIT: '', descEN: '' },
+          { id: 'birra-panache', nameIT: 'Birra panache', nameEN: 'Shandy', price: 3.0, sizes: [{ labelIT: 'Piccola 0,3L', labelEN: 'Small 0.3L', price: 3.0 }, { labelIT: 'Media 0,5L', labelEN: 'Medium 0.5L', price: 5.0 }], descIT: '', descEN: '' },
+          { id: 'birra-rossa', nameIT: 'Birra rossa alla spina', nameEN: 'Draught red ale', price: 4.0, sizes: [{ labelIT: 'Piccola 0,3L', labelEN: 'Small 0.3L', price: 4.0 }, { labelIT: 'Media 0,5L', labelEN: 'Medium 0.5L', price: 6.0 }], descIT: '', descEN: '' },
         ],
       },
       {
@@ -195,9 +195,9 @@ export const MENU = {
         subtitleEN: '',
         items: [
           { id: 'amaro', nameIT: 'Amaro', nameEN: 'Amaro', price: 4.0, descIT: '', descEN: '' },
-          { id: 'caffe', nameIT: 'Caffe', nameEN: 'Coffee', price: 1.4, priceRange: '1,40 - 1,60', descIT: 'Liscio, macchiato, decaffeinato, orzo', descEN: 'Espresso, macchiato, decaf, barley' },
+          { id: 'caffe', nameIT: 'Caffe', nameEN: 'Coffee', price: 1.4, sizes: [{ labelIT: 'Espresso', labelEN: 'Espresso', price: 1.4 }, { labelIT: 'Macchiato / Orzo', labelEN: 'Macchiato / Barley', price: 1.6 }], descIT: 'Liscio, macchiato, decaffeinato, orzo', descEN: 'Espresso, macchiato, decaf, barley' },
           { id: 'caffe-corretto', nameIT: 'Caffe corretto', nameEN: 'Corrected coffee', price: 2.0, descIT: '', descEN: '' },
-          { id: 'grappe', nameIT: 'Grappe', nameEN: 'Grappa', price: 4.0, priceRange: '4,00 - 4,50', descIT: 'Morbida, barricata', descEN: 'Smooth, barrel-aged' },
+          { id: 'grappe', nameIT: 'Grappe', nameEN: 'Grappa', price: 4.0, sizes: [{ labelIT: 'Morbida', labelEN: 'Smooth', price: 4.0 }, { labelIT: 'Barricata', labelEN: 'Barrel-aged', price: 4.5 }], descIT: '', descEN: '' },
         ],
       },
       {
@@ -207,7 +207,7 @@ export const MENU = {
         subtitleIT: '',
         subtitleEN: '',
         items: [
-          { id: 'merlot-spina', nameIT: 'Merlot alla spina', nameEN: 'Draught Merlot', price: 3.5, priceRange: '3,50 - 7,00 - 12,00', descIT: '', descEN: '' },
+          { id: 'merlot-spina', nameIT: 'Merlot alla spina', nameEN: 'Draught Merlot', price: 3.5, sizes: [{ labelIT: 'Bicchiere', labelEN: 'Glass', price: 3.5 }, { labelIT: '1/2 Litro', labelEN: '1/2 Litre', price: 7.0 }, { labelIT: 'Litro', labelEN: 'Litre', price: 12.0 }], descIT: '', descEN: '' },
           { id: 'chianti-gallonero', nameIT: 'Chianti Classico Gallonero', nameEN: 'Chianti Classico Gallonero', price: 22.0, descIT: '', descEN: '' },
           { id: 'chianti-arizzi', nameIT: 'Chianti Arizzi Wine', nameEN: 'Chianti Arizzi Wine', price: 22.0, descIT: '', descEN: '' },
           { id: 'rosso-montalcino', nameIT: 'Rosso di Montalcino Banfi', nameEN: 'Rosso di Montalcino Banfi', price: 30.0, descIT: '', descEN: '' },
@@ -223,7 +223,7 @@ export const MENU = {
         subtitleIT: '',
         subtitleEN: '',
         items: [
-          { id: 'verduzzo-spina', nameIT: 'Verduzzo alla spina', nameEN: 'Draught Verduzzo', price: 3.5, priceRange: '3,50 - 7,00 - 12,00', descIT: '', descEN: '' },
+          { id: 'verduzzo-spina', nameIT: 'Verduzzo alla spina', nameEN: 'Draught Verduzzo', price: 3.5, sizes: [{ labelIT: 'Bicchiere', labelEN: 'Glass', price: 3.5 }, { labelIT: '1/2 Litro', labelEN: '1/2 Litre', price: 7.0 }, { labelIT: 'Litro', labelEN: 'Litre', price: 12.0 }], descIT: '', descEN: '' },
           { id: 'pinot-grigio', nameIT: 'Pinot Grigio Santa Margherita', nameEN: 'Pinot Grigio Santa Margherita', price: 22.0, descIT: '', descEN: '' },
           { id: 'muller-thurgau', nameIT: 'Muller Thurgau', nameEN: 'Muller Thurgau', price: 22.0, descIT: '', descEN: '' },
           { id: 'verdicchio', nameIT: 'Verdicchio Fazi Battaglia', nameEN: 'Verdicchio Fazi Battaglia', price: 22.0, descIT: '', descEN: '' },
