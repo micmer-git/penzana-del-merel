@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Marquee from '../../components/Marquee.astro';
 const base = '/penzana-del-merel';
 ---
 
@@ -9,6 +10,7 @@ const base = '/penzana-del-merel';
   lang="en"
   currentPath={`${base}/en/gallery/`}
 >
+
   <section class="hero" style="padding-block:clamp(3rem,8vw,5rem);">
     <div class="container">
       <span class="hero-eyebrow">Gallery</span>
@@ -16,6 +18,8 @@ const base = '/penzana-del-merel';
       <p>Our pizzas, the restaurant, the century-old chestnut tree. A genuine place, every season.</p>
     </div>
   </section>
+
+  <Marquee lang="en" />
 
   <section class="section">
     <div class="container">
@@ -54,36 +58,6 @@ const base = '/penzana-del-merel';
     </div>
   </section>
 
-</BaseLayout>
+  <Marquee lang="en" />
 
-<style>
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
-}
-.gallery-item {
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--bg-warm);
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.3s var(--ease-out), transform 0.3s var(--ease-out);
-}
-.gallery-item:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-.gallery-item-wide { grid-column: 1 / -1; }
-.gallery-item img { width: 100%; height: auto; display: block; object-fit: cover; }
-.gallery-item-wide img { max-height: 420px; }
-.gallery-item figcaption {
-  padding: 0.85rem 1rem;
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
-@media (max-width: 600px) {
-  .gallery-grid { grid-template-columns: 1fr; }
-  .gallery-item-wide img { max-height: 280px; }
-}
-</style>
+</BaseLayout>

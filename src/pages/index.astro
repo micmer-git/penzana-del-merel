@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Marquee from '../components/Marquee.astro';
 const base = '/penzana-del-merel';
 ---
 
@@ -11,13 +12,14 @@ const base = '/penzana-del-merel';
   currentPath={`${base}/`}
 >
 
-  <!-- Hero -->
-  <section class="hero" aria-labelledby="hero-heading">
+  <!-- Hero — full viewport with background image -->
+  <section class="hero hero-full" aria-labelledby="hero-heading">
+    <div class="hero-bg" style={`background-image:url('${base}/img/general_pizza_overview.png');`}></div>
     <div class="container">
       <span class="hero-eyebrow">Orezzo · Valle Seriana · Bergamo</span>
       <h1 id="hero-heading">La Penzana del Merel</h1>
       <p>Pizzeria di famiglia nel cuore delle colline bergamasche. Un posto fresco d'estate, rustico nei giorni di festa, genuino ogni sera. Dal 1959.</p>
-      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
         <a href={`${base}/menu/`} class="btn btn-primary">Scopri il Menu</a>
         <a href={`${base}/storia/`} class="btn btn-outline">La nostra storia</a>
       </div>
@@ -49,6 +51,9 @@ const base = '/penzana-del-merel';
     </div>
   </div>
 
+  <!-- Marquee -->
+  <Marquee lang="it" />
+
   <!-- Perche sceglierci -->
   <section class="section-sm" style="background:var(--bg-warm);">
     <div class="container">
@@ -77,17 +82,15 @@ const base = '/penzana-del-merel';
     <div class="container">
       <div class="grid-2" style="align-items:center; gap:3rem;">
         <div>
-          <div class="section-header" style="text-align:left; margin-bottom:1.5rem;">
-            <span class="kicker">La storia</span>
-            <h2 id="intro-heading">Un posto dove il tempo rallenta</h2>
-            <hr class="divider" style="margin:1rem 0;" />
-          </div>
+          <span class="kicker" style="color:var(--accent-gold);">La storia</span>
+          <h2 id="intro-heading" style="margin-top:0.5rem;">Un posto dove il tempo rallenta</h2>
+          <hr class="divider" style="margin:1rem 0;" />
           <p>Sotto il secolare ippocastano, a Orezzo, la famiglia Merelli ha costruito qualcosa di raro: un luogo di genuinita autentica. Calici di rosso, partite a bocce, pizze curate in ogni dettaglio.</p>
           <p>Quello che un tempo era la "Trattoria Cima Verde" e diventata la Penzana del Merel — il nome richiama le semplici costruzioni in lamiera dove i contadini riponevano gli attrezzi. Un segno di radici.</p>
           <a href={`${base}/storia/`} class="btn btn-green mt-2">Leggi la storia completa</a>
         </div>
         <div>
-          <img src={`${base}/img/cucina_tipica.png`} alt="In cucina — piatti tradizionali bergamaschi" loading="lazy" style="width:100%; border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); margin-bottom:1rem;" />
+          <img src={`${base}/img/cucina_tipica.png`} alt="In cucina — piatti tradizionali bergamaschi" loading="lazy" style="width:100%; border-radius:var(--radius-lg); box-shadow:var(--shadow-md); margin-bottom:1rem;" />
           <blockquote class="pullquote" style="margin:0;">
             "Vogliamo cambiare per rimanere noi stessi, rimanere con voi."
           </blockquote>
@@ -97,11 +100,11 @@ const base = '/penzana-del-merel';
     </div>
   </section>
 
-  <!-- Menu preview -->
-  <section class="section reveal" style="background:var(--bg-warm);" aria-labelledby="menu-preview-heading">
+  <!-- Menu preview — dark section -->
+  <section class="section section-dark reveal" aria-labelledby="menu-preview-heading">
     <div class="container">
       <div class="section-header">
-        <span class="kicker">Menu 2026</span>
+        <span class="kicker" style="color:var(--accent-gold);">Menu 2026</span>
         <h2 id="menu-preview-heading">Il nostro menu</h2>
         <hr class="divider" />
         <p>Pizze, cucina bergamasca, dolci e carta dei vini. Ogni piatto e curato con ingredienti selezionati.</p>
@@ -115,21 +118,29 @@ const base = '/penzana-del-merel';
           <div class="card card-body">
             <div class="card-label">{cat.label}</div>
             <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:0.5rem;">{cat.desc}</p>
-            <div style="font-family:var(--font-display); font-weight:700; color:var(--green-deep); font-size:1.1rem;">{cat.from}</div>
+            <div style="font-family:var(--font-display); font-weight:700; color:var(--accent-gold); font-size:1.1rem;">{cat.from}</div>
           </div>
         ))}
       </div>
       <div class="text-center mt-3">
-        <a href={`${base}/menu/`} class="btn btn-green">Menu completo + Ordina dal tavolo</a>
+        <a href={`${base}/menu/`} class="btn btn-primary">Menu completo + Ordina dal tavolo</a>
       </div>
     </div>
   </section>
+
+  <!-- Photo strip -->
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0;">
+    <div style="overflow:hidden; aspect-ratio:1;"><img src={`${base}/img/general_pizza_overview.png`} alt="" loading="lazy" style="width:100%; height:100%; object-fit:cover;" /></div>
+    <div style="overflow:hidden; aspect-ratio:1;"><img src={`${base}/img/cucina_tipica.png`} alt="" loading="lazy" style="width:100%; height:100%; object-fit:cover;" /></div>
+    <div style="overflow:hidden; aspect-ratio:1;"><img src={`${base}/img/team_2020.png`} alt="" loading="lazy" style="width:100%; height:100%; object-fit:cover;" /></div>
+    <div style="overflow:hidden; aspect-ratio:1;"><img src={`${base}/img/trattoria_alpina_historical_photo.png`} alt="" loading="lazy" style="width:100%; height:100%; object-fit:cover;" /></div>
+  </div>
 
   <!-- Territorio teaser -->
   <section class="section reveal" aria-labelledby="territorio-teaser">
     <div class="container">
       <div class="grid-2" style="align-items:center; gap:3rem;">
-        <div style="background:var(--green-deep); border-radius:var(--radius-lg); padding:2.5rem; color:white;">
+        <div style="background:var(--blue-deep); border-radius:var(--radius-lg); padding:2.5rem; color:white;">
           <span class="kicker" style="color:var(--accent-gold);">Dove siamo</span>
           <h2 id="territorio-teaser" style="color:white; margin-bottom:1rem;">Valle Seriana,<br/>cuore bergamasco</h2>
           <p style="color:rgba(255,255,255,0.75);">Orezzo e una piccola frazione di Gazzaniga, sul fianco destro del fiume Serio, a circa 380 metri sul livello del mare e 18 km da Bergamo. Una cornice collinare e rustica, perfetta per staccare dalla citta.</p>
@@ -161,5 +172,8 @@ const base = '/penzana-del-merel';
       </div>
     </div>
   </section>
+
+  <!-- Bottom marquee -->
+  <Marquee lang="it" />
 
 </BaseLayout>
