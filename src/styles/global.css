@@ -28,8 +28,8 @@
   --accent-gold: #f6d400;
   --accent-gold-hover: #e2be00;
   --accent-amber: #f59e0b;
-  --wa-green: #25d366;
-  --wa-green-hover: #1da851;
+  --wa-green: var(--blue-mid);
+  --wa-green-hover: var(--blue-deep);
   --success: #16a34a;
   --success-bg: #f0fdf4;
   --success-border: #86efac;
@@ -111,6 +111,17 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+/* Subtle paper grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
 
 img { max-width: 100%; height: auto; display: block; }
 
@@ -127,9 +138,10 @@ select:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--blue-mid);
+  outline: 2px solid var(--accent-gold);
   outline-offset: 3px;
   border-radius: 4px;
+  transition: outline-offset 0.2s var(--ease-out);
 }
 
 /* ---- Typography ---- */
@@ -758,7 +770,7 @@ nav.main-nav a[aria-current] {
   border-color: var(--wa-green-hover);
   color: var(--white);
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(37,211,102,0.3);
+  box-shadow: 0 4px 16px rgba(25,51,197,0.25);
 }
 .btn-wa:disabled {
   opacity: 0.5;
@@ -771,14 +783,14 @@ nav.main-nav a[aria-current] {
 .card {
   background: var(--white);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   overflow: hidden;
-  transition: box-shadow 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+  transition: border-color 0.35s var(--ease-out), transform 0.35s var(--ease-out);
   border: 1px solid var(--slate-xlight);
 }
 .card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-4px);
+  border-color: var(--blue-light);
+  transform: translateY(-3px);
 }
 .card-body { padding: clamp(1.25rem, 3vw, 1.75rem); }
 .card-label {
@@ -1074,7 +1086,7 @@ nav.main-nav a[aria-current] {
   background: var(--white);
   border-radius: var(--radius-lg);
   padding: 1.75rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -1082,11 +1094,11 @@ nav.main-nav a[aria-current] {
   border: 1px solid var(--slate-xlight);
 }
 .contact-item:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-3px);
-  border-color: var(--blue-xlight);
+  box-shadow: none;
+  transform: translateY(-2px);
+  border-color: var(--blue-light);
 }
-.contact-item-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+.contact-item-icon { color: var(--blue-mid); margin-bottom: 0.25rem; display: flex; }
 .contact-item-label {
   font-size: 0.7rem;
   font-weight: 700;
@@ -1154,7 +1166,7 @@ nav.main-nav a[aria-current] {
   padding: 2.5rem 2rem;
   background: var(--white);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   transition: all 0.35s var(--ease-out);
   border: 1px solid var(--slate-xlight);
   position: relative;
@@ -1172,24 +1184,26 @@ nav.main-nav a[aria-current] {
   transition: opacity 0.35s var(--ease-out);
 }
 .feature-card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-5px);
-  border-color: var(--blue-xlight);
+  box-shadow: none;
+  transform: translateY(-3px);
+  border-color: var(--blue-light);
 }
 .feature-card:hover::before { opacity: 1; }
 
 .feature-icon {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   margin: 0 auto 1.25rem;
-  background: var(--blue-xlight);
-  border-radius: var(--radius-lg);
+  background: transparent;
+  border: 1px solid var(--slate-xlight);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
-  transition: transform var(--transition-spring);
+  color: var(--blue-mid);
+  transition: transform var(--transition-spring), border-color 0.35s var(--ease-out);
 }
+.feature-card:hover .feature-icon { border-color: var(--blue-light); }
 .feature-card:hover .feature-icon { transform: scale(1.1) rotate(-3deg); }
 
 /* ---- Gallery (edge-to-edge, Bartali-style) ---- */
