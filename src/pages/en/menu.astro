@@ -154,14 +154,60 @@ const menuDataJSON = JSON.stringify(
     </div>
   </section>
 
-  <div id="cart-fab" class="cart-fab" aria-hidden="true">
-    <button id="cart-fab-btn" class="cart-fab-btn" aria-label="Open cart">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      <span class="cart-fab-label">Cart</span>
-      <span id="cart-fab-count" class="cart-fab-count">0</span>
-    </button>
+  <!-- Persistent cart bar — always visible when items in cart -->
+  <div id="cart-bar" class="cart-bar" aria-hidden="true">
+    <div class="cart-bar-inner">
+      <div class="cart-bar-info">
+        <span id="cart-bar-count" class="cart-bar-count">0</span>
+        <span class="cart-bar-label">items</span>
+        <span class="cart-bar-dot">&middot;</span>
+        <strong id="cart-bar-total">&euro;0.00</strong>
+      </div>
+      <button id="cart-bar-btn" class="cart-bar-btn" aria-label="Open cart">
+        View order
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
   </div>
 
+  <!-- Order mode modal — shown on first item if no table selected -->
+  <div id="order-mode-overlay" class="order-mode-overlay" aria-hidden="true"></div>
+  <div id="order-mode-modal" class="order-mode-modal" role="dialog" aria-label="Order mode" aria-hidden="true">
+    <h3>How would you like to order?</h3>
+    <p class="order-mode-sub">Choose your order mode</p>
+    <div class="order-mode-options">
+      <button id="mode-table-btn" class="order-mode-option">
+        <span class="order-mode-icon">🪑</span>
+        <span class="order-mode-title">Dine in</span>
+        <span class="order-mode-desc">Select your table</span>
+      </button>
+      <button id="mode-delivery-btn" class="order-mode-option">
+        <span class="order-mode-icon">🛵</span>
+        <span class="order-mode-title">Delivery</span>
+        <span class="order-mode-desc">Enter address and time</span>
+      </button>
+    </div>
+    <!-- Table sub-form -->
+    <div id="mode-table-form" class="order-mode-form" style="display:none">
+      <label class="order-mode-label">Select table</label>
+      <select id="modal-table-select" class="order-mode-input">
+        <option value="">Table...</option>
+      </select>
+      <button id="mode-table-confirm" class="order-mode-confirm" disabled>Confirm table</button>
+    </div>
+    <!-- Delivery sub-form -->
+    <div id="mode-delivery-form" class="order-mode-form" style="display:none">
+      <label class="order-mode-label">Name</label>
+      <input id="delivery-name" type="text" class="order-mode-input" placeholder="Your name" />
+      <label class="order-mode-label">Address</label>
+      <input id="delivery-address" type="text" class="order-mode-input" placeholder="Street, number, city" />
+      <label class="order-mode-label">Preferred time</label>
+      <input id="delivery-time" type="time" class="order-mode-input" />
+      <button id="mode-delivery-confirm" class="order-mode-confirm" disabled>Confirm delivery</button>
+    </div>
+  </div>
+
+  <!-- Cart drawer -->
   <div id="cart-overlay" class="cart-overlay" aria-hidden="true"></div>
   <div id="cart-drawer" class="cart-drawer" role="dialog" aria-label="Cart" aria-hidden="true">
     <div class="cart-drawer-header">
@@ -211,7 +257,7 @@ const menuDataJSON = JSON.stringify(
 .menu-tabs-wrapper { background: var(--white); border-bottom: 1px solid var(--slate-xlight); position: sticky; top: 56px; z-index: var(--z-sticky); }
 
 /* Section wrap */
-.menu-section-wrap { padding-top: 1.5rem; padding-bottom: 6rem; }
+.menu-section-wrap { padding-top: 1.5rem; padding-bottom: 7rem; }
 .menu-container { max-width: 800px; }
 
 /* Panel visibility */
@@ -277,24 +323,200 @@ const menuDataJSON = JSON.stringify(
 /* Bottom note */
 .menu-note { margin-top: 2rem; padding: 1rem; background: var(--bg-warm); border-radius: var(--radius); font-size: 0.8rem; color: var(--text-muted); }
 
-/* Cart FAB */
-.cart-fab { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: var(--z-fab); opacity: 0; visibility: hidden; transform: scale(0.6); transition: opacity 0.3s var(--ease-out), transform 0.4s var(--ease-spring), visibility 0.3s; pointer-events: none; }
-.cart-fab.visible { opacity: 1; visibility: visible; transform: scale(1); pointer-events: auto; }
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .cart-fab { bottom: calc(1.5rem + env(safe-area-inset-bottom)); }
+/* ---- Persistent Cart Bar — always visible when items in cart ---- */
+.cart-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-fab);
+  transform: translateY(100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.35s var(--ease-out), opacity 0.3s var(--ease-out), visibility 0.3s;
+  pointer-events: none;
 }
-.cart-fab-btn { height: 52px; padding: 0 1.25rem; border-radius: 999px; border: none; background: var(--wa-green); color: white; box-shadow: 0 4px 20px rgba(37,211,102,0.35), 0 0 0 0 rgba(37,211,102,0.3); display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; transition: all 0.25s var(--ease-out); position: relative; animation: fabPulse 2s infinite; -webkit-tap-highlight-color: transparent; }
-.cart-fab-label { font-size: 0.85rem; font-weight: 700; font-family: var(--font-body); letter-spacing: 0.02em; }
-@keyframes fabPulse {
-  0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.35), 0 0 0 0 rgba(37,211,102,0.3); }
-  50% { box-shadow: 0 4px 20px rgba(37,211,102,0.35), 0 0 0 8px rgba(37,211,102,0); }
+.cart-bar.visible {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
-.cart-fab-btn:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,0.45); animation: none; }
-.cart-fab-btn:active { transform: scale(0.92); }
-.cart-fab-count { position: absolute; top: -5px; right: -5px; background: var(--blue-mid); color: white; font-size: 0.7rem; font-weight: 800; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); box-shadow: var(--shadow-sm); }
+.cart-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  background: var(--blue-deep);
+  color: white;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+}
+.cart-bar-info {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+.cart-bar-count {
+  background: white;
+  color: var(--blue-deep);
+  font-weight: 800;
+  font-size: 0.78rem;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.cart-bar-dot { opacity: 0.5; }
+.cart-bar-label { font-weight: 400; opacity: 0.85; }
+.cart-bar-btn {
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--wa-green);
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s var(--ease-out);
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+}
+.cart-bar-btn:hover { filter: brightness(1.1); transform: scale(1.03); }
+.cart-bar-btn:active { transform: scale(0.96); }
 
-/* Cart Drawer */
-.cart-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.45); z-index: var(--z-cart-overlay); opacity: 0; visibility: hidden; transition: opacity 0.3s var(--ease-out), visibility 0.3s; pointer-events: none; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+/* ---- Order Mode Modal ---- */
+.order-mode-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 400;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s var(--ease-out), visibility 0.3s;
+  pointer-events: none;
+}
+.order-mode-overlay.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.order-mode-modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 410;
+  background: var(--white);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: var(--shadow-xl);
+  padding: 1.5rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  transform: translateY(100%);
+  visibility: hidden;
+  transition: transform 0.4s var(--ease-out), visibility 0.4s;
+  pointer-events: none;
+  max-width: 460px;
+  margin: 0 auto;
+}
+.order-mode-modal.open {
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+.order-mode-modal h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+.order-mode-sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+}
+.order-mode-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.order-mode-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 1.25rem 0.75rem;
+  border: 2px solid var(--slate-xlight);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+.order-mode-option:hover { border-color: var(--blue-mid); background: var(--blue-xlight); }
+.order-mode-option.selected { border-color: var(--blue-mid); background: var(--blue-xlight); box-shadow: 0 0 0 3px rgba(59,125,216,0.15); }
+.order-mode-option:active { transform: scale(0.97); }
+.order-mode-icon { font-size: 2rem; }
+.order-mode-title { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+.order-mode-desc { font-size: 0.75rem; color: var(--text-muted); text-align: center; }
+.order-mode-form { margin-top: 0.5rem; }
+.order-mode-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+  margin-top: 0.6rem;
+}
+.order-mode-label:first-child { margin-top: 0; }
+.order-mode-input {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1.5px solid var(--slate-xlight);
+  border-radius: var(--radius);
+  font-size: 16px;
+  font-family: var(--font-body);
+  background: var(--white);
+  transition: border-color var(--transition);
+  min-height: 44px;
+  box-sizing: border-box;
+}
+.order-mode-input:focus {
+  border-color: var(--blue-mid);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59,125,216,0.1);
+}
+.order-mode-confirm {
+  margin-top: 0.85rem;
+  width: 100%;
+  padding: 0.65rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--blue-mid);
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  min-height: 48px;
+  transition: all 0.2s var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+.order-mode-confirm:hover:not(:disabled) { background: var(--blue-deep); }
+.order-mode-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ---- Cart Drawer — visibility + transform ---- */
+.cart-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.65); z-index: var(--z-cart-overlay); opacity: 0; visibility: hidden; transition: opacity 0.3s var(--ease-out), visibility 0.3s; pointer-events: none; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 .cart-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
 
 .cart-drawer { position: fixed; bottom: 0; left: 0; right: 0; z-index: var(--z-cart-drawer); background: var(--white); border-radius: var(--radius-xl) var(--radius-xl) 0 0; box-shadow: var(--shadow-xl); max-height: 85vh; max-height: 85dvh; display: flex; flex-direction: column; transform: translateY(100%); visibility: hidden; transition: transform 0.4s var(--ease-out), visibility 0.4s; pointer-events: none; }
@@ -346,26 +568,42 @@ const menuDataJSON = JSON.stringify(
 <script>
 const WHATSAPP_NUMBER = (window as any).__WA_NUMBER || '393487024985';
 const MENU_DATA: Array<{id:string, categories:Array<{id:string, items:Array<{id:string, name:string, price:number, desc:string, ingredients:string[]}>}>}> = JSON.parse((window as any).__MENU_DATA || '[]');
+
+// Build lookup
 const itemLookup = new Map<string, {name:string, price:number, ingredients:string[]}>();
 MENU_DATA.forEach(s => s.categories.forEach(c => c.items.forEach(i => itemLookup.set(i.id, i))));
 
-interface CartEntry { id:string; name:string; price:number; qty:number; removed:string[]; added:string[]; note:string; }
+// ---- State ----
+interface CartEntry {
+  id: string;
+  name: string;
+  price: number;
+  qty: number;
+  removed: string[];
+  added: string[];
+  note: string;
+}
+
 let cart: CartEntry[] = [];
 let tableId: string | null = new URLSearchParams(window.location.search).get('table');
+let orderMode: 'table' | 'delivery' | null = tableId ? 'table' : null;
+let deliveryInfo: { name: string; address: string; time: string } | null = null;
 
-// Tab switching
+// ---- Tab switching ----
 const allTabs = document.querySelectorAll<HTMLElement>('.menu-tab');
 const allPanels = document.querySelectorAll<HTMLElement>('.menu-panel');
+
 allTabs.forEach(tab => {
   tab.addEventListener('click', () => {
     const section = tab.dataset.section!;
     allTabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
-    tab.classList.add('active'); tab.setAttribute('aria-selected', 'true');
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
     allPanels.forEach(p => p.classList.toggle('active', p.dataset.section === section));
   });
 });
 
-// Table selection
+// ---- Table selection ----
 const tableSelect = document.getElementById('table-select') as HTMLSelectElement;
 const bannerNoTable = document.getElementById('banner-no-table')!;
 const bannerHasTable = document.getElementById('banner-has-table')!;
@@ -374,40 +612,57 @@ const tableNameDisplay = document.getElementById('table-name-display')!;
 function setTable(id: string | null) {
   tableId = id;
   if (id) {
+    const label = 'Table ' + id.replace('table-', '');
     bannerNoTable.style.display = 'none';
     bannerHasTable.style.display = '';
     bannerHasTable.classList.remove('banner-hidden');
-    tableNameDisplay.textContent = 'Table ' + id.replace('table-', '');
+    tableNameDisplay.textContent = label;
     tableSelect.value = id;
-    const url = new URL(window.location.href); url.searchParams.set('table', id); window.history.replaceState({}, '', url.toString());
-  } else { bannerNoTable.style.display = ''; bannerHasTable.style.display = 'none'; }
+    const url = new URL(window.location.href);
+    url.searchParams.set('table', id);
+    window.history.replaceState({}, '', url.toString());
+  } else {
+    bannerNoTable.style.display = '';
+    bannerHasTable.style.display = 'none';
+  }
   updateCartUI();
 }
+
 if (tableId) setTable(tableId);
 tableSelect.addEventListener('change', () => setTable(tableSelect.value || null));
 
-// Menu card expand
+// ---- Menu card expand ----
 document.querySelectorAll<HTMLElement>('.menu-card').forEach(card => {
   const expandPanel = card.querySelector('.menu-card-expand') as HTMLElement;
   const addBtn = card.querySelector('.add-btn') as HTMLElement;
   const itemId = card.dataset.itemId!;
   const itemData = itemLookup.get(itemId);
-  let tempQty = 1; let tempRemoved: Set<string> = new Set(); let tempAdded: string[] = [];
+  let tempQty = 1;
+  let tempRemoved: Set<string> = new Set();
+  let tempAdded: string[] = [];
 
   function renderChips() {
-    const container = expandPanel.querySelector('.ingredient-chips')!; container.innerHTML = '';
+    const container = expandPanel.querySelector('.ingredient-chips')!;
+    container.innerHTML = '';
     (itemData?.ingredients || []).forEach(ing => {
       const chip = document.createElement('span');
       chip.className = 'ing-chip' + (tempRemoved.has(ing) ? ' removed' : '');
       chip.innerHTML = `${ing} <span class="chip-x">${tempRemoved.has(ing) ? '+' : '\u00D7'}</span>`;
-      chip.addEventListener('click', () => { if (tempRemoved.has(ing)) tempRemoved.delete(ing); else tempRemoved.add(ing); renderChips(); });
+      chip.addEventListener('click', () => {
+        if (tempRemoved.has(ing)) tempRemoved.delete(ing);
+        else tempRemoved.add(ing);
+        renderChips();
+      });
       container.appendChild(chip);
     });
     tempAdded.forEach((ing, idx) => {
       const chip = document.createElement('span');
       chip.className = 'ing-chip added';
       chip.innerHTML = `+ ${ing} <span class="chip-x">\u00D7</span>`;
-      chip.addEventListener('click', () => { tempAdded.splice(idx, 1); renderChips(); });
+      chip.addEventListener('click', () => {
+        tempAdded.splice(idx, 1);
+        renderChips();
+      });
       container.appendChild(chip);
     });
   }
@@ -419,11 +674,18 @@ document.querySelectorAll<HTMLElement>('.menu-card').forEach(card => {
 
   function openExpand() {
     closeAllExpands();
-    tempQty = 1; tempRemoved = new Set(); tempAdded = [];
-    expandPanel.classList.add('open'); card.classList.add('expanding'); renderChips();
-    const qtyEl = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement; if (qtyEl) qtyEl.textContent = '1';
-    const noteInput = expandPanel.querySelector('.item-note-input') as HTMLInputElement; if (noteInput) noteInput.value = '';
-    const addInput = expandPanel.querySelector('.add-ingredient-input') as HTMLInputElement; if (addInput) addInput.value = '';
+    tempQty = 1;
+    tempRemoved = new Set();
+    tempAdded = [];
+    expandPanel.classList.add('open');
+    card.classList.add('expanding');
+    renderChips();
+    const qtyEl = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement;
+    if (qtyEl) qtyEl.textContent = '1';
+    const noteInput = expandPanel.querySelector('.item-note-input') as HTMLInputElement;
+    if (noteInput) noteInput.value = '';
+    const addInput = expandPanel.querySelector('.add-ingredient-input') as HTMLInputElement;
+    if (addInput) addInput.value = '';
     requestAnimationFrame(() => {
       setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 150);
     });
@@ -434,25 +696,70 @@ document.querySelectorAll<HTMLElement>('.menu-card').forEach(card => {
 
   const addIngInput = expandPanel.querySelector('.add-ingredient-input') as HTMLInputElement;
   addIngInput?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && addIngInput.value.trim()) { e.preventDefault(); tempAdded.push(addIngInput.value.trim()); addIngInput.value = ''; renderChips(); }
+    if (e.key === 'Enter' && addIngInput.value.trim()) {
+      e.preventDefault();
+      tempAdded.push(addIngInput.value.trim());
+      addIngInput.value = '';
+      renderChips();
+    }
   });
 
-  expandPanel.querySelector('.qty-dec')?.addEventListener('click', () => { if (tempQty > 1) { tempQty--; const el = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement; if (el) el.textContent = String(tempQty); } });
-  expandPanel.querySelector('.qty-inc')?.addEventListener('click', () => { tempQty++; const el = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement; if (el) el.textContent = String(tempQty); });
+  expandPanel.querySelector('.qty-dec')?.addEventListener('click', () => {
+    if (tempQty > 1) {
+      tempQty--;
+      const el = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement;
+      if (el) el.textContent = String(tempQty);
+    }
+  });
+  expandPanel.querySelector('.qty-inc')?.addEventListener('click', () => {
+    tempQty++;
+    const el = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement;
+    if (el) el.textContent = String(tempQty);
+  });
 
   expandPanel.querySelector('.confirm-add-btn')?.addEventListener('click', () => {
     const noteInput = expandPanel.querySelector('.item-note-input') as HTMLInputElement;
-    cart.push({ id: itemId + '_' + Date.now(), name: itemData?.name || itemId, price: itemData?.price || 0, qty: tempQty, removed: Array.from(tempRemoved), added: [...tempAdded], note: noteInput?.value?.trim() || '' });
-    expandPanel.classList.remove('open'); card.classList.remove('expanding'); card.classList.add('in-cart');
+    const entry: CartEntry = {
+      id: itemId + '_' + Date.now(),
+      name: itemData?.name || itemId,
+      price: itemData?.price || 0,
+      qty: tempQty,
+      removed: Array.from(tempRemoved),
+      added: [...tempAdded],
+      note: noteInput?.value?.trim() || '',
+    };
+
+    // On first item, if no order mode set, ask table or delivery
+    if (cart.length === 0 && !orderMode) {
+      pendingEntry = entry;
+      pendingCard = card;
+      pendingExpandPanel = expandPanel;
+      showOrderModeModal();
+      return;
+    }
+
+    cart.push(entry);
+    expandPanel.classList.remove('open');
+    card.classList.remove('expanding');
+    card.classList.add('in-cart');
     card.animate([{transform:'scale(0.97)'},{transform:'scale(1)'}], {duration:200, easing:'ease-out'});
     updateCartUI();
   });
 });
 
-// Cart UI
-const cartFab = document.getElementById('cart-fab')!; const cartFabCount = document.getElementById('cart-fab-count')!;
-const cartDrawer = document.getElementById('cart-drawer')!; const cartOverlay = document.getElementById('cart-overlay')!;
-const cartItemsEl = document.getElementById('cart-items')!; const cartTotalPrice = document.getElementById('cart-total-price')!;
+// ---- Pending entry (for order mode modal flow) ----
+let pendingEntry: CartEntry | null = null;
+let pendingCard: HTMLElement | null = null;
+let pendingExpandPanel: HTMLElement | null = null;
+
+// ---- Cart UI ----
+const cartBar = document.getElementById('cart-bar')!;
+const cartBarCount = document.getElementById('cart-bar-count')!;
+const cartBarTotal = document.getElementById('cart-bar-total')!;
+const cartDrawer = document.getElementById('cart-drawer')!;
+const cartOverlay = document.getElementById('cart-overlay')!;
+const cartItemsEl = document.getElementById('cart-items')!;
+const cartTotalPrice = document.getElementById('cart-total-price')!;
 const cartSendBtn = document.getElementById('cart-send-btn') as HTMLButtonElement;
 
 function formatPrice(n: number): string { return '\u20AC' + n.toFixed(2); }
@@ -461,50 +768,120 @@ function totalPrice(): number { return cart.reduce((s, e) => s + e.price * e.qty
 
 function updateCartUI() {
   const count = totalQty();
-  if (count > 0) { cartFab.classList.add('visible'); cartFab.setAttribute('aria-hidden', 'false'); cartFabCount.textContent = String(count); }
-  else { cartFab.classList.remove('visible'); cartFab.setAttribute('aria-hidden', 'true'); }
 
-  if (cart.length === 0) { cartItemsEl.innerHTML = '<div class="cart-empty">No items in your order</div>'; }
-  else {
+  // Persistent cart bar visibility
+  if (count > 0) {
+    cartBar.classList.add('visible');
+    cartBar.setAttribute('aria-hidden', 'false');
+    cartBarCount.textContent = String(count);
+    cartBarTotal.textContent = formatPrice(totalPrice());
+  } else {
+    cartBar.classList.remove('visible');
+    cartBar.setAttribute('aria-hidden', 'true');
+  }
+
+  // Drawer items
+  if (cart.length === 0) {
+    cartItemsEl.innerHTML = '<div class="cart-empty">No items in your order</div>';
+  } else {
     cartItemsEl.innerHTML = cart.map((entry, idx) => {
       let modsHtml = '';
       if (entry.removed.length) modsHtml += entry.removed.map(r => `<span class="mod-remove">no ${r}</span>`).join(', ');
       if (entry.added.length) modsHtml += (modsHtml ? ', ' : '') + entry.added.map(a => `<span class="mod-add">+ ${a}</span>`).join(', ');
-      return `<div class="cart-item" data-idx="${idx}"><div class="cart-item-info"><div class="cart-item-name">${entry.name}</div>${modsHtml ? `<div class="cart-item-mods">${modsHtml}</div>` : ''}${entry.note ? `<div class="cart-item-note">"${entry.note}"</div>` : ''}</div><div class="cart-item-actions"><div class="cart-item-price">${formatPrice(entry.price * entry.qty)}</div><div class="cart-item-qty"><button class="cart-remove-btn" data-idx="${idx}" aria-label="Remove item">\u{1F5D1}</button><button data-action="dec" data-idx="${idx}" aria-label="Decrease quantity">\u2212</button><span>${entry.qty}</span><button data-action="inc" data-idx="${idx}" aria-label="Increase quantity">+</button></div></div></div>`;
+      return `<div class="cart-item" data-idx="${idx}">
+        <div class="cart-item-info">
+          <div class="cart-item-name">${entry.name}</div>
+          ${modsHtml ? `<div class="cart-item-mods">${modsHtml}</div>` : ''}
+          ${entry.note ? `<div class="cart-item-note">"${entry.note}"</div>` : ''}
+        </div>
+        <div class="cart-item-actions">
+          <div class="cart-item-price">${formatPrice(entry.price * entry.qty)}</div>
+          <div class="cart-item-qty">
+            <button class="cart-remove-btn" data-idx="${idx}" aria-label="Remove item">\u{1F5D1}</button>
+            <button data-action="dec" data-idx="${idx}" aria-label="Decrease quantity">\u2212</button>
+            <span>${entry.qty}</span>
+            <button data-action="inc" data-idx="${idx}" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+      </div>`;
     }).join('');
-    cartItemsEl.querySelectorAll('[data-action="dec"]').forEach(btn => { btn.addEventListener('click', () => { const idx = parseInt((btn as HTMLElement).dataset.idx!); if (cart[idx].qty > 1) cart[idx].qty--; else cart.splice(idx, 1); updateCartUI(); }); });
-    cartItemsEl.querySelectorAll('[data-action="inc"]').forEach(btn => { btn.addEventListener('click', () => { cart[parseInt((btn as HTMLElement).dataset.idx!)].qty++; updateCartUI(); }); });
-    cartItemsEl.querySelectorAll('.cart-remove-btn').forEach(btn => { btn.addEventListener('click', () => { cart.splice(parseInt((btn as HTMLElement).dataset.idx!), 1); updateCartUI(); }); });
+
+    cartItemsEl.querySelectorAll('[data-action="dec"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt((btn as HTMLElement).dataset.idx!);
+        if (cart[idx].qty > 1) cart[idx].qty--;
+        else cart.splice(idx, 1);
+        updateCartUI();
+      });
+    });
+    cartItemsEl.querySelectorAll('[data-action="inc"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        cart[parseInt((btn as HTMLElement).dataset.idx!)].qty++;
+        updateCartUI();
+      });
+    });
+    cartItemsEl.querySelectorAll('.cart-remove-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        cart.splice(parseInt((btn as HTMLElement).dataset.idx!), 1);
+        updateCartUI();
+      });
+    });
   }
+
   cartTotalPrice.textContent = formatPrice(totalPrice());
-  cartSendBtn.disabled = cart.length === 0 || !tableId;
-  document.querySelectorAll<HTMLElement>('.menu-card').forEach(c => { const id = c.dataset.itemId!; c.classList.toggle('in-cart', cart.some(e => e.id.startsWith(id + '_'))); });
+  cartSendBtn.disabled = cart.length === 0 || (!tableId && !deliveryInfo);
+
+  // Update in-cart marks
+  document.querySelectorAll<HTMLElement>('.menu-card').forEach(c => {
+    const id = c.dataset.itemId!;
+    const inCart = cart.some(e => e.id.startsWith(id + '_'));
+    c.classList.toggle('in-cart', inCart);
+  });
 }
 
+// Cart open/close
 function openCart() {
-  cartOverlay.classList.add('open'); cartDrawer.classList.add('open');
-  cartDrawer.setAttribute('aria-hidden', 'false'); cartOverlay.setAttribute('aria-hidden', 'false');
+  cartOverlay.classList.add('open');
+  cartDrawer.classList.add('open');
+  cartDrawer.setAttribute('aria-hidden', 'false');
+  cartOverlay.setAttribute('aria-hidden', 'false');
   document.body.classList.add('scroll-locked');
-  requestAnimationFrame(() => { (document.getElementById('cart-close') as HTMLElement)?.focus(); });
+  requestAnimationFrame(() => {
+    (document.getElementById('cart-close') as HTMLElement)?.focus();
+  });
 }
+
 function closeCart() {
-  cartOverlay.classList.remove('open'); cartDrawer.classList.remove('open');
-  cartDrawer.setAttribute('aria-hidden', 'true'); cartOverlay.setAttribute('aria-hidden', 'true');
+  cartOverlay.classList.remove('open');
+  cartDrawer.classList.remove('open');
+  cartDrawer.setAttribute('aria-hidden', 'true');
+  cartOverlay.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('scroll-locked');
 }
 
-document.getElementById('cart-fab-btn')?.addEventListener('click', openCart);
+document.getElementById('cart-bar-btn')?.addEventListener('click', openCart);
 document.getElementById('cart-close')?.addEventListener('click', closeCart);
 cartOverlay.addEventListener('click', closeCart);
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && cartDrawer.classList.contains('open')) closeCart(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && cartDrawer.classList.contains('open')) closeCart();
+});
 
-// Send order via WhatsApp
+// ---- Send order via WhatsApp ----
 cartSendBtn.addEventListener('click', () => {
-  if (!tableId || cart.length === 0) return;
-  const label = 'Table ' + tableId.replace('table-', '');
+  if (cart.length === 0 || (!tableId && !deliveryInfo)) return;
+
   const ts = new Date().toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' });
   const globalNotes = (document.getElementById('order-notes-global') as HTMLTextAreaElement)?.value?.trim();
-  let msg = `*ORDER \u2014 ${label}*\nDate: ${ts}\n\n*Items:*\n`;
+
+  let header = '';
+  if (orderMode === 'delivery' && deliveryInfo) {
+    header = `*ORDER — Delivery*\nName: ${deliveryInfo.name}\nAddress: ${deliveryInfo.address}\nTime: ${deliveryInfo.time || 'As soon as possible'}\nDate: ${ts}`;
+  } else {
+    const label = tableId ? 'Table ' + tableId.replace('table-', '') : 'Not specified';
+    header = `*ORDER \u2014 ${label}*\nDate: ${ts}`;
+  }
+
+  let msg = `${header}\n\n*Items:*\n`;
   cart.forEach(entry => {
     msg += `\u2022 ${entry.name} x${entry.qty} \u2014 ${formatPrice(entry.price * entry.qty)}`;
     const mods: string[] = [];
@@ -516,6 +893,7 @@ cartSendBtn.addEventListener('click', () => {
   });
   msg += `\n*ESTIMATED TOTAL: ${formatPrice(totalPrice())}*`;
   if (globalNotes) msg += `\n\n*General notes:* ${globalNotes}`;
+
   const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 
   // Must append to DOM for mobile Safari/Chrome to follow the click
@@ -531,5 +909,118 @@ cartSendBtn.addEventListener('click', () => {
   setTimeout(() => a.remove(), 200);
 });
 
+// ---- Order Mode Modal ----
+const orderModeOverlay = document.getElementById('order-mode-overlay')!;
+const orderModeModal = document.getElementById('order-mode-modal')!;
+const modeTableBtn = document.getElementById('mode-table-btn')!;
+const modeDeliveryBtn = document.getElementById('mode-delivery-btn')!;
+const modeTableForm = document.getElementById('mode-table-form')!;
+const modeDeliveryForm = document.getElementById('mode-delivery-form')!;
+const modalTableSelect = document.getElementById('modal-table-select') as HTMLSelectElement;
+const modeTableConfirm = document.getElementById('mode-table-confirm') as HTMLButtonElement;
+const deliveryNameInput = document.getElementById('delivery-name') as HTMLInputElement;
+const deliveryAddressInput = document.getElementById('delivery-address') as HTMLInputElement;
+const deliveryTimeInput = document.getElementById('delivery-time') as HTMLInputElement;
+const modeDeliveryConfirm = document.getElementById('mode-delivery-confirm') as HTMLButtonElement;
+
+// Populate modal table select with same options
+for (let i = 1; i <= 20; i++) {
+  const opt = document.createElement('option');
+  opt.value = `table-${String(i).padStart(2, '0')}`;
+  opt.textContent = `Table ${String(i).padStart(2, '0')}`;
+  modalTableSelect.appendChild(opt);
+}
+
+function showOrderModeModal() {
+  orderModeOverlay.classList.add('open');
+  orderModeModal.classList.add('open');
+  orderModeOverlay.setAttribute('aria-hidden', 'false');
+  orderModeModal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('scroll-locked');
+  // Reset forms
+  modeTableForm.style.display = 'none';
+  modeDeliveryForm.style.display = 'none';
+  modeTableBtn.classList.remove('selected');
+  modeDeliveryBtn.classList.remove('selected');
+}
+
+function closeOrderModeModal() {
+  orderModeOverlay.classList.remove('open');
+  orderModeModal.classList.remove('open');
+  orderModeOverlay.setAttribute('aria-hidden', 'true');
+  orderModeModal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('scroll-locked');
+}
+
+function finalizePendingEntry() {
+  if (pendingEntry && pendingCard && pendingExpandPanel) {
+    cart.push(pendingEntry);
+    pendingExpandPanel.classList.remove('open');
+    pendingCard.classList.remove('expanding');
+    pendingCard.classList.add('in-cart');
+    pendingCard.animate([{transform:'scale(0.97)'},{transform:'scale(1)'}], {duration:200, easing:'ease-out'});
+    pendingEntry = null;
+    pendingCard = null;
+    pendingExpandPanel = null;
+    updateCartUI();
+  }
+  closeOrderModeModal();
+}
+
+modeTableBtn.addEventListener('click', () => {
+  modeTableBtn.classList.add('selected');
+  modeDeliveryBtn.classList.remove('selected');
+  modeTableForm.style.display = 'block';
+  modeDeliveryForm.style.display = 'none';
+});
+
+modeDeliveryBtn.addEventListener('click', () => {
+  modeDeliveryBtn.classList.add('selected');
+  modeTableBtn.classList.remove('selected');
+  modeDeliveryForm.style.display = 'block';
+  modeTableForm.style.display = 'none';
+});
+
+modalTableSelect.addEventListener('change', () => {
+  modeTableConfirm.disabled = !modalTableSelect.value;
+});
+
+modeTableConfirm.addEventListener('click', () => {
+  if (!modalTableSelect.value) return;
+  orderMode = 'table';
+  setTable(modalTableSelect.value);
+  finalizePendingEntry();
+});
+
+function validateDelivery() {
+  modeDeliveryConfirm.disabled = !deliveryNameInput.value.trim() || !deliveryAddressInput.value.trim();
+}
+deliveryNameInput.addEventListener('input', validateDelivery);
+deliveryAddressInput.addEventListener('input', validateDelivery);
+
+modeDeliveryConfirm.addEventListener('click', () => {
+  if (!deliveryNameInput.value.trim() || !deliveryAddressInput.value.trim()) return;
+  orderMode = 'delivery';
+  deliveryInfo = {
+    name: deliveryNameInput.value.trim(),
+    address: deliveryAddressInput.value.trim(),
+    time: deliveryTimeInput.value || '',
+  };
+  // Update banner to show delivery mode
+  bannerNoTable.style.display = 'none';
+  bannerHasTable.style.display = '';
+  bannerHasTable.classList.remove('banner-hidden');
+  tableNameDisplay.textContent = `Delivery — ${deliveryInfo.name}`;
+  finalizePendingEntry();
+});
+
+orderModeOverlay.addEventListener('click', () => {
+  pendingEntry = null;
+  pendingCard = null;
+  pendingExpandPanel = null;
+  closeOrderModeModal();
+});
+
+// Initial render
 updateCartUI();
 </script>
