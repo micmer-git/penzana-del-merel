@@ -16,6 +16,7 @@ const menuDataJSON = JSON.stringify(
         price: i.price,
         desc: i.descIT || '',
         ingredients: (i.descIT || '').split(/,\s*| e /).map((x: string) => x.trim()).filter(Boolean),
+        sizes: (i as any).sizes?.map((sz: any) => ({ label: sz.labelIT, price: sz.price })) || null,
       })),
     })),
   }))
@@ -87,8 +88,13 @@ const menuDataJSON = JSON.stringify(
               {category.subtitleIT && (
                 <p class="menu-section-subtitle">{category.subtitleIT}</p>
               )}
-              {category.items.map(item => (
-                <div class="menu-card" data-item-id={item.id} data-item-name={item.nameIT} data-item-price={item.price} data-item-desc={item.descIT || ''}>
+              {category.items.map(item => {
+                const sizes = (item as any).sizes;
+                const priceDisplay = sizes && sizes.length > 1
+                  ? `${Math.min(...sizes.map(s => s.price)).toFixed(2).replace('.',',')} – ${Math.max(...sizes.map(s => s.price)).toFixed(2).replace('.',',')} \u20AC`
+                  : `${item.price.toFixed(2).replace('.',',')} \u20AC`;
+                return (
+                <div class="menu-card" data-item-id={item.id} data-item-name={item.nameIT} data-item-price={item.price} data-item-desc={item.descIT || ''} data-has-sizes={sizes ? 'true' : undefined}>
                   <div class="menu-card-main">
                     <div class="menu-card-info">
                       <div class="menu-card-name">{item.nameIT}</div>
@@ -97,9 +103,7 @@ const menuDataJSON = JSON.stringify(
                       )}
                     </div>
                     <div class="menu-card-right">
-                      <div class="menu-card-price">
-                        {item.priceRange ? item.priceRange + ' \u20AC' : item.price.toFixed(2).replace('.', ',') + ' \u20AC'}
-                      </div>
+                      <div class="menu-card-price">{priceDisplay}</div>
                       <button class="add-btn" aria-label={`Aggiungi ${item.nameIT}`} data-id={item.id}>
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v8M6 10h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
                       </button>
@@ -108,6 +112,19 @@ const menuDataJSON = JSON.stringify(
                   <!-- Expand panel -->
                   <div class="menu-card-expand">
                     <div class="expand-inner">
+                      {sizes && sizes.length > 1 && (
+                        <div class="size-selector">
+                          <div class="size-selector-label">Formato:</div>
+                          <div class="size-selector-options">
+                            {sizes.map((sz, si) => (
+                              <button class={`size-option ${si === 0 ? 'selected' : ''}`} data-size-idx={si} data-size-price={sz.price} data-size-label={sz.labelIT}>
+                                <span class="size-option-label">{sz.labelIT}</span>
+                                <span class="size-option-price">{sz.price.toFixed(2).replace('.',',')} &euro;</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       <div class="ingredient-chips"></div>
                       <div class="expand-input-row">
                         <input type="text" class="add-ingredient-input expand-input" placeholder="+ aggiungi ingrediente..." aria-label={`Aggiungi ingrediente a ${item.nameIT}`} />
@@ -126,7 +143,8 @@ const menuDataJSON = JSON.stringify(
                     </div>
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
           ))}
         </div>
@@ -387,6 +405,42 @@ const menuDataJSON = JSON.stringify(
   margin-top: 0.85rem;
   border-top: 1px solid var(--slate-xlight);
 }
+
+/* Size selector */
+.size-selector { margin-bottom: 0.75rem; }
+.size-selector-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.size-selector-options { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.size-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.45rem 0.85rem;
+  border: 2px solid var(--slate-xlight);
+  border-radius: var(--radius);
+  background: var(--white);
+  cursor: pointer;
+  transition: all 0.15s var(--ease-out);
+  min-height: 44px;
+  min-width: 44px;
+  -webkit-tap-highlight-color: transparent;
+}
+.size-option:hover { border-color: var(--blue-mid); background: var(--blue-xlight); }
+.size-option.selected {
+  border-color: var(--blue-mid);
+  background: var(--blue-xlight);
+  box-shadow: 0 0 0 3px rgba(59,125,216,0.12);
+}
+.size-option:active { transform: scale(0.96); }
+.size-option-label { font-weight: 700; font-size: 0.8rem; color: var(--text); }
+.size-option-price { font-size: 0.75rem; color: var(--blue-deep); font-weight: 600; }
 
 .ingredient-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .ing-chip {
@@ -885,10 +939,12 @@ const menuDataJSON = JSON.stringify(
 
 <script>
 const WHATSAPP_NUMBER = (window as any).__WA_NUMBER || '393487024985';
-const MENU_DATA: Array<{id:string, categories:Array<{id:string, items:Array<{id:string, name:string, price:number, desc:string, ingredients:string[]}>}>}> = JSON.parse((window as any).__MENU_DATA || '[]');
+interface ItemSize { label: string; price: number; }
+interface ItemData { id: string; name: string; price: number; desc: string; ingredients: string[]; sizes: ItemSize[] | null; }
+const MENU_DATA: Array<{id:string, categories:Array<{id:string, items:ItemData[]}>}> = JSON.parse((window as any).__MENU_DATA || '[]');
 
 // Build lookup
-const itemLookup = new Map<string, {name:string, price:number, ingredients:string[]}>();
+const itemLookup = new Map<string, ItemData>();
 MENU_DATA.forEach(s => s.categories.forEach(c => c.items.forEach(i => itemLookup.set(i.id, i))));
 
 // ---- State ----
@@ -900,6 +956,7 @@ interface CartEntry {
   removed: string[];
   added: string[];
   note: string;
+  sizeLabel: string;
 }
 
 let cart: CartEntry[] = [];
@@ -943,6 +1000,7 @@ document.querySelectorAll<HTMLElement>('.menu-card').forEach(card => {
   let tempQty = 1;
   let tempRemoved: Set<string> = new Set();
   let tempAdded: string[] = [];
+  let tempSizeIdx = 0;
 
   function renderChips() {
     const container = expandPanel.querySelector('.ingredient-chips')!;
@@ -980,9 +1038,14 @@ document.querySelectorAll<HTMLElement>('.menu-card').forEach(card => {
     tempQty = 1;
     tempRemoved = new Set();
     tempAdded = [];
+    tempSizeIdx = 0;
     expandPanel.classList.add('open');
     card.classList.add('expanding');
     renderChips();
+    // Reset size selector
+    expandPanel.querySelectorAll('.size-option').forEach((btn, i) => {
+      btn.classList.toggle('selected', i === 0);
+    });
     const qtyEl = expandPanel.querySelector(`.qty-val[data-id="${itemId}"]`) as HTMLElement;
     if (qtyEl) qtyEl.textContent = '1';
     const noteInput = expandPanel.querySelector('.item-note-input') as HTMLInputElement;
@@ -993,6 +1056,15 @@ document.querySelectorAll<HTMLElement>('.menu-card').forEach(card => {
       setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 150);
     });
   }
+
+  // Size option click handlers
+  expandPanel.querySelectorAll<HTMLElement>('.size-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      tempSizeIdx = parseInt(btn.dataset.sizeIdx || '0');
+      expandPanel.querySelectorAll('.size-option').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
 
   addBtn?.addEventListener('click', (e) => { e.stopPropagation(); openExpand(); });
   card.querySelector('.menu-card-main')?.addEventListener('click', () => openExpand());
@@ -1022,14 +1094,17 @@ document.querySelectorAll<HTMLElement>('.menu-card').forEach(card => {
 
   expandPanel.querySelector('.confirm-add-btn')?.addEventListener('click', () => {
     const noteInput = expandPanel.querySelector('.item-note-input') as HTMLInputElement;
+    const hasSizes = itemData?.sizes && itemData.sizes.length > 1;
+    const selectedSize = hasSizes ? itemData!.sizes![tempSizeIdx] : null;
     const entry: CartEntry = {
       id: itemId + '_' + Date.now(),
       name: itemData?.name || itemId,
-      price: itemData?.price || 0,
+      price: selectedSize ? selectedSize.price : (itemData?.price || 0),
       qty: tempQty,
       removed: Array.from(tempRemoved),
       added: [...tempAdded],
       note: noteInput?.value?.trim() || '',
+      sizeLabel: selectedSize ? selectedSize.label : '',
     };
 
     // On first item, if no order mode set, ask table or delivery
@@ -1093,7 +1168,7 @@ function updateCartUI() {
       if (entry.added.length) modsHtml += (modsHtml ? ', ' : '') + entry.added.map(a => `<span class="mod-add">+ ${a}</span>`).join(', ');
       return `<div class="cart-item" data-idx="${idx}">
         <div class="cart-item-info">
-          <div class="cart-item-name">${entry.name}</div>
+          <div class="cart-item-name">${entry.name}${entry.sizeLabel ? ` <span style="font-weight:500;color:var(--text-muted);font-size:0.82rem;">(${entry.sizeLabel})</span>` : ''}</div>
           ${modsHtml ? `<div class="cart-item-mods">${modsHtml}</div>` : ''}
           ${entry.note ? `<div class="cart-item-note">"${entry.note}"</div>` : ''}
         </div>
@@ -1186,7 +1261,8 @@ cartSendBtn.addEventListener('click', () => {
 
   let msg = `${header}\n\n*Articoli:*\n`;
   cart.forEach(entry => {
-    msg += `\u2022 ${entry.name} x${entry.qty} \u2014 ${formatPrice(entry.price * entry.qty)}`;
+    const sizeInfo = entry.sizeLabel ? ` (${entry.sizeLabel})` : '';
+    msg += `\u2022 ${entry.name}${sizeInfo} x${entry.qty} \u2014 ${formatPrice(entry.price * entry.qty)}`;
     const mods: string[] = [];
     if (entry.removed.length) mods.push('SENZA: ' + entry.removed.join(', '));
     if (entry.added.length) mods.push('CON: ' + entry.added.join(', '));
