@@ -29,25 +29,6 @@ const menuDataJSON = JSON.stringify(
   currentPath={`${base}/en/menu/`}
 >
 
-  <div id="table-banner" class="table-banner-new">
-    <div class="container table-banner-inner">
-      <div id="banner-text" class="banner-text">
-        <span id="banner-no-table">Select your table to order via WhatsApp</span>
-        <span id="banner-has-table" class="banner-hidden">Ordering from <strong id="table-name-display"></strong></span>
-      </div>
-      <div class="table-select-wrap">
-        <label for="table-select" class="sr-only">Select table</label>
-        <select id="table-select" class="table-select-input" aria-label="Select your table">
-          <option value="">Table...</option>
-          {Array.from({length: 20}, (_, i) => {
-            const id = `table-${String(i+1).padStart(2,'0')}`;
-            return <option value={id}>Table {String(i+1).padStart(2,'0')}</option>;
-          })}
-        </select>
-      </div>
-    </div>
-  </div>
-
   <section class="hero hero-compact">
     <div class="container">
       <span class="hero-eyebrow">Menu 2026</span>
@@ -177,12 +158,12 @@ const menuDataJSON = JSON.stringify(
     <p class="order-mode-sub">Choose your order mode</p>
     <div class="order-mode-options">
       <button id="mode-table-btn" class="order-mode-option">
-        <span class="order-mode-icon">🪑</span>
+        <span class="order-mode-icon" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--blue-deep)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M5 12V6a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v6"/><path d="M6 12v7"/><path d="M18 12v7"/><path d="M4 19h4"/><path d="M16 19h4"/></svg></span>
         <span class="order-mode-title">Dine in</span>
         <span class="order-mode-desc">Select your table</span>
       </button>
       <button id="mode-delivery-btn" class="order-mode-option">
-        <span class="order-mode-icon">🛵</span>
+        <span class="order-mode-icon" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--blue-deep)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/><path d="M5 18H3V11l2-4h4l3 5h4l2 3v3h-2"/><path d="M9 18h6"/><path d="M14 8V4h-4"/></svg></span>
         <span class="order-mode-title">Delivery</span>
         <span class="order-mode-desc">Enter address and time</span>
       </button>
@@ -239,16 +220,6 @@ const menuDataJSON = JSON.stringify(
 /* Hero compact */
 .hero-compact { padding-block: clamp(2.5rem, 6vw, 4rem); }
 .hero-sub { margin-bottom: 0.5rem; }
-
-/* Table Banner */
-.table-banner-new { background: var(--blue-deep); color: white; padding: 0.65rem 0; }
-.table-banner-inner { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
-.banner-text { font-size: 0.9rem; }
-.banner-hidden { display: none; }
-.table-select-wrap { display: flex; gap: 0.5rem; align-items: center; }
-.table-select-input { padding: 0.45rem 0.75rem; border-radius: var(--radius); border: 2px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: white; font-size: 0.85rem; font-weight: 600; cursor: pointer; min-height: 44px; transition: border-color var(--transition); }
-.table-select-input:hover, .table-select-input:focus { border-color: rgba(255,255,255,0.5); }
-.table-select-input option { color: var(--text); background: var(--white); }
 
 /* Coperto */
 .coperto-bar { background: var(--bg-warm); padding: 0.55rem 1rem; text-align: center; font-size: 0.82rem; color: var(--text-muted); border-bottom: 1px solid var(--slate-xlight); font-weight: 500; }
@@ -466,7 +437,16 @@ const menuDataJSON = JSON.stringify(
 .order-mode-option:hover { border-color: var(--blue-mid); background: var(--blue-xlight); }
 .order-mode-option.selected { border-color: var(--blue-mid); background: var(--blue-xlight); box-shadow: 0 0 0 3px rgba(59,125,216,0.15); }
 .order-mode-option:active { transform: scale(0.97); }
-.order-mode-icon { font-size: 2rem; }
+.order-mode-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--blue-xlight);
+  border-radius: var(--radius-lg);
+  margin-bottom: 0.25rem;
+}
 .order-mode-title { font-weight: 700; font-size: 0.95rem; color: var(--text); }
 .order-mode-desc { font-size: 0.75rem; color: var(--text-muted); text-align: center; }
 .order-mode-form { margin-top: 0.5rem; }
@@ -604,32 +584,17 @@ allTabs.forEach(tab => {
 });
 
 // ---- Table selection ----
-const tableSelect = document.getElementById('table-select') as HTMLSelectElement;
-const bannerNoTable = document.getElementById('banner-no-table')!;
-const bannerHasTable = document.getElementById('banner-has-table')!;
-const tableNameDisplay = document.getElementById('table-name-display')!;
-
 function setTable(id: string | null) {
   tableId = id;
   if (id) {
-    const label = 'Table ' + id.replace('table-', '');
-    bannerNoTable.style.display = 'none';
-    bannerHasTable.style.display = '';
-    bannerHasTable.classList.remove('banner-hidden');
-    tableNameDisplay.textContent = label;
-    tableSelect.value = id;
     const url = new URL(window.location.href);
     url.searchParams.set('table', id);
     window.history.replaceState({}, '', url.toString());
-  } else {
-    bannerNoTable.style.display = '';
-    bannerHasTable.style.display = 'none';
   }
   updateCartUI();
 }
 
 if (tableId) setTable(tableId);
-tableSelect.addEventListener('change', () => setTable(tableSelect.value || null));
 
 // ---- Menu card expand ----
 document.querySelectorAll<HTMLElement>('.menu-card').forEach(card => {
@@ -1006,11 +971,6 @@ modeDeliveryConfirm.addEventListener('click', () => {
     address: deliveryAddressInput.value.trim(),
     time: deliveryTimeInput.value || '',
   };
-  // Update banner to show delivery mode
-  bannerNoTable.style.display = 'none';
-  bannerHasTable.style.display = '';
-  bannerHasTable.classList.remove('banner-hidden');
-  tableNameDisplay.textContent = `Delivery — ${deliveryInfo.name}`;
   finalizePendingEntry();
 });
 
