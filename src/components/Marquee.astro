@@ -1,0 +1,15 @@
+---
+interface Props {
+  lang?: 'it' | 'en';
+}
+const { lang = 'it' } = Astro.props;
+const text = lang === 'it'
+  ? 'FORNO A LEGNA DAL 1959 — OREZZO, VALLE SERIANA — PIZZERIA DI FAMIGLIA — '
+  : 'WOOD-FIRED OVEN SINCE 1959 — OREZZO, VALLE SERIANA — FAMILY PIZZERIA — ';
+---
+
+<div class="marquee-strip" aria-hidden="true">
+  <div class="marquee-track">
+    <span>{text}{text}{text}{text}</span>
+  </div>
+</div>
