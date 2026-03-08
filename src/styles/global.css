@@ -236,10 +236,11 @@ p:last-child { margin-bottom: 0; }
   position: sticky;
   top: 0;
   z-index: var(--z-header);
-  background: rgba(248,250,252,0.92);
+  background: rgba(248,250,252,0.97);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--slate-xlight);
+  isolation: isolate;
 }
 
 .site-header .inner {

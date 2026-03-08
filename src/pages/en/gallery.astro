@@ -19,27 +19,71 @@ const base = '/penzana-del-merel';
 
   <section class="section">
     <div class="container">
-      <div class="gallery-placeholder" role="img" aria-label="Photo gallery coming soon">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="margin:0 auto 1rem; color:var(--stone-light);">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-        </svg>
-        <h2 style="color:var(--stone); font-size:1.3rem; margin-bottom:0.5rem;">Photos coming soon</h2>
-        <p style="max-width:400px; margin:0 auto;">
-          <!-- TODO: Add real photos from the restaurant -->
-          The photo gallery will be updated soon. In the meantime, visit our Facebook page to see the latest photos.
-        </p>
-        <div style="margin-top:1.5rem;">
-          <a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer" class="btn btn-green">View photos on Facebook</a>
-        </div>
+      <div class="gallery-grid">
+
+        <figure class="gallery-item gallery-item-wide reveal">
+          <img src={`${base}/img/trattoria_alpina_historical_photo.png`} alt="Historical photo of the Trattoria Alpina in Orezzo, the original building with water reflection" loading="lazy" />
+          <figcaption>The Trattoria Alpina of Orezzo — the original building, before becoming La Penzana del Merel</figcaption>
+        </figure>
+
+        <figure class="gallery-item reveal">
+          <img src={`${base}/img/general_pizza_overview.png`} alt="Two freshly baked pizzas being served, staff wearing Penzana t-shirt" loading="lazy" />
+          <figcaption>Freshly baked from our wood-fired oven</figcaption>
+        </figure>
+
+        <figure class="gallery-item reveal">
+          <img src={`${base}/img/cucina_tipica.png`} alt="Kitchen scene: cooking traditional Bergamo dishes in large pots" loading="lazy" />
+          <figcaption>In the kitchen — polenta, casoncelli and traditional Bergamo cuisine</figcaption>
+        </figure>
+
+        <figure class="gallery-item gallery-item-wide reveal">
+          <img src={`${base}/img/team_2020.png`} alt="Family and staff group photo with Santa hats, Christmas celebration" loading="lazy" />
+          <figcaption>The family and staff — Christmas celebration</figcaption>
+        </figure>
+
+        <figure class="gallery-item reveal">
+          <img src={`${base}/img/la_penzana_logo.jpg`} alt="La Penzana del Merel logo with blue, teal and gold geometric shapes" loading="lazy" />
+          <figcaption>The Penzana del Merel logo</figcaption>
+        </figure>
+
       </div>
 
-      <div class="grid-3" style="margin-top:3rem; opacity:0.3; pointer-events:none;" aria-hidden="true">
-        {Array.from({ length: 6 }, (_, i) => (
-          <div style="background:var(--stone-xlight); border-radius:var(--radius-lg); aspect-ratio:4/3; display:flex; align-items:center; justify-content:center; color:var(--stone);">
-            <span style="font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;">Photo {i+1}</span>
-          </div>
-        ))}
+      <div style="margin-top:2.5rem; text-align:center;">
+        <a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer" class="btn btn-green">More photos on Facebook</a>
       </div>
     </div>
   </section>
+
 </BaseLayout>
+
+<style>
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+.gallery-item {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-warm);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+}
+.gallery-item:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.gallery-item-wide { grid-column: 1 / -1; }
+.gallery-item img { width: 100%; height: auto; display: block; object-fit: cover; }
+.gallery-item-wide img { max-height: 420px; }
+.gallery-item figcaption {
+  padding: 0.85rem 1rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+@media (max-width: 600px) {
+  .gallery-grid { grid-template-columns: 1fr; }
+  .gallery-item-wide img { max-height: 280px; }
+}
+</style>

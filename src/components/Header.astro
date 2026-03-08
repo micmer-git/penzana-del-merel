@@ -80,7 +80,7 @@ const enTarget = currentPath.startsWith(`${base}/en`)
     nav.classList.add('open');
     overlay.classList.add('open');
     toggle.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('scroll-locked');
     if (iconMenu) iconMenu.style.display = 'none';
     if (iconClose) iconClose.style.display = 'block';
   }
@@ -89,7 +89,7 @@ const enTarget = currentPath.startsWith(`${base}/en`)
     nav.classList.remove('open');
     overlay.classList.remove('open');
     toggle.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+    document.body.classList.remove('scroll-locked');
     if (iconMenu) iconMenu.style.display = 'block';
     if (iconClose) iconClose.style.display = 'none';
   }
