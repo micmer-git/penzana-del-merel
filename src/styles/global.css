@@ -53,8 +53,8 @@
   --max-width: 1140px;
 
   /* Type */
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Montserrat', system-ui, -apple-system, sans-serif;
+  --font-body: 'Montserrat', system-ui, -apple-system, sans-serif;
   --font-script: 'Sacramento', cursive;
   --font-subline: 'Montserrat', sans-serif;
 
@@ -240,7 +240,7 @@ p:last-child { margin-bottom: 0; }
   left: 0;
   right: 0;
   z-index: var(--z-header);
-  background: transparent;
+  background: var(--blue-deep);
   border-bottom: none;
   isolation: isolate;
 }
@@ -488,6 +488,69 @@ nav.main-nav a[aria-current] {
   .nav-lang a.active { color: rgba(16,30,143,0.65); background: transparent; }
 }
 
+
+body.home-onepager {
+  overflow: hidden;
+}
+body.home-onepager main {
+  height: 100svh;
+  overflow: hidden;
+}
+body.home-onepager .site-footer {
+  display: none;
+}
+
+.home-hero {
+  min-height: calc(100svh - clamp(60px, 10vh, 90px));
+}
+.hero-bg-slider {
+  transition: background-image 0.8s var(--ease-out);
+}
+.hero-home-copy {
+  min-height: 1px;
+}
+.home-marquee-fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+}
+.hero-booking-badge {
+  cursor: pointer;
+}
+.hero-booking-badge span {
+  color: var(--blue-deep);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: clamp(0.95rem, 2vw, 1.45rem);
+  font-weight: 800;
+  text-align: center;
+  max-width: 75%;
+  line-height: 1.25;
+}
+.reservation-form {
+  display: grid;
+  gap: 0.75rem;
+}
+.reservation-form label {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.reservation-form input,
+.reservation-form textarea {
+  width: 100%;
+  border: 1px solid var(--slate-xlight);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.7rem;
+  font: inherit;
+}
+
 /* ---- Animations ---- */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(24px); }
@@ -664,8 +727,11 @@ nav.main-nav a[aria-current] {
 .marquee-track {
   display: flex;
   white-space: nowrap;
-  animation: marqueeScroll 25s linear infinite;
+  animation: marqueeScroll 18s linear infinite;
   will-change: transform;
+}
+.marquee-track > span {
+  flex-shrink: 0;
 }
 .marquee-track span {
   color: var(--accent-gold);
@@ -860,15 +926,6 @@ nav.main-nav a[aria-current] {
   box-shadow: var(--shadow-lg);
   display: grid;
   place-items: center;
-}
-.hero-booking-badge a {
-  color: var(--blue-deep);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: clamp(0.95rem, 2vw, 1.45rem);
-  font-weight: 800;
-  text-align: center;
-  max-width: 75%;
 }
 
 .hero-bottom-band {

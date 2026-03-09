@@ -10,7 +10,7 @@ export const SITE = {
   phone: '+39 035 712021',
   email: null,
   facebook: 'https://www.facebook.com/LaPenzanaDelMerel/',
-  instagram: null,
+  instagram: 'https://www.instagram.com/lapenzanadelmerel/?hl=en',
   hours: 'Contattare per orari',
   reservations: 'Telefono',
   founded: 1959,
