@@ -11,6 +11,8 @@ interface Props {
   ogImage?: string;
   pageType?: 'website' | 'restaurant';
   currentPath?: string;
+  bodyClass?: string;
+  mainClass?: string;
 }
 
 const {
@@ -21,6 +23,8 @@ const {
   ogImage = '/og/default.jpg',
   pageType = 'website',
   currentPath = Astro.url.pathname,
+  bodyClass = '',
+  mainClass = '',
 } = Astro.props;
 
 const siteName = 'La Penzana del Merel';
@@ -93,10 +97,10 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
     })} />
   )}
 </head>
-<body>
+<body class={bodyClass}>
   <a href="#main-content" class="sr-only" style="position:fixed;top:0;left:0;z-index:9999;background:var(--accent-gold);padding:0.5rem 1rem;">Skip to content</a>
   <Header lang={lang} currentPath={currentPath} />
-  <main id="main-content">
+  <main id="main-content" class={mainClass}>
     <slot />
   </main>
   <Footer lang={lang} />

@@ -1,7 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Marquee from '../components/Marquee.astro';
+import { WHATSAPP_NUMBER } from '../data/site.js';
 const base = '/penzana-del-merel';
+const bgImages = [
+  `${base}/img/general_pizza_overview.png`,
+  `${base}/img/cucina_tipica.png`,
+  `${base}/img/team_2020.png`,
+  `${base}/img/trattoria_alpina_historical_photo.png`,
+];
 ---
 
 <BaseLayout
@@ -10,177 +17,132 @@ const base = '/penzana-del-merel';
   lang="it"
   pageType="restaurant"
   currentPath={`${base}/`}
+  bodyClass="home-onepager"
 >
+  <section class="hero hero-full home-hero" aria-labelledby="hero-heading">
+    <div
+      class="hero-bg hero-bg-slider"
+      data-hero-slider
+      data-images={JSON.stringify(bgImages)}
+      style={`background-image:url('${bgImages[0]}');`}
+    ></div>
 
-  <!-- Hero — full viewport with background image -->
-  <section class="hero hero-full" aria-labelledby="hero-heading">
-    <div class="hero-bg" style={`background-image:url('${base}/img/general_pizza_overview.png');`}></div>
     <div class="hero-center-mark" aria-hidden="true">
       <span class="hero-script">La Penzana</span>
       <span class="hero-subline">del Merel</span>
     </div>
-    <div class="hero-booking-badge">
-      <a href={`${base}/contatti/`} aria-label="Prenota un tavolo">Prenota un tavolo</a>
-    </div>
-    <div class="container">
-      <span class="hero-eyebrow">Orezzo · Valle Seriana · Bergamo</span>
+
+    <button class="hero-booking-badge" type="button" id="open-booking-modal" aria-label="Prenota un tavolo su WhatsApp">
+      <span>Prenota<br/>un tavolo</span>
+    </button>
+
+    <div class="container hero-home-copy">
       <h1 id="hero-heading" class="hero-title-hidden">La Penzana del Merel</h1>
-      <p>Pizzeria di famiglia nel cuore delle colline bergamasche. Un posto fresco d'estate, rustico nei giorni di festa, genuino ogni sera. Dal 1959.</p>
-      <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
-        <a href={`${base}/menu/`} class="btn btn-primary">Scopri il Menu</a>
-        <a href={`${base}/storia/`} class="btn btn-outline">La nostra storia</a>
-      </div>
     </div>
-    <div class="hero-bottom-band"></div>
   </section>
 
-  <!-- Info strip -->
-  <div class="info-strip" role="region" aria-label="Informazioni rapide">
-    <div class="container">
-      <div class="grid">
-        <div>
-          <div class="item-label">Dal</div>
-          <div class="item-value">1959</div>
+  <div class="home-marquee-fixed">
+    <Marquee lang="it" />
+  </div>
+
+  <div class="modal-overlay" id="booking-modal" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="booking-title">
+      <h2 id="booking-title">Prenota il tuo tavolo</h2>
+      <p>Compila i dettagli e ti apriamo subito il messaggio WhatsApp pronto da inviare.</p>
+
+      <form id="booking-form" class="reservation-form">
+        <label>
+          Nome
+          <input type="text" id="booking-name" required />
+        </label>
+        <label>
+          Numero persone
+          <input type="number" id="booking-guests" min="1" max="20" required />
+        </label>
+        <label>
+          Data
+          <input type="date" id="booking-date" required />
+        </label>
+        <label>
+          Orario
+          <input type="time" id="booking-time" required />
+        </label>
+        <label>
+          Telefono
+          <input type="tel" id="booking-phone" required />
+        </label>
+        <label>
+          Note (opzionale)
+          <textarea id="booking-notes" rows="2" placeholder="Es. tavolo all'aperto, seggiolone..."></textarea>
+        </label>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" id="close-booking-modal">Chiudi</button>
+          <button type="submit" class="btn btn-wa">Invia su WhatsApp</button>
         </div>
-        <div>
-          <div class="item-label">Dove</div>
-          <div class="item-value">Orezzo (BG)</div>
-        </div>
-        <div>
-          <div class="item-label">Telefono</div>
-          <div class="item-value"><a href="tel:+39035712021" style="color:inherit;">035 712021</a></div>
-        </div>
-        <div>
-          <div class="item-label">Specialita</div>
-          <div class="item-value">Pizze al forno a legna</div>
-        </div>
-      </div>
+      </form>
     </div>
   </div>
 
-  <!-- Marquee -->
-  <Marquee lang="it" />
+  <script define:vars={{ whatsappNumber: WHATSAPP_NUMBER }}>
+    const slider = document.querySelector('[data-hero-slider]');
+    const rawImages = slider?.getAttribute('data-images');
+    const images = rawImages ? JSON.parse(rawImages) : [];
+    let index = 0;
 
-  <!-- Perche sceglierci -->
-  <section class="section-sm" style="background:var(--bg-warm);">
-    <div class="container">
-      <div class="grid-3">
-        <div class="feature-card reveal">
-          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c-2-2.67-2-6 0-8 2 2 2 5.33 0 8z"/><path d="M12 12c2-2.67 2-6 0-8-2 2-2 5.33 0 8z"/><path d="M12 12c-3.5 0-6 2-7 5h14c-1-3-3.5-5-7-5z"/><path d="M5 17c0 1 1 3 7 3s7-2 7-3"/></svg></div>
-          <h3 style="font-size:1.1rem; margin-bottom:0.5rem;">Forno a legna</h3>
-          <p style="font-size:0.875rem; color:var(--text-muted);">Pizze cotte nel forno costruito a mano dal maestro pizzaiolo Tarcisio Merelli.</p>
-        </div>
-        <div class="feature-card reveal">
-          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
-          <h3 style="font-size:1.1rem; margin-bottom:0.5rem;">Ingredienti selezionati</h3>
-          <p style="font-size:0.875rem; color:var(--text-muted);">Dalla mozzarella ai funghi porcini, ogni ingrediente e scelto con cura.</p>
-        </div>
-        <div class="feature-card reveal">
-          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-          <h3 style="font-size:1.1rem; margin-bottom:0.5rem;">Famiglia dal 1959</h3>
-          <p style="font-size:0.875rem; color:var(--text-muted);">Tre generazioni di passione bergamasca per la pizza e l'ospitalita.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+    if (slider && images.length > 1) {
+      setInterval(() => {
+        index = (index + 1) % images.length;
+        slider.style.backgroundImage = `url('${images[index]}')`;
+      }, 5000);
+    }
 
-  <!-- Intro -->
-  <section class="section reveal" aria-labelledby="intro-heading">
-    <div class="container">
-      <div class="grid-2" style="align-items:center; gap:3rem;">
-        <div>
-          <span class="kicker" style="color:var(--accent-gold);">La storia</span>
-          <h2 id="intro-heading" style="margin-top:0.5rem;">Un posto dove il tempo rallenta</h2>
-          <hr class="divider" style="margin:1rem 0;" />
-          <p>Sotto il secolare ippocastano, a Orezzo, la famiglia Merelli ha costruito qualcosa di raro: un luogo di genuinita autentica. Calici di rosso, partite a bocce, pizze curate in ogni dettaglio.</p>
-          <p>Quello che un tempo era la "Trattoria Cima Verde" e diventata la Penzana del Merel — il nome richiama le semplici costruzioni in lamiera dove i contadini riponevano gli attrezzi. Un segno di radici.</p>
-          <a href={`${base}/storia/`} class="btn btn-green mt-2">Leggi la storia completa</a>
-        </div>
-        <div>
-          <img src={`${base}/img/cucina_tipica.png`} alt="In cucina — piatti tradizionali bergamaschi" loading="lazy" style="width:100%; border-radius:var(--radius-lg); box-shadow:var(--shadow-md); margin-bottom:1rem;" />
-          <blockquote class="pullquote" style="margin:0;">
-            "Vogliamo cambiare per rimanere noi stessi, rimanere con voi."
-          </blockquote>
-          <p style="margin-top:0.5rem; color:var(--text-muted); font-size:0.875rem;">— La famiglia Merel</p>
-        </div>
-      </div>
-    </div>
-  </section>
+    const modal = document.getElementById('booking-modal');
+    const openBtn = document.getElementById('open-booking-modal');
+    const closeBtn = document.getElementById('close-booking-modal');
+    const form = document.getElementById('booking-form');
 
-  <!-- Menu preview — dark section -->
-  <section class="section section-dark reveal" aria-labelledby="menu-preview-heading">
-    <div class="container">
-      <div class="section-header">
-        <span class="kicker" style="color:var(--accent-gold);">Menu 2026</span>
-        <h2 id="menu-preview-heading">Il nostro menu</h2>
-        <hr class="divider" />
-        <p>Pizze, cucina bergamasca, dolci e carta dei vini. Ogni piatto e curato con ingredienti selezionati.</p>
-      </div>
-      <div class="grid-3">
-        {[
-          { label: 'La Pizzeria', desc: 'Classiche, sfiziose, giocose e focacce — 31 pizze dal forno a legna.', from: 'da 5,50 \u20AC' },
-          { label: 'La Cucina', desc: 'Casoncelli, risotti, grigliate su brace di faggio e dolci caserecci.', from: 'da 4,50 \u20AC' },
-          { label: 'Il Banco', desc: 'Birre alla spina, caffetteria, vini rossi e bianchi selezionati.', from: 'da 1,40 \u20AC' },
-        ].map(cat => (
-          <div class="card card-body">
-            <div class="card-label">{cat.label}</div>
-            <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:0.5rem;">{cat.desc}</p>
-            <div style="font-family:var(--font-display); font-weight:700; color:var(--accent-gold); font-size:1.1rem;">{cat.from}</div>
-          </div>
-        ))}
-      </div>
-      <div class="text-center mt-3">
-        <a href={`${base}/menu/`} class="btn btn-primary">Menu completo + Ordina dal tavolo</a>
-      </div>
-    </div>
-  </section>
+    const openModal = () => {
+      modal?.removeAttribute('hidden');
+      document.body.classList.add('scroll-locked');
+    };
 
-  <!-- Photo strip -->
-  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0;">
-    <div style="overflow:hidden; aspect-ratio:1;"><img src={`${base}/img/general_pizza_overview.png`} alt="" loading="lazy" style="width:100%; height:100%; object-fit:cover;" /></div>
-    <div style="overflow:hidden; aspect-ratio:1;"><img src={`${base}/img/cucina_tipica.png`} alt="" loading="lazy" style="width:100%; height:100%; object-fit:cover;" /></div>
-    <div style="overflow:hidden; aspect-ratio:1;"><img src={`${base}/img/team_2020.png`} alt="" loading="lazy" style="width:100%; height:100%; object-fit:cover;" /></div>
-    <div style="overflow:hidden; aspect-ratio:1;"><img src={`${base}/img/trattoria_alpina_historical_photo.png`} alt="" loading="lazy" style="width:100%; height:100%; object-fit:cover;" /></div>
-  </div>
+    const closeModal = () => {
+      modal?.setAttribute('hidden', '');
+      document.body.classList.remove('scroll-locked');
+    };
 
-  <!-- Territorio teaser -->
-  <section class="section reveal" aria-labelledby="territorio-teaser">
-    <div class="container">
-      <div class="grid-2" style="align-items:center; gap:3rem;">
-        <div style="background:var(--blue-deep); border-radius:var(--radius-lg); padding:2.5rem; color:white;">
-          <span class="kicker" style="color:var(--accent-gold);">Dove siamo</span>
-          <h2 id="territorio-teaser" style="color:white; margin-bottom:1rem;">Valle Seriana,<br/>cuore bergamasco</h2>
-          <p style="color:rgba(255,255,255,0.75);">Orezzo e una piccola frazione di Gazzaniga, sul fianco destro del fiume Serio, a circa 380 metri sul livello del mare e 18 km da Bergamo. Una cornice collinare e rustica, perfetta per staccare dalla citta.</p>
-          <a href={`${base}/territorio/`} class="btn btn-outline mt-2">Scopri il territorio</a>
-        </div>
-        <div>
-          <div class="contact-grid" style="display:grid; gap:1rem;">
-            <div class="contact-item">
-              <div class="contact-item-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-              <div class="contact-item-label">Indirizzo</div>
-              <div class="contact-item-value">Via alla Chiesa, 4</div>
-              <div class="contact-item-note">24025 Orezzo (BG)</div>
-            </div>
-            <div class="contact-item">
-              <div class="contact-item-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-              <div class="contact-item-label">Telefono</div>
-              <div class="contact-item-value"><a href="tel:+39035712021">035 712021</a></div>
-            </div>
-            <div class="contact-item">
-              <div class="contact-item-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-              <div class="contact-item-label">Orari</div>
-              <div class="contact-item-note">Contattare per orari di apertura</div>
-            </div>
-          </div>
-          <div class="mt-2">
-            <a href={`${base}/contatti/`} class="btn btn-green">Come raggiungerci</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    openBtn?.addEventListener('click', openModal);
+    closeBtn?.addEventListener('click', closeModal);
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
 
-  <!-- Bottom marquee -->
-  <Marquee lang="it" />
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = (document.getElementById('booking-name') as HTMLInputElement).value.trim();
+      const guests = (document.getElementById('booking-guests') as HTMLInputElement).value.trim();
+      const date = (document.getElementById('booking-date') as HTMLInputElement).value.trim();
+      const time = (document.getElementById('booking-time') as HTMLInputElement).value.trim();
+      const phone = (document.getElementById('booking-phone') as HTMLInputElement).value.trim();
+      const notes = (document.getElementById('booking-notes') as HTMLTextAreaElement).value.trim();
+
+      const lines = [
+        'Ciao La Penzana del Merel! Vorrei prenotare un tavolo:',
+        `Nome: ${name}`,
+        `Persone: ${guests}`,
+        `Data: ${date}`,
+        `Orario: ${time}`,
+        `Telefono: ${phone}`,
+      ];
+
+      if (notes) lines.push(`Note: ${notes}`);
+
+      const message = encodeURIComponent(lines.join('\n'));
+      window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+      closeModal();
+      form.reset();
+    });
+  </script>
 
 </BaseLayout>
