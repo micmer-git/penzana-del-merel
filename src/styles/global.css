@@ -500,6 +500,18 @@ body.home-onepager .site-footer {
   display: none;
 }
 
+
+.layout-bottom-marquee {
+  width: 100%;
+}
+body.home-onepager .layout-bottom-marquee {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+}
+
 .home-hero {
   min-height: calc(100svh - clamp(60px, 10vh, 90px));
 }
@@ -509,25 +521,23 @@ body.home-onepager .site-footer {
 .hero-home-copy {
   min-height: 1px;
 }
-.home-marquee-fixed {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 60;
-}
 .hero-booking-badge {
   cursor: pointer;
+  text-decoration: none;
 }
-.hero-booking-badge span {
+.circle-text text {
+  fill: var(--blue-deep);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+.circle-center-label {
+  position: absolute;
   color: var(--blue-deep);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: clamp(0.95rem, 2vw, 1.45rem);
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
   font-weight: 800;
-  text-align: center;
-  max-width: 75%;
-  line-height: 1.25;
 }
 .reservation-form {
   display: grid;
@@ -727,7 +737,7 @@ body.home-onepager .site-footer {
 .marquee-track {
   display: flex;
   white-space: nowrap;
-  animation: marqueeScroll 18s linear infinite;
+  animation: marqueeScroll 14s linear infinite;
   will-change: transform;
 }
 .marquee-track > span {
@@ -870,15 +880,16 @@ body.home-onepager .site-footer {
 
 /* ---- Story Quote ---- */
 .pullquote {
-  border-left: 4px solid var(--accent-gold);
+  border-left: 4px solid var(--blue-deep);
   padding: 1.25rem 1.75rem;
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-style: italic;
+  font-family: var(--font-script);
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-style: normal;
   color: var(--blue-deep);
-  background: var(--blue-xlight);
+  background: #ffe45c;
   border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
   margin-block: 2rem;
+  line-height: 1.2;
 }
 
 
@@ -916,7 +927,7 @@ body.home-onepager .site-footer {
 .hero-booking-badge {
   position: absolute;
   right: clamp(1rem, 4vw, 3rem);
-  bottom: clamp(2.5rem, 8vw, 4.5rem);
+  bottom: calc(clamp(3rem, 8vw, 5rem) + clamp(60px, 10vh, 90px));
   z-index: 4;
   width: clamp(140px, 20vw, 220px);
   aspect-ratio: 1;
@@ -926,6 +937,26 @@ body.home-onepager .site-footer {
   box-shadow: var(--shadow-lg);
   display: grid;
   place-items: center;
+}
+.hero-booking-badge .circle-text {
+  width: 92%;
+  height: 92%;
+  animation: spinBadge 14s linear infinite;
+}
+.hero-menu-badge {
+  right: clamp(1rem, 4vw, 3rem);
+  bottom: calc(clamp(12rem, 26vw, 18rem) + clamp(60px, 10vh, 90px));
+  background: var(--blue-deep);
+  border-color: var(--accent-gold);
+}
+.hero-menu-badge .circle-text text,
+.hero-menu-badge .circle-center-label {
+  fill: var(--accent-gold);
+  color: var(--accent-gold);
+}
+@keyframes spinBadge {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .hero-bottom-band {
@@ -1408,4 +1439,25 @@ body.home-onepager .site-footer {
   /* legacy */
 .hero-mountains { display: none; }
   .marquee-track { animation: none; }
+}
+
+
+body:not(.home-onepager) .hero:not(.hero-full) {
+  padding-block: 1.1rem !important;
+  min-height: auto;
+}
+body:not(.home-onepager) .hero:not(.hero-full)::before,
+body:not(.home-onepager) .hero:not(.hero-full)::after,
+body:not(.home-onepager) .hero:not(.hero-full) .hero-bg,
+body:not(.home-onepager) .hero:not(.hero-full) h1,
+body:not(.home-onepager) .hero:not(.hero-full) p {
+  display: none;
+}
+body:not(.home-onepager) .hero:not(.hero-full) .hero-eyebrow {
+  margin: 0;
+  background: #ffe45c;
+  color: var(--blue-deep);
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
 }

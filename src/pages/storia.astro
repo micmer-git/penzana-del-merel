@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Marquee from '../components/Marquee.astro';
 const base = '/penzana-del-merel';
 ---
 
@@ -12,12 +11,10 @@ const base = '/penzana-del-merel';
   currentPath={`${base}/storia/`}
 >
 
-  <section class="hero" aria-labelledby="storia-heading" style="padding-block:clamp(3rem,8vw,5rem);">
+  <section class="hero" style="padding-block:clamp(3rem,8vw,5rem);">
     <div class="container">
       <span class="hero-eyebrow">Storia</span>
-      <h1 id="storia-heading">Le radici del Merel</h1>
-      <p>Dall'acquisizione nel 1936 alla pizzeria di oggi: tre generazioni, un ippocastano centenario e l'orgoglio di restare noi stessi.</p>
-    </div>
+          </div>
   </section>
 
   <section class="section">
@@ -79,6 +76,5 @@ const base = '/penzana-del-merel';
     </div>
   </section>
 
-  <Marquee lang="it" />
 
 </BaseLayout>
