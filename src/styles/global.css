@@ -5,7 +5,7 @@
    full-bleed imagery, clean type, intentional motion.
    =================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=Italianno&family=Josefin+Sans:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=Sacramento&family=Montserrat:wght@400;500;600;700;800&display=swap');
 
 /* ---- Custom Properties ---- */
 :root {
@@ -55,8 +55,8 @@
   /* Type */
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-script: 'Italianno', cursive;
-  --font-subline: 'Josefin Sans', sans-serif;
+  --font-script: 'Sacramento', cursive;
+  --font-subline: 'Montserrat', sans-serif;
 
   /* Motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -594,20 +594,20 @@ nav.main-nav a[aria-current] {
   display: block;
   font-family: var(--font-script);
   font-weight: 400;
-  font-size: clamp(4rem, 12vw, 7.5rem);
-  line-height: 0.85;
-  letter-spacing: 0.01em;
+  font-size: clamp(3.2rem, 10vw, 6.5rem);
+  line-height: 0.95;
+  letter-spacing: 0.02em;
   color: var(--white);
 }
 .hero-subline {
   display: block;
   font-family: var(--font-subline);
-  font-weight: 700;
-  font-size: clamp(1rem, 3.2vw, 2rem);
-  letter-spacing: 0.3em;
+  font-weight: 600;
+  font-size: clamp(0.9rem, 2.8vw, 1.8rem);
+  letter-spacing: 0.35em;
   text-transform: uppercase;
   color: var(--accent-gold);
-  margin-top: 0.35rem;
+  margin-top: 0.4rem;
 }
 .hero-full p {
   max-width: 600px;
@@ -840,8 +840,8 @@ nav.main-nav a[aria-current] {
   text-shadow: 0 8px 26px rgba(15,23,42,0.45);
 }
 .hero-center-mark .hero-script {
-  font-size: clamp(4rem, 12vw, 9rem);
-  line-height: 0.85;
+  font-size: clamp(3.5rem, 11vw, 7.5rem);
+  line-height: 0.95;
 }
 .hero-center-mark .hero-subline {
   font-size: clamp(1.4rem, 3vw, 2.3rem);
