@@ -37,7 +37,7 @@ const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`
 const itPath = currentPath.replace(/^\/penzana-del-merel\/en(\/.*)?$/, '/penzana-del-merel$1').replace(/\/\/$/, '/') || '/penzana-del-merel/';
 const enPath = currentPath.startsWith('/penzana-del-merel/en')
   ? currentPath
-  : currentPath.replace(/^\/penzana-del-merel(\/?.*)$/, '/penzana-del-merel/en$1').replace(/\/\/$/, '/');
+  : currentPath.replace(/^\/penzana-del-merel(\/.*)?$/, '/penzana-del-merel/en$1').replace(/\/\/$/, '/');
 ---
 
 <!DOCTYPE html>
@@ -72,34 +72,34 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
 
   {pageType === 'restaurant' && (
     <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Restaurant",
-      "name": "La Penzana del Merel",
-      "description": "Pizzeria di famiglia nel cuore della Valle Seriana, aperta dal 1959.",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Via alla Chiesa, 4",
-        "addressLocality": "Orezzo",
-        "addressRegion": "BG",
-        "postalCode": "24025",
-        "addressCountry": "IT"
+      '@context': 'https://schema.org',
+      '@type': 'Restaurant',
+      name: 'La Penzana del Merel',
+      description: 'Pizzeria di famiglia nel cuore della Valle Seriana, aperta dal 1959.',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Via alla Chiesa, 4',
+        addressLocality: 'Orezzo',
+        addressRegion: 'BG',
+        postalCode: '24025',
+        addressCountry: 'IT'
       },
-      "telephone": "+39 035 712021",
-      "url": "https://micmer-git.github.io/penzana-del-merel/",
-      "menu": "https://micmer-git.github.io/penzana-del-merel/menu/",
-      "servesCuisine": ["Pizza", "Italian", "Bergamasca"],
-      "acceptsReservations": true,
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": 45.806,
-        "longitude": 9.823
+      telephone: '+39 035 712021',
+      url: 'https://micmer-git.github.io/penzana-del-merel/',
+      menu: 'https://micmer-git.github.io/penzana-del-merel/menu/',
+      servesCuisine: ['Pizza', 'Italian', 'Bergamasca'],
+      acceptsReservations: true,
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 45.806,
+        longitude: 9.823
       },
-      "sameAs": ["https://www.facebook.com/LaPenzanaDelMerel/"]
+      sameAs: ['https://www.facebook.com/LaPenzanaDelMerel/']
     })} />
   )}
 </head>
 <body class={bodyClass}>
-  <a href="#main-content" class="sr-only" style="position:fixed;top:0;left:0;z-index:9999;background:var(--accent-gold);padding:0.5rem 1rem;">Skip to content</a>
+  <a href="#main-content" class="skip-link">Skip to content</a>
   <Header lang={lang} currentPath={currentPath} />
   <main id="main-content" class={mainClass}>
     <slot />
@@ -109,10 +109,9 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
   </div>
   <Footer lang={lang} />
 
-  <!-- Scroll reveal -->
   <script>
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
           observer.unobserve(entry.target);
@@ -120,7 +119,13 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+    const syncScrollState = () => {
+      document.body.classList.toggle('has-scrolled', window.scrollY > 10);
+    };
+    syncScrollState();
+    window.addEventListener('scroll', syncScrollState, { passive: true });
   </script>
 </body>
 </html>

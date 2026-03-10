@@ -9,57 +9,41 @@ const base = '/penzana-del-merel';
   lang="it"
   currentPath={`${base}/galleria/`}
 >
-
-  <section class="hero" style="padding-block:clamp(3rem,8vw,5rem);">
-    <div class="container">
-      <span class="hero-eyebrow">Galleria</span>
-      <h1>Le foto</h1>
-      <p>Le nostre pizze, il locale, l'ippocastano centenario. Un posto autentico, ogni stagione.</p>
+  <section class="page-hero">
+    <div class="container page-hero__inner">
+      <span class="page-hero__eyebrow">Galleria</span>
+      <h1 class="page-hero__title">Pizze, tavoli, legna, luci di sera.</h1>
+      <p class="page-hero__lead">Un piccolo atlante visivo della Penzana: impasti, cucina, famiglia, dettagli del luogo e memoria del locale.</p>
     </div>
   </section>
-
 
   <section class="section">
-    <div class="container">
+    <div class="container gallery-shell" style="max-width:1100px;">
       <div class="gallery-grid">
-
         <figure class="gallery-item gallery-item-wide reveal">
-          <img src={`${base}/img/trattoria_alpina_historical_photo.png`} alt="Foto storica della Trattoria Alpina a Orezzo, l'edificio originale con riflesso nell'acqua" loading="lazy" />
-          <figcaption>La Trattoria Alpina di Orezzo — l'edificio originale, prima di diventare La Penzana del Merel</figcaption>
+          <img src={`${base}/img/trattoria_alpina_historical_photo.png`} alt="La Trattoria Alpina di Orezzo, edificio originario" loading="lazy" />
+          <figcaption>La Trattoria Alpina di Orezzo — l'edificio originale, prima di diventare La Penzana del Merel.</figcaption>
         </figure>
-
         <figure class="gallery-item reveal">
-          <img src={`${base}/img/general_pizza_overview.png`} alt="Due pizze appena sfornate servite al tavolo, staff con maglietta Penzana" loading="lazy" />
-          <figcaption>Pizze appena sfornate dal nostro forno a legna</figcaption>
+          <img src={`${base}/img/general_pizza_overview.png`} alt="Pizze appena sfornate dal forno a legna" loading="lazy" />
+          <figcaption>Pizze appena sfornate dal nostro forno a legna.</figcaption>
         </figure>
-
         <figure class="gallery-item reveal">
-          <img src={`${base}/img/cucina_tipica.png`} alt="Scena dalla cucina: cottura in pentoloni di piatti tradizionali bergamaschi" loading="lazy" />
-          <figcaption>In cucina — polenta, casoncelli e piatti della tradizione bergamasca</figcaption>
+          <img src={`${base}/img/cucina_tipica.png`} alt="Piatti della cucina bergamasca" loading="lazy" />
+          <figcaption>In cucina — polenta, casoncelli e piatti della tradizione bergamasca.</figcaption>
         </figure>
-
         <figure class="gallery-item gallery-item-wide reveal">
-          <img src={`${base}/img/team_2020.png`} alt="Foto di gruppo della famiglia e dello staff con cappellini natalizi" loading="lazy" />
-          <figcaption>La famiglia e lo staff — festa di Natale</figcaption>
+          <img src={`${base}/img/team_2020.png`} alt="La famiglia e lo staff della Penzana" loading="lazy" />
+          <figcaption>La famiglia e lo staff — una foto che racconta atmosfera e continuità.</figcaption>
         </figure>
-
         <figure class="gallery-item reveal">
-          <img src={`${base}/img/la_penzana_logo.jpg`} alt="Logo della Penzana del Merel con forme geometriche blu, turchesi e oro" loading="lazy" />
-          <figcaption>Il logo della Penzana del Merel</figcaption>
+          <img src={`${base}/img/la_penzana_logo.jpg`} alt="Logo della Penzana del Merel" loading="lazy" />
+          <figcaption>Il logo della Penzana del Merel.</figcaption>
         </figure>
-
       </div>
-
-      <div style="margin-top:2.5rem; text-align:center;">
-        <a
-          href="https://www.facebook.com/LaPenzanaDelMerel/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn-green"
-        >Altre foto su Facebook</a>
+      <div class="cta-row">
+        <a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Altre foto su Facebook</a>
       </div>
     </div>
   </section>
-
-
 </BaseLayout>

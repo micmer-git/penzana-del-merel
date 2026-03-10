@@ -1,81 +1,79 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 const base = '/penzana-del-merel';
+const events = [
+  { year: '1936', label: 'Acquisition' },
+  { year: '1959', label: 'Inn opens' },
+  { year: '1989', label: 'Naples finalist' },
+  { year: '1990s', label: 'Pizzeria begins' },
+  { year: 'Today', label: 'Third generation' },
+];
 ---
 
 <BaseLayout
-  title="Our Story — La Penzana del Merel"
-  description="The history of La Penzana del Merel: from the Trattoria Cima Verde in 1959 to today's family pizzeria. Three generations, a century-old chestnut tree, and Bergamo roots."
+  title="Our story — La Penzana del Merel"
+  description="The story of La Penzana del Merel: from the original building and inn to the family pizzeria of today. Bergamo roots, three generations, one hillside memory."
   lang="en"
   currentPath={`${base}/en/history/`}
 >
-
-  <section class="hero" style="padding-block:clamp(3rem,8vw,5rem);">
-    <div class="container">
-      <span class="hero-eyebrow">History</span>
-      <h1>The Roots of Merel</h1>
-      <p>From the 1936 acquisition to today's pizzeria: three generations, a century-old chestnut tree, and the pride of staying true to oneself.</p>
+  <section class="page-hero">
+    <div class="container page-hero__inner">
+      <span class="page-hero__eyebrow">History</span>
+      <h1 class="page-hero__title">A story of ovens, hillside air and a family that stayed.</h1>
+      <p class="page-hero__lead">From the original building to the inn, from Trattoria Cima Verde to today's pizzeria: one continuous line shaped by place, ritual and people.</p>
     </div>
   </section>
 
   <section class="section">
-    <div class="container" style="max-width:780px;">
-
-      <div style="display:flex; gap:0.75rem; margin-bottom:2.5rem; flex-wrap:wrap;">
-        {[
-          { year: '1936', label: 'Acquisition' },
-          { year: '1959', label: 'Inn opens' },
-          { year: '1989', label: 'Naples pizza finalist' },
-          { year: "1990s", label: 'Transformed into pizzeria' },
-          { year: 'Today', label: 'Third generation' },
-        ].map(ev => (
-          <div style="background:var(--bg-warm); border-radius:var(--radius); padding:0.6rem 1rem; border-left:3px solid var(--accent-gold);">
-            <div style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--stone);">{ev.label}</div>
-            <div style="font-family:var(--font-display); font-weight:700; font-size:1.05rem; color:var(--green-deep);">{ev.year}</div>
+    <div class="container" style="display:grid; gap:1.2rem; max-width:960px;">
+      <div class="timeline-pills reveal">
+        {events.map((ev) => (
+          <div class="timeline-pill">
+            <span class="timeline-pill__label">{ev.label}</span>
+            <span class="timeline-pill__year">{ev.year}</span>
           </div>
         ))}
       </div>
 
-      <h2>1936 — The Building</h2>
-      <figure class="storia-img reveal" style="margin-bottom:1.5rem;">
-        <img src={`${base}/img/trattoria_alpina_historical_photo.png`} alt="Historical photo: Orezzo - Trattoria Alpina, the original building with water reflection" loading="lazy" style="width:100%; border-radius:var(--radius-lg); box-shadow:var(--shadow-sm);" />
-        <figcaption style="font-size:0.8rem; color:var(--text-muted); margin-top:0.5rem; font-style:italic;">Orezzo — Trattoria Alpina, the original building</figcaption>
-      </figure>
-      <p>The building was acquired in 1936 by <strong>Alessandro Merelli</strong>. Rented out for a few decades, it remained a reference point in the hamlet of Orezzo.</p>
+      <div class="page-content-shell reveal">
+        <h2>1936 — The building</h2>
+        <figure class="editorial-figure" style="margin:1rem 0 1.25rem;">
+          <img src={`${base}/img/trattoria_alpina_historical_photo.png`} alt="Historic photo of the original building in Orezzo" loading="lazy" />
+          <figcaption>Orezzo — Trattoria Alpina, the original building.</figcaption>
+        </figure>
+        <p>The building is acquired in 1936 by Alessandro Merelli. For a few decades it is rented out, but it remains a recognisable landmark in the village of Orezzo.</p>
+      </div>
 
-      <h2 style="margin-top:2rem;">31 December 1959 — The Inn Opens</h2>
-      <p>On the last day of the year, <strong>Tarcisio</strong>, Alessandro's son, opens the inn as <em>Trattoria Cima Verde</em>. From the very start it stands out for its <strong>genuine character</strong>: a place for relaxed summer afternoons with a glass of red at the counter and bowls under the shade of the century-old <strong>chestnut tree</strong>.</p>
+      <div class="page-content-shell reveal">
+        <h2>31 December 1959 — The inn opens</h2>
+        <p>Tarcisio, Alessandro's son, opens the inn under the name Trattoria Cima Verde. It becomes a place of summer afternoons, glasses of red wine at the counter, bowls and the shade of the century-old chestnut tree.</p>
+        <blockquote class="pullquote">Glasses of red at the counter, bowls under the old chestnut tree. A place where time still had permission to slow down.</blockquote>
+      </div>
 
-      <blockquote class="pullquote">
-        Glasses of red, bowls on the lawn, the shade of the old chestnut. A place where time still had the right to slow down.
-      </blockquote>
+      <div class="page-content-shell reveal">
+        <h2>1989 — Passion for the oven</h2>
+        <p>Tarcisio develops a passion for building food ovens. In 1989 he becomes a finalist at the Naples Centenary of the Margherita pizza, a rare recognition for a craftsman from Bergamo.</p>
+      </div>
 
-      <h2 style="margin-top:2rem;">1989 — A Passion for the Oven</h2>
-      <p>Tarcisio develops a passion for <strong>building bread ovens</strong>. The turning point comes in 1989, when he is a <strong>finalist at the Naples Centenary of the Margherita pizza</strong> — an extraordinary recognition for a craftsman from Bergamo.</p>
+      <div class="page-content-shell reveal">
+        <h2>1990s — La Penzana del Merel</h2>
+        <p>With the help of his son Efrem and daughter-in-law Laura Merla, the inn becomes a pizzeria. The name recalls the simple tin-roofed shelters where farmers stored rakes and pitchforks — an image rooted in local land and labour.</p>
+        <p>From the first years, the pizzas and the setting attract people looking for cool summer evenings, hillside dinners and a genuinely local place.</p>
+        <figure class="editorial-figure" style="margin:1rem 0 1.25rem;">
+          <img src={`${base}/img/general_pizza_overview.png`} alt="Fresh pizzas from the wood-fired oven" loading="lazy" />
+          <figcaption>Pizzas at La Penzana — crafted with care in every detail.</figcaption>
+        </figure>
+      </div>
 
-      <h2 style="margin-top:2rem;">1990s — La Penzana del Merel</h2>
-      <p>With the help of his son <strong>Efrem</strong> and daughter-in-law <strong>Laura Merla</strong>, Tarcisio transforms the inn into a <strong>pizzeria</strong>. The three name it <em>La Penzana del Merel</em> — evoking the simple tin-roofed shelters where local farmers used to store their <em>rastei e furchine</em> (rakes and pitchforks). A name that smells of soil and authentic Bergamo.</p>
-      <p>From the earliest years, their pizzas — crafted with care in every detail — attract many people from Bergamo looking for a cool spot in summer or a rustic hillside setting for festive days and evenings out.</p>
+      <div class="story-quote reveal">
+        <p>"We want to change in order to remain ourselves, and remain with you."</p>
+        <span class="story-quote__cite">The Merel family</span>
+      </div>
 
-      <blockquote class="pullquote">
-        "La Penzana del Merel" — the tin-roofed shelters where farmers kept their rakes and pitchforks. A name rooted in the land.
-      </blockquote>
-
-      <figure class="storia-img reveal" style="margin-top:2rem; margin-bottom:1.5rem;">
-        <img src={`${base}/img/general_pizza_overview.png`} alt="Freshly baked pizzas from the wood-fired oven" loading="lazy" style="width:100%; border-radius:var(--radius-lg); box-shadow:var(--shadow-sm);" />
-        <figcaption style="font-size:0.8rem; color:var(--text-muted); margin-top:0.5rem; font-style:italic;">Penzana pizzas — crafted with care in every detail</figcaption>
-      </figure>
-
-      <h2 style="margin-top:2rem;">Today</h2>
-      <p>Believing that the present is what tomorrow will be history, the family wants to continue this story as positively as they have over the last fifty years.</p>
-      <p style="font-style:italic; font-family:var(--font-display); font-size:1.1rem; color:var(--green-deep);">"We want to change in order to remain ourselves, to remain with you."<br/><span style="font-size:0.85rem; font-style:normal; font-family:var(--font-body); color:var(--stone);">— The Merel family</span></p>
-
-      <div style="margin-top:3rem; display:flex; gap:1rem; flex-wrap:wrap;">
-        <a href={`${base}/en/family/`} class="btn btn-green">The family today</a>
-        <a href={`${base}/en/menu/`} class="btn btn-outline" style="color:var(--green-deep); border-color:var(--stone-xlight);">See the menu</a>
+      <div class="cta-row reveal">
+        <a href={`${base}/en/family/`} class="btn btn-primary">The family today</a>
+        <a href={`${base}/en/menu/`} class="btn btn-outline">See the menu</a>
       </div>
     </div>
   </section>
-
-
 </BaseLayout>

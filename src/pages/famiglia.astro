@@ -1,76 +1,65 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 const base = '/penzana-del-merel';
+const family = [
+  {
+    name: 'Alessandro Merelli',
+    role: 'Il fondatore',
+    text: "Nel 1936 acquisisce l'edificio, gettando la prima pietra di ciò che diventerà un riferimento per Orezzo.",
+  },
+  {
+    name: 'Tarcisio Merelli',
+    role: 'Il maestro pizzaiolo',
+    text: 'Apre la locanda nel 1959, costruisce forni, arriva finalista a Napoli nel 1989 e trasforma la trattoria in pizzeria.',
+  },
+  {
+    name: 'Efrem Merelli',
+    role: 'Seconda generazione',
+    text: 'Affianca il padre nella trasformazione del locale e continua la tradizione con attenzione alla qualità e al cliente.',
+  },
+  {
+    name: 'Laura Merla',
+    role: "Il cuore dell'accoglienza",
+    text: 'Parte integrante della gestione fin dagli inizi della pizzeria, contribuisce a costruire il calore che i clienti ricordano.',
+  },
+];
 ---
 
 <BaseLayout
   title="La famiglia — La Penzana del Merel"
-  description="La famiglia Merelli: Alessandro, Tarcisio, Efrem e Laura. Tre generazioni di passione bergamasca per la pizza, il forno e l'ospitalità autentica."
+  description="Tre generazioni della famiglia Merelli: il fondatore, il maestro pizzaiolo, chi ha fatto crescere il locale e chi lo tiene vivo ogni giorno."
   lang="it"
   currentPath={`${base}/famiglia/`}
 >
-
-  <section class="hero" style="padding-block:clamp(3rem,8vw,5rem);">
-    <div class="container">
-      <span class="hero-eyebrow">Famiglia</span>
-      <h1>I Merelli — La famiglia del Merel</h1>
-      <p>Tre generazioni legate da una stessa passione: un forno, la pizza, e un posto in Valle Seriana dove la gente torna volentieri.</p>
+  <section class="page-hero">
+    <div class="container page-hero__inner">
+      <span class="page-hero__eyebrow">Famiglia</span>
+      <h1 class="page-hero__title">Tre generazioni, un forno, lo stesso modo di accogliere.</h1>
+      <p class="page-hero__lead">La Penzana del Merel non è solo un locale: è una storia di continuità. Persone diverse, stessa idea di cura, luogo e memoria.</p>
     </div>
   </section>
 
   <section class="section">
-    <div class="container" style="max-width:900px;">
-      <div class="grid-2" style="gap:3rem; align-items:start;">
-
-        <div>
-          <h2>Alessandro Merelli</h2>
-          <span class="card-label" style="display:inline-block; margin-bottom:0.5rem;">Il fondatore · 1936</span>
-          <p>Alessandro acquisisce l'edificio nel 1936, posando la prima pietra di quello che diventerà un punto di riferimento per Orezzo e la Valle Seriana. La sua intuizione — riconoscere il potenziale del luogo — è il punto di partenza di tutto.</p>
-        </div>
-
-        <div>
-          <h2>Tarcisio Merelli</h2>
-          <span class="card-label" style="display:inline-block; margin-bottom:0.5rem;">Il maestro pizzaiolo · 1959–oggi</span>
-          <p>Tarcisio inaugura la locanda il 31 dicembre 1959. La sua passione per i forni alimentari lo porta a costruirli lui stesso — e nel 1989 arriva come <strong>finalista al Centenario della pizza Margherita a Napoli</strong>. Un traguardo raro per un pizzaiolo bergamasco, che resta un punto d'orgoglio della famiglia.</p>
-          <p>Negli anni '90 trasforma la trattoria in pizzeria, insieme ai familiari, inventando il nome che porta ancora oggi.</p>
-        </div>
-
-        <div>
-          <h2>Efrem Merelli</h2>
-          <span class="card-label" style="display:inline-block; margin-bottom:0.5rem;">Seconda generazione</span>
-          <p>Figlio di Tarcisio, Efrem affianca il padre nella trasformazione in pizzeria. Porta avanti la tradizione di famiglia con attenzione alla qualita degli ingredienti e alla cura del cliente.</p>
-        </div>
-
-        <div>
-          <h2>Laura Merla</h2>
-          <span class="card-label" style="display:inline-block; margin-bottom:0.5rem;">Il cuore della famiglia</span>
-          <p>Moglie di Efrem, Laura e parte integrante della gestione fin dagli inizi della pizzeria. La sua presenza contribuisce a creare quell'atmosfera di accoglienza genuina che i clienti ricordano.</p>
-        </div>
-
+    <div class="container" style="display:grid; gap:1.2rem; max-width:980px;">
+      <div class="profile-grid">
+        {family.map((member) => (
+          <article class="profile-card reveal">
+            <span class="profile-card__role">{member.role}</span>
+            <h2>{member.name}</h2>
+            <p>{member.text}</p>
+          </article>
+        ))}
       </div>
 
-      <figure class="reveal" style="margin-top:2.5rem;">
-        <img src={`${base}/img/team_2020.png`} alt="Foto di gruppo della famiglia e dello staff con cappellini natalizi" loading="lazy" style="width:100%; border-radius:var(--radius-lg); box-shadow:var(--shadow-sm);" />
-        <figcaption style="font-size:0.8rem; color:var(--text-muted); margin-top:0.5rem; font-style:italic; text-align:center;">La famiglia e lo staff — sempre insieme</figcaption>
-      </figure>
-
-      <blockquote class="pullquote" style="margin-top:3rem;">
-        La famiglia Merelli non ha mai smesso di credere che il luogo contasse quanto la pizza. E forse è proprio per questo che la gente continua a tornare.
-      </blockquote>
-
-      <div style="margin-top:2.5rem; padding:1.5rem; background:var(--bg-warm); border-radius:var(--radius-lg);">
-        <h3 style="margin-bottom:0.75rem;">Una nota editoriale</h3>
-        <p style="color:var(--text-muted); font-size:0.875rem; margin:0;">
-          I dettagli biografici su questa pagina sono tratti dalla fonte primaria del proprietario (menu 2026). Alcuni dettagli potrebbero essere incompleti — contattaci via telefono o Facebook per informazioni aggiornate.
-        </p>
+      <div class="story-quote reveal">
+        <p>La famiglia Merelli non ha mai smesso di credere che il luogo contasse quanto la pizza. Forse è anche per questo che la gente continua a tornare.</p>
+        <span class="story-quote__cite">Nota editoriale</span>
       </div>
 
-      <div style="margin-top:2rem; display:flex; gap:1rem; flex-wrap:wrap;">
-        <a href={`${base}/storia/`} class="btn btn-green">La storia completa</a>
-        <a href={`${base}/contatti/`} class="btn btn-outline" style="color:var(--green-deep); border-color:var(--stone-xlight);">Contattaci</a>
+      <div class="cta-row reveal">
+        <a href={`${base}/storia/`} class="btn btn-primary">La storia completa</a>
+        <a href={`${base}/contatti/`} class="btn btn-outline">Contattaci</a>
       </div>
     </div>
   </section>
-
-
 </BaseLayout>
