@@ -10,10 +10,10 @@
 /* ---- Custom Properties ---- */
 :root {
   /* Primary — Alpine Blue */
-  --blue-deep: #101e8f;
-  --blue-mid: #1933c5;
-  --blue-light: #7cb8e4;
-  --blue-xlight: #dceefb;
+  --blue-deep: #8f0f2f;
+  --blue-mid: #c2184f;
+  --blue-light: #f27ba7;
+  --blue-xlight: #fde2ec;
 
   /* Neutrals */
   --slate: #64748b;
@@ -25,8 +25,8 @@
   --text-muted: #475569;
 
   /* Accents */
-  --accent-gold: #f6d400;
-  --accent-gold-hover: #e2be00;
+  --accent-gold: #f7b8cd;
+  --accent-gold-hover: #ec9db8;
   --accent-amber: #f59e0b;
   --wa-green: #25d366;
   --wa-green-hover: #1fa855;
@@ -264,6 +264,13 @@ p:last-child { margin-bottom: 0; }
   justify-content: space-between;
   padding-block: 0.75rem;
   gap: 1rem;
+}
+
+.nav-actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .site-logo {
@@ -902,7 +909,7 @@ body.home-onepager .layout-bottom-marquee {
   border-left: none;
   border: 2px solid var(--blue-deep);
   padding: 1.5rem 2rem;
-  font-family: var(--font-script);
+  font-family: var(--font-subline);
   font-size: clamp(1.6rem, 3.5vw, 2.4rem);
   font-style: normal;
   color: var(--blue-deep);
