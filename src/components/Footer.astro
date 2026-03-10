@@ -48,13 +48,14 @@ const menuPath = lang === 'it' ? `${base}/menu/` : `${base}/en/menu/`;
   <div class="container">
     <div class="footer-inner">
       <div>
-        <div class="footer-brand">La Penzana del Merel</div>
-        <p style="font-size:0.85rem; margin-bottom:0.75rem;">{c.tagline}</p>
-        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
+        <div class="footer-brand">La Penzana</div>
+        <span class="footer-brand-sub">del Merel · Orezzo</span>
+        <p style="font-size:0.85rem; margin-bottom:1rem; line-height:1.6; color:rgba(255,255,255,0.5);">{c.tagline}</p>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
           <a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer"
-             style="color:rgba(255,255,255,0.6); font-size:0.8rem; text-decoration:underline;">Facebook</a>
+             style="color:rgba(255,255,255,0.5); font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; font-weight:600; transition:color 0.2s;">Facebook</a>
           <a href={waLink} target="_blank" rel="noopener noreferrer"
-             style="color:#25d366; font-size:0.8rem; text-decoration:underline;">{c.waLabel}</a>
+             style="color:var(--accent-gold); font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; font-weight:600; transition:color 0.2s;">{c.waLabel}</a>
         </div>
       </div>
 
