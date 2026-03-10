@@ -5,7 +5,7 @@ const base = '/penzana-del-merel';
 const startYear = 1989;
 const now = new Date();
 const currentYear = now.getFullYear();
-const pizzasPerWeek = 200;
+const pizzasPerWeek = 300;
 const pizzaDiameterCm = 33;
 
 const weeksSinceStart = Math.floor((now.getTime() - new Date(startYear, 0, 1).getTime()) / (1000 * 60 * 60 * 24 * 7));
@@ -16,17 +16,26 @@ const annualKm = (52 * pizzasPerWeek * pizzaDiameterCm) / 100000;
 const napoliDistanceKm = 800;
 const yearsToNapoli = Math.ceil((napoliDistanceKm - totalKm) / annualKm);
 const etaNapoli = currentYear + Math.max(0, yearsToNapoli);
-const trackMaxKm = 1000;
-const progressPct = Math.min((totalKm / trackMaxKm) * 100, 100);
+const trackMaxKm = 900;
 
+// Milestones along the actual Orezzo → Napoli route (A4 → A1 autostrada)
 const milestones = [
-  { km: 0, label: 'La Penzana (Orezzo)', desc: 'Dove tutto è iniziato nel 1989', icon: '🏠' },
-  { km: 3, label: 'Gazzaniga', desc: 'La conquista della valle', icon: '⛰️' },
-  { km: 42.2, label: 'La Maratona della Pizza', desc: '42 km ininterrotti di impasto', icon: '🏃' },
-  { km: 75, label: 'Piazza del Duomo, Milano', desc: 'Sotto lo sguardo della Madonnina', icon: '🏛️' },
-  { km: 250, label: 'Venezia', desc: 'Attraverso la Pianura Padana', icon: '🛶' },
-  { km: 500, label: 'Roma — Il Colosseo', desc: 'Mezzo migliaio di chilometri', icon: '🏟️' },
-  { km: 800, label: 'Napoli', desc: 'La patria della pizza — obiettivo simbolico', icon: '🌋', isTarget: true },
+  { km: 0, label: 'La Penzana (Orezzo)', desc: 'Dove tutto è iniziato: forno acceso, impasto pronto, il viaggio ha inizio.', icon: '🏠', year: 1989, fun: 'Pizza numero uno: probabilmente bruciata. Ma con amore.' },
+  { km: 3, label: 'Gazzaniga', desc: 'Tre chilometri di pizza. Il profumo arriva già in paese.', icon: '⛰️', year: Math.round(startYear + 3 / annualKm), fun: 'La valle intera sa che stasera è pizza.' },
+  { km: 12, label: 'Bergamo — Città Alta', desc: 'Le mura venete conquistate, impasto dopo impasto.', icon: '🏰', year: Math.round(startYear + 12 / annualKm), fun: 'Una pizza larga quanto Piazza Vecchia? Ci siamo quasi.' },
+  { km: 42.2, label: 'La Maratona della Pizza', desc: '42,195 km di impasto steso. Una maratona senza scarpe, solo farina.', icon: '🏃', year: Math.round(startYear + 42.2 / annualKm), fun: 'Kipchoge fa i 42 km in 2 ore. Noi ci abbiamo messo qualche anno.' },
+  { km: 60, label: 'Milano — Il Duomo', desc: 'Sotto lo sguardo della Madonnina, il filo d\'oro brilla.', icon: '🏛️', year: Math.round(startYear + 60 / annualKm), fun: 'Milano chiede: "Ma è gourmet?" Noi: "È buona."' },
+  { km: 130, label: 'Piacenza', desc: 'Dove l\'Emilia inizia. Terra di salumi, tortelli, e rispetto per l\'impasto.', icon: '🧀', year: Math.round(startYear + 130 / annualKm), fun: 'Piacenza approva: la pizza con lo stracchino funziona.' },
+  { km: 180, label: 'Parma', desc: 'Parmigiano e prosciutto: ingredienti che parlano da soli.', icon: '🍖', year: Math.round(startYear + 180 / annualKm), fun: 'Verdi componeva opere. Noi componiamo pizze. Stessa passione.' },
+  { km: 260, label: 'Bologna — Le Due Torri', desc: 'La dotta, la grassa, la rossa. Il filo d\'oro attraversa il cuore d\'Italia.', icon: '🏗️', year: Math.round(startYear + 260 / annualKm), fun: 'Bologna ha i tortellini. Noi abbiamo la Diavola. Pace fatta.' },
+  { km: 360, label: 'Firenze — Ponte Vecchio', desc: 'Rinascimento e pizza: due eccellenze italiane che non passano mai di moda.', icon: '🎨', year: Math.round(startYear + 360 / annualKm), fun: 'Leonardo avrebbe inventato una macchina per stendere l\'impasto.' },
+  { km: 430, label: 'Siena — Piazza del Campo', desc: 'A metà del Palio, il filo d\'oro attraversa le contrade.', icon: '🐎', year: Math.round(startYear + 430 / annualKm), fun: 'Il Palio dura 90 secondi. Una pizza lievita 24 ore. Chi vince?' },
+  { km: 500, label: 'Orvieto', desc: 'Mezzo migliaio di chilometri. La cattedrale ci guarda dall\'alto.', icon: '⛪', year: Math.round(startYear + 500 / annualKm), fun: '500 km = 1.515.151 pizze. Più o meno.' },
+  { km: 560, label: 'Roma — Il Colosseo', desc: 'Tutti i fili portano a Roma. Il Colosseo ha visto gladiatori, noi sforniamo pizze.', icon: '🏟️', year: Math.round(startYear + 560 / annualKm), fun: '"Pollice su" diceva il pubblico. Anche per la nostra Margherita.' },
+  { km: 650, label: 'Cassino — Abbazia di Montecassino', desc: 'Tra storia e spiritualità, il filo d\'oro prosegue verso sud.', icon: '📿', year: Math.round(startYear + 650 / annualKm), fun: 'I monaci facevano il pane. Noi facciamo la pizza. Evoluzione.' },
+  { km: 720, label: 'Caserta — La Reggia', desc: 'Il palazzo dei re. La pizza è democratica: uguale per tutti.', icon: '👑', year: Math.round(startYear + 720 / annualKm), fun: 'La Reggia ha 1.200 stanze. Noi abbiamo 1 forno. Basta e avanza.' },
+  { km: 780, label: 'Aversa', desc: 'L\'ultima tappa prima di Napoli. La tensione sale, l\'impasto lievita.', icon: '🔥', year: Math.round(startYear + 780 / annualKm), fun: 'Si sente già il profumo del Vesuvio. O è il nostro forno?' },
+  { km: 800, label: 'Napoli — Via dei Tribunali', desc: 'La patria della pizza. Il filo d\'oro ha raggiunto casa.', icon: '🌋', isTarget: true, year: Math.round(startYear + 800 / annualKm), fun: 'Tarcisio aveva ragione. Ce l\'abbiamo fatta.' },
 ];
 ---
 
@@ -99,6 +108,9 @@ const milestones = [
           <span class="pz-journey__km-value" id="journey-km-value">0</span>
           <span class="pz-journey__km-label">km</span>
         </div>
+        <div class="pz-journey__year-display" id="journey-year-display">
+          <span class="pz-journey__year-value" id="journey-year-value">{startYear}</span>
+        </div>
       </div>
 
       <!-- Milestone cards (right content) -->
@@ -107,15 +119,20 @@ const milestones = [
           <article
             class={`pz-milestone ${m.isTarget ? 'pz-milestone--target' : ''}`}
             data-km={m.km}
+            data-year={m.year}
             data-index={i}
           >
             <div class="pz-milestone__icon">{m.icon}</div>
             <div class="pz-milestone__content">
-              <span class="pz-milestone__km">{m.km} km</span>
+              <div class="pz-milestone__meta">
+                <span class="pz-milestone__km">{m.km} km</span>
+                <span class="pz-milestone__year-tag">~{m.year}</span>
+              </div>
               <h3 class="pz-milestone__title">{m.label}</h3>
               <p class="pz-milestone__desc">{m.desc}</p>
+              <p class="pz-milestone__fun">{m.fun}</p>
               {m.km <= totalKm ? (
-                <span class="pz-milestone__badge pz-milestone__badge--reached">Raggiunto</span>
+                <span class="pz-milestone__badge pz-milestone__badge--reached">✓ Raggiunto</span>
               ) : (
                 <span class="pz-milestone__badge pz-milestone__badge--future">In arrivo</span>
               )}
@@ -124,7 +141,7 @@ const milestones = [
         ))}
 
         <!-- ETA card -->
-        <article class="pz-milestone pz-milestone--eta" data-km={trackMaxKm} data-index={milestones.length}>
+        <article class="pz-milestone pz-milestone--eta" data-km={trackMaxKm} data-year={etaNapoli} data-index={milestones.length}>
           <div class="pz-milestone__icon">🎯</div>
           <div class="pz-milestone__content">
             <span class="pz-milestone__km">Stima arrivo Napoli</span>
@@ -133,6 +150,7 @@ const milestones = [
               Con {annualKm.toFixed(2).replace('.', ',')} km/anno, mancano {Math.max(0, (napoliDistanceKm - totalKm)).toFixed(1).replace('.', ',')} km.
               Il filo d'oro continua a srotolarsi.
             </p>
+            <p class="pz-milestone__fun">Ogni pizza che ordini accorcia il viaggio di 33 cm. Fai la tua parte.</p>
           </div>
         </article>
       </div>
@@ -320,7 +338,7 @@ const milestones = [
       position: sticky;
       top: 50%;
       transform: translateY(-50%);
-      height: 300px;
+      height: 340px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -375,6 +393,18 @@ const milestones = [
       color: rgba(255,255,255,0.4);
     }
 
+    .pz-journey__year-display {
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+    .pz-journey__year-value {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.6);
+    }
+
     /* Milestone cards (right) */
     .pz-journey__milestones {
       display: flex;
@@ -386,7 +416,6 @@ const milestones = [
       display: flex;
       gap: 1.25rem;
       padding: clamp(1.25rem, 3vw, 2rem);
-      border-radius: var(--radius-lg);
       border-left: 4px solid transparent;
       background: rgba(255,255,255,0.03);
       backdrop-filter: blur(8px);
@@ -394,11 +423,13 @@ const milestones = [
       opacity: 0;
       transform: translateY(40px) translateX(20px);
       transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out), border-color 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+      border-radius: 0;
+      border: 1px solid rgba(255,255,255,0.06);
     }
     .pz-milestone.is-active {
       opacity: 1;
       transform: translateY(0) translateX(0);
-      border-left-color: var(--accent-gold);
+      border-left: 4px solid var(--accent-gold);
       background: rgba(255,255,255,0.06);
     }
 
@@ -416,6 +447,12 @@ const milestones = [
       flex: 1;
       min-width: 0;
     }
+    .pz-milestone__meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.3rem;
+    }
     .pz-milestone__km {
       display: inline-block;
       font-family: var(--font-subline);
@@ -424,7 +461,13 @@ const milestones = [
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--accent-gold);
-      margin-bottom: 0.3rem;
+    }
+    .pz-milestone__year-tag {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.05em;
     }
     .pz-milestone__title {
       font-family: var(--font-display);
@@ -438,7 +481,15 @@ const milestones = [
       font-size: 0.95rem;
       color: rgba(255,255,255,0.6);
       line-height: 1.6;
+      margin-bottom: 0.3rem;
+    }
+    .pz-milestone__fun {
+      font-family: var(--font-script);
+      font-size: 1.2rem;
+      color: var(--accent-gold);
+      line-height: 1.3;
       margin-bottom: 0.6rem;
+      opacity: 0.85;
     }
     .pz-milestone__badge {
       display: inline-block;
@@ -447,15 +498,18 @@ const milestones = [
       letter-spacing: 0.08em;
       text-transform: uppercase;
       padding: 0.2rem 0.6rem;
-      border-radius: 999px;
+      border-radius: 0;
+      font-family: var(--font-subline);
     }
     .pz-milestone__badge--reached {
       background: rgba(22,163,74,0.2);
       color: #4ade80;
+      border: 1px solid rgba(22,163,74,0.3);
     }
     .pz-milestone__badge--future {
       background: rgba(246,212,0,0.1);
       color: var(--accent-gold);
+      border: 1px solid rgba(246,212,0,0.2);
     }
 
     /* Target milestone (Napoli) glow */
@@ -484,14 +538,14 @@ const milestones = [
       background: var(--accent-gold);
       color: var(--blue-deep);
       padding: 0.8rem 1.5rem;
-      border-radius: 999px;
+      border: 2px solid var(--blue-deep);
       font-size: 0.9rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 0.5rem;
       z-index: var(--z-modal);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      box-shadow: 6px 6px 0 var(--blue-deep);
       transition: transform 0.5s var(--ease-spring);
       white-space: nowrap;
     }
@@ -511,7 +565,7 @@ const milestones = [
         gap: 1rem;
       }
       .pz-journey__tracker {
-        height: 200px;
+        height: 240px;
       }
       .pz-journey__line {
         width: 3px;
@@ -522,6 +576,9 @@ const milestones = [
         height: 32px;
       }
       .pz-journey__km-display {
+        display: none;
+      }
+      .pz-journey__year-display {
         display: none;
       }
       .pz-milestone {
@@ -580,26 +637,38 @@ const milestones = [
         requestAnimationFrame(animateCounter);
       }
 
-      // ---- SCROLLTRIGGER: MILESTONE REVEAL ----
+      // ---- SCROLLTRIGGER: MILESTONE REVEAL + YEAR ANIMATION ----
       if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
 
-        // Reveal milestones
-        const milestones = document.querySelectorAll('.pz-milestone');
-        milestones.forEach((el) => {
-          ScrollTrigger.create({
-            trigger: el,
-            start: 'top 80%',
-            onEnter: () => el.classList.add('is-active'),
+        // Gather milestone data for year interpolation
+        var milestoneEls = document.querySelectorAll('.pz-milestone');
+        var milestoneData = [];
+        milestoneEls.forEach(function(el) {
+          milestoneData.push({
+            km: parseFloat(el.dataset.km) || 0,
+            year: parseInt(el.dataset.year) || 1989
           });
         });
 
-        // Journey progress tracker
-        const journeySection = document.querySelector('.pz-journey');
-        const lineFill = document.getElementById('journey-line-fill');
-        const pizza = document.getElementById('journey-pizza');
-        const kmValue = document.getElementById('journey-km-value');
-        const maxKm = 1000;
+        // Reveal milestones
+        milestoneEls.forEach(function(el) {
+          ScrollTrigger.create({
+            trigger: el,
+            start: 'top 80%',
+            onEnter: function() { el.classList.add('is-active'); },
+          });
+        });
+
+        // Journey progress tracker with year
+        var journeySection = document.querySelector('.pz-journey');
+        var lineFill = document.getElementById('journey-line-fill');
+        var pizza = document.getElementById('journey-pizza');
+        var kmValue = document.getElementById('journey-km-value');
+        var yearValue = document.getElementById('journey-year-value');
+        var maxKm = 900;
+        var startYr = 1989;
+        var kmPerYear = (52 * 300 * 33) / 100000;
 
         if (journeySection && lineFill && pizza && kmValue) {
           ScrollTrigger.create({
@@ -607,45 +676,55 @@ const milestones = [
             start: 'top top',
             end: 'bottom bottom',
             scrub: 1,
-            onUpdate: (self) => {
-              const pct = self.progress * 100;
+            onUpdate: function(self) {
+              var pct = self.progress * 100;
               lineFill.style.height = pct + '%';
               pizza.style.top = pct + '%';
 
               // Map scroll progress to km
-              const currentKm = Math.round(self.progress * maxKm);
+              var currentKm = Math.round(self.progress * maxKm);
               kmValue.textContent = currentKm;
+
+              // Map km to year
+              if (yearValue) {
+                var year = Math.round(startYr + currentKm / kmPerYear);
+                yearValue.textContent = year;
+              }
+
+              // Rotate pizza with scroll
+              var rotation = self.progress * 720;
+              pizza.style.transform = 'translate(-50%, -50%) rotate(' + rotation + 'deg)';
             },
           });
         }
       }
 
       // ---- POST-ORDER TOAST ----
-      const params = new URLSearchParams(window.location.search);
-      const addedPizzas = parseInt(params.get('addedPizzas'), 10);
+      var params = new URLSearchParams(window.location.search);
+      var addedPizzas = parseInt(params.get('addedPizzas'), 10);
       if (addedPizzas > 0) {
-        const toast = document.getElementById('pz-toast');
-        const toastText = document.getElementById('pz-toast-text');
+        var toast = document.getElementById('pz-toast');
+        var toastText = document.getElementById('pz-toast-text');
         if (toast && toastText) {
-          const addedMeters = (addedPizzas * 33 / 100).toFixed(1).replace('.', ',');
+          var addedMeters = (addedPizzas * 33 / 100).toFixed(1).replace('.', ',');
           toastText.textContent = '+' + addedPizzas + ' pizze ordinate! Il filo d\u2019oro cresce di ' + addedMeters + ' m';
           toast.removeAttribute('hidden');
 
           // Animate counter from (total - added) to total
           if (counterEl) {
-            const totalTarget = parseFloat(counterEl.dataset.target);
-            const addedKm = (addedPizzas * 33) / 100000;
-            const fromKm = totalTarget - addedKm;
+            var totalTarget = parseFloat(counterEl.dataset.target);
+            var addedKm = (addedPizzas * 33) / 100000;
+            var fromKm = totalTarget - addedKm;
             counterEl.textContent = fromKm.toFixed(1).replace('.', ',');
 
-            setTimeout(() => {
-              const dur = 1500;
-              const s = performance.now();
+            setTimeout(function() {
+              var dur = 1500;
+              var s = performance.now();
               function recount(now) {
-                const elapsed = now - s;
-                const p = Math.min(elapsed / dur, 1);
-                const eased = 1 - Math.pow(1 - p, 3);
-                const val = (fromKm + eased * addedKm).toFixed(1).replace('.', ',');
+                var elapsed = now - s;
+                var p = Math.min(elapsed / dur, 1);
+                var eased = 1 - Math.pow(1 - p, 3);
+                var val = (fromKm + eased * addedKm).toFixed(1).replace('.', ',');
                 counterEl.textContent = val;
                 if (p < 1) requestAnimationFrame(recount);
               }
@@ -654,17 +733,34 @@ const milestones = [
           }
 
           // Show toast
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
               toast.classList.add('is-visible');
             });
           });
 
-          // Auto-dismiss
-          setTimeout(() => {
+          // Auto-dismiss and open WhatsApp if stored
+          setTimeout(function() {
             toast.classList.remove('is-visible');
-            setTimeout(() => { toast.setAttribute('hidden', ''); }, 600);
-          }, 8000);
+            setTimeout(function() {
+              toast.setAttribute('hidden', '');
+              // Open stored WhatsApp URL from menu order
+              var storedWaUrl = sessionStorage.getItem('pz_wa_url');
+              if (storedWaUrl) {
+                sessionStorage.removeItem('pz_wa_url');
+                var a = document.createElement('a');
+                a.href = storedWaUrl;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.style.position = 'fixed';
+                a.style.opacity = '0';
+                a.style.pointerEvents = 'none';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(function() { a.remove(); }, 200);
+              }
+            }, 600);
+          }, 5000);
         }
       }
     });

@@ -88,11 +88,12 @@ const menuDataJSON = JSON.stringify(
               )}
               {category.items.map(item => {
                 const sizes = (item as any).sizes;
+                const noCustomize = (item as any).noCustomize;
                 const priceDisplay = sizes && sizes.length > 1
                   ? `\u20AC${Math.min(...sizes.map(s => s.price)).toFixed(2)} – \u20AC${Math.max(...sizes.map(s => s.price)).toFixed(2)}`
                   : `\u20AC${item.price.toFixed(2)}`;
                 return (
-                <div class="menu-card" data-item-id={item.id} data-item-name={item.nameEN} data-item-price={item.price} data-item-desc={item.descEN || ''} data-has-sizes={sizes ? 'true' : undefined}>
+                <div class="menu-card" data-item-id={item.id} data-item-name={item.nameEN} data-item-price={item.price} data-item-desc={item.descEN || ''} data-has-sizes={sizes ? 'true' : undefined} data-no-customize={noCustomize ? 'true' : undefined}>
                   <div class="menu-card-main">
                     <div class="menu-card-info">
                       <div class="menu-card-name">{item.nameEN}</div>
@@ -122,13 +123,17 @@ const menuDataJSON = JSON.stringify(
                           </div>
                         </div>
                       )}
-                      <div class="ingredient-chips"></div>
-                      <div class="expand-input-row">
-                        <input type="text" class="add-ingredient-input expand-input" placeholder="+ add ingredient..." aria-label={`Add ingredient to ${item.nameEN}`} />
-                      </div>
-                      <div class="expand-input-row">
-                        <input type="text" class="item-note-input expand-input expand-input-full" placeholder="Notes (e.g. well done, no lactose...)" aria-label={`Notes for ${item.nameEN}`} />
-                      </div>
+                      {!noCustomize && (
+                        <Fragment>
+                          <div class="ingredient-chips"></div>
+                          <div class="expand-input-row">
+                            <input type="text" class="add-ingredient-input expand-input" placeholder="+ add ingredient..." aria-label={`Add ingredient to ${item.nameEN}`} />
+                          </div>
+                          <div class="expand-input-row">
+                            <input type="text" class="item-note-input expand-input expand-input-full" placeholder="Notes (e.g. well done, no lactose...)" aria-label={`Notes for ${item.nameEN}`} />
+                          </div>
+                        </Fragment>
+                      )}
                       <div class="expand-actions">
                         <div class="qty-row">
                           <button class="qty-btn-new qty-dec" data-id={item.id} aria-label="Remove">&#8722;</button>
@@ -960,17 +965,30 @@ cartSendBtn.addEventListener('click', () => {
 
   const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 
-  // Must append to DOM for mobile Safari/Chrome to follow the click
-  const a = document.createElement('a');
-  a.href = waUrl;
-  a.target = '_blank';
-  a.rel = 'noopener noreferrer';
-  a.style.position = 'fixed';
-  a.style.opacity = '0';
-  a.style.pointerEvents = 'none';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => a.remove(), 200);
+  // Count pizza items for pizzameter
+  const pizzaCount = cart.reduce((sum, e) => {
+    const isPizza = document.querySelector(`.menu-card[data-item-id="${e.id.split('_')[0]}"]`)
+      ?.closest('[data-section="pizzeria"]') !== null;
+    return sum + (isPizza ? e.qty : 0);
+  }, 0);
+
+  // Store WhatsApp URL and redirect to pizzameter first
+  if (pizzaCount > 0) {
+    sessionStorage.setItem('pz_wa_url', waUrl);
+    window.location.href = `${base}/en/pizzameter/?addedPizzas=${pizzaCount}`;
+  } else {
+    // No pizzas, just open WhatsApp directly
+    const a = document.createElement('a');
+    a.href = waUrl;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.style.position = 'fixed';
+    a.style.opacity = '0';
+    a.style.pointerEvents = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => a.remove(), 200);
+  }
 });
 
 // ---- Order Mode Modal ----
