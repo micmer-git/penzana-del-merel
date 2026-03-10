@@ -5,56 +5,45 @@ const base = '/penzana-del-merel';
 
 <BaseLayout
   title="Gallery — La Penzana del Merel"
-  description="Photo gallery of La Penzana del Merel: pizzas, the restaurant, the century-old chestnut tree. A genuine and rustic place in the heart of Valle Seriana."
+  description="Photo gallery of La Penzana del Merel: pizzas, restaurant, family and place. A genuine hillside pizzeria in Valle Seriana."
   lang="en"
   currentPath={`${base}/en/gallery/`}
 >
-
-  <section class="hero" style="padding-block:clamp(3rem,8vw,5rem);">
-    <div class="container">
-      <span class="hero-eyebrow">Gallery</span>
-      <h1>Photos</h1>
-      <p>Our pizzas, the restaurant, the century-old chestnut tree. A genuine place, every season.</p>
+  <section class="page-hero">
+    <div class="container page-hero__inner">
+      <span class="page-hero__eyebrow">Gallery</span>
+      <h1 class="page-hero__title">Pizzas, tables, wood-fire, evening light.</h1>
+      <p class="page-hero__lead">A small visual atlas of La Penzana: dough, kitchen, family, place and memory.</p>
     </div>
   </section>
-
 
   <section class="section">
-    <div class="container">
+    <div class="container gallery-shell" style="max-width:1100px;">
       <div class="gallery-grid">
-
         <figure class="gallery-item gallery-item-wide reveal">
-          <img src={`${base}/img/trattoria_alpina_historical_photo.png`} alt="Historical photo of the Trattoria Alpina in Orezzo, the original building with water reflection" loading="lazy" />
-          <figcaption>The Trattoria Alpina of Orezzo — the original building, before becoming La Penzana del Merel</figcaption>
+          <img src={`${base}/img/trattoria_alpina_historical_photo.png`} alt="Historic Trattoria Alpina building in Orezzo" loading="lazy" />
+          <figcaption>The Trattoria Alpina of Orezzo — the original building before becoming La Penzana del Merel.</figcaption>
         </figure>
-
         <figure class="gallery-item reveal">
-          <img src={`${base}/img/general_pizza_overview.png`} alt="Two freshly baked pizzas being served, staff wearing Penzana t-shirt" loading="lazy" />
-          <figcaption>Freshly baked from our wood-fired oven</figcaption>
+          <img src={`${base}/img/general_pizza_overview.png`} alt="Fresh pizzas from the wood-fired oven" loading="lazy" />
+          <figcaption>Freshly baked pizzas from our wood-fired oven.</figcaption>
         </figure>
-
         <figure class="gallery-item reveal">
-          <img src={`${base}/img/cucina_tipica.png`} alt="Kitchen scene: cooking traditional Bergamo dishes in large pots" loading="lazy" />
-          <figcaption>In the kitchen — polenta, casoncelli and traditional Bergamo cuisine</figcaption>
+          <img src={`${base}/img/cucina_tipica.png`} alt="Bergamo dishes in the kitchen" loading="lazy" />
+          <figcaption>In the kitchen — polenta, casoncelli and Bergamo classics.</figcaption>
         </figure>
-
         <figure class="gallery-item gallery-item-wide reveal">
-          <img src={`${base}/img/team_2020.png`} alt="Family and staff group photo with Santa hats, Christmas celebration" loading="lazy" />
-          <figcaption>The family and staff — Christmas celebration</figcaption>
+          <img src={`${base}/img/team_2020.png`} alt="Family and staff of La Penzana del Merel" loading="lazy" />
+          <figcaption>The family and the staff — a picture of continuity and atmosphere.</figcaption>
         </figure>
-
         <figure class="gallery-item reveal">
-          <img src={`${base}/img/la_penzana_logo.jpg`} alt="La Penzana del Merel logo with blue, teal and gold geometric shapes" loading="lazy" />
-          <figcaption>The Penzana del Merel logo</figcaption>
+          <img src={`${base}/img/la_penzana_logo.jpg`} alt="La Penzana del Merel logo" loading="lazy" />
+          <figcaption>The La Penzana del Merel logo.</figcaption>
         </figure>
-
       </div>
-
-      <div style="margin-top:2.5rem; text-align:center;">
-        <a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer" class="btn btn-green">More photos on Facebook</a>
+      <div class="cta-row">
+        <a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">More photos on Facebook</a>
       </div>
     </div>
   </section>
-
-
 </BaseLayout>
