@@ -1,63 +1,65 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 const base = '/penzana-del-merel';
+const family = [
+  {
+    name: 'Alessandro Merelli',
+    role: 'The founder',
+    text: 'In 1936 he acquires the building, laying the first stone of what becomes a local landmark in Orezzo.',
+  },
+  {
+    name: 'Tarcisio Merelli',
+    role: 'Master pizza maker',
+    text: 'He opens the inn in 1959, builds ovens, becomes a finalist in Naples in 1989 and later turns the inn into a pizzeria.',
+  },
+  {
+    name: 'Efrem Merelli',
+    role: 'Second generation',
+    text: 'He supports his father in shaping the pizzeria and carries the tradition forward with care for ingredients and guests.',
+  },
+  {
+    name: 'Laura Merla',
+    role: 'The heart of hospitality',
+    text: 'Present since the early years of the pizzeria, she helps create the genuine warmth customers still remember.',
+  },
+];
 ---
 
 <BaseLayout
-  title="The Family — La Penzana del Merel"
-  description="The Merelli family: Alessandro, Tarcisio, Efrem, and Laura. Three generations of Bergamo passion for pizza, the oven, and genuine hospitality."
+  title="The family — La Penzana del Merel"
+  description="Three generations of the Merelli family: the founder, the pizza maker, the people who grew the place and still keep it alive today."
   lang="en"
   currentPath={`${base}/en/family/`}
 >
-  <section class="hero" style="padding-block:clamp(3rem,8vw,5rem);">
-    <div class="container">
-      <span class="hero-eyebrow">Family</span>
-      <h1>The Merelli Family</h1>
-      <p>Three generations united by one passion: an oven, a pizza, and a place in Valle Seriana where people keep coming back.</p>
+  <section class="page-hero">
+    <div class="container page-hero__inner">
+      <span class="page-hero__eyebrow">Family</span>
+      <h1 class="page-hero__title">Three generations, one oven, the same way of welcoming people.</h1>
+      <p class="page-hero__lead">La Penzana del Merel is not just a venue. It is continuity: different people, one shared idea of care, memory and place.</p>
     </div>
   </section>
 
   <section class="section">
-    <div class="container" style="max-width:900px;">
-      <div class="grid-2" style="gap:3rem; align-items:start;">
-        <div>
-          <h2>Alessandro Merelli</h2>
-          <span class="card-label" style="display:inline-block; margin-bottom:0.5rem;">The founder · 1936</span>
-          <p>Alessandro acquired the building in 1936, laying the first stone of what would become a landmark for Orezzo and the Valle Seriana. His intuition — recognising the potential of the place — is where everything began.</p>
-        </div>
-        <div>
-          <h2>Tarcisio Merelli</h2>
-          <span class="card-label" style="display:inline-block; margin-bottom:0.5rem;">Master pizza maker · 1959–present</span>
-          <p>Tarcisio opens the inn on 31 December 1959. His passion for bread ovens leads him to build them himself — and in 1989 he reaches the <strong>final of the Naples Centenary of the Margherita pizza</strong>. A rare achievement for a Bergamo craftsman, still a point of pride for the family.</p>
-          <p>In the 1990s he transforms the inn into a pizzeria, together with his family, inventing the name still used today.</p>
-        </div>
-        <div>
-          <h2>Efrem Merelli</h2>
-          <span class="card-label" style="display:inline-block; margin-bottom:0.5rem;">Second generation</span>
-          <p>Tarcisio's son, Efrem supports his father in the transformation into a pizzeria. He carries on the family tradition with careful attention to ingredient quality and customer care.</p>
-        </div>
-        <div>
-          <h2>Laura Merla</h2>
-          <span class="card-label" style="display:inline-block; margin-bottom:0.5rem;">The heart of the family</span>
-          <p>Efrem's wife, Laura has been an integral part of running the place since the pizzeria's early days. Her presence contributes to the genuine warmth that customers remember.</p>
-        </div>
+    <div class="container" style="display:grid; gap:1.2rem; max-width:980px;">
+      <div class="profile-grid">
+        {family.map((member) => (
+          <article class="profile-card reveal">
+            <span class="profile-card__role">{member.role}</span>
+            <h2>{member.name}</h2>
+            <p>{member.text}</p>
+          </article>
+        ))}
       </div>
 
-      <figure class="reveal" style="margin-top:2.5rem;">
-        <img src={`${base}/img/team_2020.png`} alt="Family and staff group photo with Santa hats" loading="lazy" style="width:100%; border-radius:var(--radius-lg); box-shadow:var(--shadow-sm);" />
-        <figcaption style="font-size:0.8rem; color:var(--text-muted); margin-top:0.5rem; font-style:italic; text-align:center;">The family and staff — always together</figcaption>
-      </figure>
+      <div class="story-quote reveal">
+        <p>The Merelli family never stopped believing that the place mattered as much as the pizza. That may be one reason people keep coming back.</p>
+        <span class="story-quote__cite">Editorial note</span>
+      </div>
 
-      <blockquote class="pullquote" style="margin-top:3rem;">
-        The Merelli family never stopped believing that the place mattered as much as the pizza. And perhaps that is why people keep coming back.
-      </blockquote>
-
-      <div style="margin-top:2rem; display:flex; gap:1rem; flex-wrap:wrap;">
-        <a href={`${base}/en/history/`} class="btn btn-green">Full history</a>
-        <a href={`${base}/en/contact/`} class="btn btn-outline" style="color:var(--green-deep); border-color:var(--stone-xlight);">Contact us</a>
+      <div class="cta-row reveal">
+        <a href={`${base}/en/history/`} class="btn btn-primary">Full history</a>
+        <a href={`${base}/en/contact/`} class="btn btn-outline">Contact us</a>
       </div>
     </div>
   </section>
-
-
 </BaseLayout>

@@ -1,8 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#1a3c28"/>
-  <!-- Stylized pizza/oven arc -->
-  <circle cx="32" cy="34" r="18" fill="#c4993b" opacity="0.9"/>
-  <circle cx="32" cy="34" r="14" fill="#1a3c28"/>
-  <!-- P letter -->
-  <text x="32" y="42" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="700" fill="#f7f3ee">P</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="18" fill="#15253f"/>
+  <circle cx="32" cy="32" r="20" fill="#fff7ec"/>
+  <path d="M19 32c8-12 18-16 26-12 4 2 6 6 6 12-10 0-21 0-32 0z" fill="#d7ab57"/>
+  <path d="M19 32h32" stroke="#15253f" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="26" cy="27" r="2.4" fill="#cf7e42"/>
+  <circle cx="35" cy="24" r="2.1" fill="#cf7e42"/>
+  <circle cx="40" cy="31" r="1.9" fill="#2e8a58"/>
 </svg>

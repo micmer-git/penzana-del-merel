@@ -1,77 +1,92 @@
 ---
 import { WHATSAPP_NUMBER } from '../data/site.js';
+
 interface Props {
   lang: 'it' | 'en';
 }
+
 const { lang } = Astro.props;
 const base = '/penzana-del-merel';
 const year = new Date().getFullYear();
 const waLink = `https://wa.me/${WHATSAPP_NUMBER}`;
+const menuPath = lang === 'it' ? `${base}/menu/` : `${base}/en/menu/`;
 
 const t = {
   it: {
-    info: 'Informazioni',
+    kicker: 'Forno a legna · Orezzo',
+    tagline: 'Pizzeria di famiglia nel cuore della Valle Seriana, tra sera buona, collina e tradizione.',
+    explore: 'Esplora',
+    visit: 'Visita',
+    socials: 'Contatti rapidi',
     links: [
       { href: `${base}/storia/`, label: 'La nostra storia' },
       { href: `${base}/famiglia/`, label: 'La famiglia' },
-      { href: `${base}/menu/`, label: 'Menu' },
-      { href: `${base}/contatti/`, label: 'Contatti' },
+      { href: `${base}/territorio/`, label: 'Il territorio' },
+      { href: `${base}/galleria/`, label: 'Galleria' },
     ],
-    address: 'Via alla Chiesa, 4 — 24025 Orezzo (BG)',
-    phone: '+39 035 712021',
-    credits: `\u00A9 ${year} La Penzana del Merel. Tutti i diritti riservati.`,
-    tagline: 'Pizzeria di famiglia nel cuore della Valle Seriana, dal 1959.',
-    orderLabel: 'Ordina dal tavolo',
-    waLabel: 'Scrivici su WhatsApp',
+    visitItems: ['Via alla Chiesa, 4 — 24025 Orezzo (BG)', 'A circa 18 km da Bergamo', 'Ordini dal tavolo via QR + WhatsApp'],
+    call: 'Chiama',
+    whatsapp: 'WhatsApp',
+    menu: 'Menu completo',
+    credits: `© ${year} La Penzana del Merel. Tutti i diritti riservati.`,
   },
   en: {
-    info: 'Information',
+    kicker: 'Wood-fired oven · Orezzo',
+    tagline: 'A family pizzeria in the heart of Valle Seriana, shaped by hillside air, ritual and tradition.',
+    explore: 'Explore',
+    visit: 'Visit',
+    socials: 'Quick contacts',
     links: [
-      { href: `${base}/en/history/`, label: 'Our Story' },
-      { href: `${base}/en/family/`, label: 'The Family' },
-      { href: `${base}/en/menu/`, label: 'Menu' },
-      { href: `${base}/en/contact/`, label: 'Contact' },
+      { href: `${base}/en/history/`, label: 'Our story' },
+      { href: `${base}/en/family/`, label: 'The family' },
+      { href: `${base}/en/area/`, label: 'The area' },
+      { href: `${base}/en/gallery/`, label: 'Gallery' },
     ],
-    address: 'Via alla Chiesa, 4 — 24025 Orezzo (BG), Italy',
-    phone: '+39 035 712021',
-    credits: `\u00A9 ${year} La Penzana del Merel. All rights reserved.`,
-    tagline: 'A family pizzeria in the heart of Valle Seriana, since 1959.',
-    orderLabel: 'Order from table',
-    waLabel: 'Message us on WhatsApp',
+    visitItems: ['Via alla Chiesa, 4 — 24025 Orezzo (BG), Italy', 'Around 18 km from Bergamo', 'Table ordering via QR + WhatsApp'],
+    call: 'Call',
+    whatsapp: 'WhatsApp',
+    menu: 'Full menu',
+    credits: `© ${year} La Penzana del Merel. All rights reserved.`,
   },
 };
 const c = t[lang];
-const menuPath = lang === 'it' ? `${base}/menu/` : `${base}/en/menu/`;
 ---
 
 <footer class="site-footer" role="contentinfo">
   <div class="container">
-    <div class="footer-inner">
-      <div>
+    <div class="footer-shell">
+      <div class="footer-brand-block">
+        <span class="footer-kicker">{c.kicker}</span>
         <div class="footer-brand">La Penzana del Merel</div>
-        <p style="font-size:0.85rem; margin-bottom:0.75rem;">{c.tagline}</p>
-        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
-          <a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer"
-             style="color:rgba(255,255,255,0.6); font-size:0.8rem; text-decoration:underline;">Facebook</a>
-          <a href={waLink} target="_blank" rel="noopener noreferrer"
-             style="color:#25d366; font-size:0.8rem; text-decoration:underline;">{c.waLabel}</a>
+        <p class="footer-tagline">{c.tagline}</p>
+        <div class="footer-cta-row">
+          <a class="footer-chip" href="tel:+39035712021">{c.call} · 035 712021</a>
+          <a class="footer-chip" href={waLink} target="_blank" rel="noopener noreferrer">{c.whatsapp}</a>
+          <a class="footer-chip" href={menuPath}>{c.menu}</a>
         </div>
       </div>
 
       <div>
-        <div class="footer-heading">{c.info}</div>
+        <div class="footer-heading">{c.explore}</div>
         <ul class="footer-links">
-          {c.links.map(l => <li><a href={l.href}>{l.label}</a></li>)}
-          <li><a href={menuPath} style="color:#25d366;">{c.orderLabel}</a></li>
+          {c.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
         </ul>
       </div>
 
       <div>
-        <div class="footer-heading">Contatti</div>
-        <p style="font-size:0.85rem; line-height:1.6;">
-          {c.address}<br />
-          <a href={`tel:${c.phone.replace(/\s/g,'')}`} style="color:rgba(255,255,255,0.7);">{c.phone}</a>
-        </p>
+        <div class="footer-heading">{c.visit}</div>
+        <ul class="footer-links">
+          {c.visitItems.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-heading">{c.socials}</div>
+        <ul class="footer-links">
+          <li><a href="https://www.facebook.com/LaPenzanaDelMerel/" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+          <li><a href="https://www.instagram.com/lapenzanadelmerel/?hl=en" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+          <li><a href={menuPath}>{lang === 'it' ? 'Ordina dal tavolo' : 'Order from table'}</a></li>
+        </ul>
       </div>
     </div>
     <div class="footer-copy">{c.credits}</div>

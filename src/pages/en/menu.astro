@@ -30,11 +30,16 @@ const menuDataJSON = JSON.stringify(
   currentPath={`${base}/en/menu/`}
 >
 
-  <section class="hero hero-compact">
+  <section class="hero hero-compact menu-hero">
     <div class="container">
       <span class="hero-eyebrow">Menu 2026</span>
       <h1>Our Menu</h1>
-      <p class="hero-sub">Wood-fired pizzas, Bergamo cuisine, wine list.</p>
+      <p class="hero-sub">Wood-fired pizzas, Bergamo dishes, wine list and WhatsApp ordering from your table.</p>
+      <div class="menu-hero-meta">
+        <span>Order from table</span>
+        <span>Delivery available</span>
+        <span>Cleaner and calmer flow</span>
+      </div>
     </div>
   </section>
 
@@ -218,7 +223,10 @@ const menuDataJSON = JSON.stringify(
   <div id="cart-overlay" class="cart-overlay" aria-hidden="true"></div>
   <div id="cart-drawer" class="cart-drawer" role="dialog" aria-label="Cart" aria-hidden="true">
     <div class="cart-drawer-header">
-      <h3>Your Order</h3>
+      <div class="cart-drawer-header-copy">
+        <h3>Your Order</h3>
+        <p id="cart-order-context" class="cart-order-context">Choose table or delivery before sending</p>
+      </div>
       <button id="cart-close" class="cart-close" aria-label="Close cart">&times;</button>
     </div>
     <div id="cart-items" class="cart-items">
@@ -615,7 +623,173 @@ const menuDataJSON = JSON.stringify(
 @media (min-width: 600px) {
   .cart-drawer { max-width: 460px; left: auto; right: 0; }
 }
+
+
+/* ---- 2026 refinement overrides ---- */
+.menu-hero .container { display:grid; gap:1rem; }
+.menu-hero-meta { margin-top:0.1rem; }
+.menu-card {
+  border-radius: 22px;
+  border: 1px solid rgba(33, 26, 23, 0.08);
+  background: linear-gradient(180deg, rgba(255,250,243,0.96), rgba(247,238,227,0.94));
+  box-shadow: var(--shadow-sm);
+  padding: 1rem 1.05rem;
+}
+.menu-card:hover,
+.menu-card.expanding {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-left-color: rgba(40,74,118,0.35);
+}
+.menu-card.in-cart {
+  background: linear-gradient(180deg, rgba(21,37,63,0.96), rgba(25,46,78,0.96));
+  box-shadow: 0 18px 36px rgba(21,37,63,0.28);
+  transform: translateY(-2px);
+}
+.add-btn,
+.confirm-add-btn,
+.order-mode-confirm {
+  border-radius: 999px;
+  box-shadow: none;
+}
+.add-btn:hover,
+.confirm-add-btn:hover,
+.order-mode-confirm:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-xs);
+}
+.order-mode-overlay {
+  background: rgba(21, 37, 63, 0.52);
+  backdrop-filter: blur(8px);
+}
+.order-mode-modal {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  inset: auto;
+  width: min(720px, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(255,250,243,0.98), rgba(248,240,228,0.98));
+  border: 1px solid rgba(33,26,23,0.08);
+  box-shadow: var(--shadow-xl);
+  transform: translate(-50%, -48%) scale(0.98);
+  padding: 1.2rem;
+}
+.order-mode-modal.open {
+  transform: translate(-50%, -50%) scale(1);
+}
+.order-mode-head {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:0.8rem;
+}
+.order-mode-kicker {
+  display:inline-flex;
+  width:fit-content;
+  padding:0.32rem 0.7rem;
+  border-radius:999px;
+  background:rgba(40,74,118,0.08);
+  color:var(--blue-mid);
+  font-size:0.72rem;
+  font-weight:700;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  margin-bottom:0.55rem;
+}
+.order-mode-close {
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:1px solid rgba(33,26,23,0.1);
+  background:rgba(255,250,243,0.85);
+  color:var(--blue-deep);
+  font-size:1.5rem;
+  cursor:pointer;
+}
+.order-mode-options { gap:0.85rem; }
+.order-mode-option {
+  border-radius:24px;
+  border:1px solid rgba(33,26,23,0.08);
+  box-shadow:var(--shadow-sm);
+  padding:1.2rem 0.9rem;
+  background:rgba(255,255,255,0.72);
+}
+.order-mode-option:hover,
+.order-mode-option.selected {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.order-mode-form {
+  border-radius:24px;
+  border:1px solid rgba(33,26,23,0.08);
+  box-shadow:none;
+  background:rgba(255,255,255,0.66);
+}
+.order-mode-input {
+  padding:0.78rem 0.2rem;
+}
+.delivery-time-pill {
+  border-radius:999px;
+  border:1px solid rgba(33,26,23,0.12);
+  box-shadow:none;
+  padding:0.5rem 0.75rem;
+}
+.delivery-time-pill:hover,
+.delivery-time-pill.selected {
+  transform:none;
+  background:var(--accent-gold);
+}
+.cart-bar {
+  padding-inline: clamp(0.6rem, 2vw, 1rem);
+  bottom: 0.6rem;
+}
+.cart-bar-inner {
+  border-radius: 999px;
+  background: rgba(21,37,63,0.96);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.cart-drawer {
+  border-radius: 28px 28px 0 0;
+  background: linear-gradient(180deg, rgba(255,250,243,0.99), rgba(247,238,227,0.98));
+}
+.cart-drawer-header {
+  align-items:flex-start;
+  gap:1rem;
+}
+.cart-drawer-header-copy {
+  display:grid;
+  gap:0.2rem;
+}
+.cart-order-context {
+  margin:0;
+  font-size:0.82rem;
+  color:var(--text-muted);
+}
+.cart-close { background: rgba(40,74,118,0.08); }
+@media (max-width: 760px) {
+  .order-mode-modal {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: auto;
+    max-height: 88dvh;
+    border-radius: 28px 28px 0 0;
+    transform: translateY(100%);
+    padding: 1rem;
+  }
+  .order-mode-modal.open {
+    transform: translateY(0);
+  }
+  .order-mode-options { grid-template-columns: 1fr; }
+  .cart-bar { bottom: 0.35rem; }
+}
 </style>
+
 
 <script define:vars={{ waNumber, menuDataJSON }}>
   window.__WA_NUMBER = waNumber;
@@ -824,6 +998,7 @@ const cartOverlay = document.getElementById('cart-overlay')!;
 const cartItemsEl = document.getElementById('cart-items')!;
 const cartTotalPrice = document.getElementById('cart-total-price')!;
 const cartSendBtn = document.getElementById('cart-send-btn') as HTMLButtonElement;
+const cartOrderContext = document.getElementById('cart-order-context') as HTMLElement;
 
 function formatPrice(n: number): string { return '\u20AC' + n.toFixed(2); }
 function totalQty(): number { return cart.reduce((s, e) => s + e.qty, 0); }
@@ -893,6 +1068,13 @@ function updateCartUI() {
 
   cartTotalPrice.textContent = formatPrice(totalPrice());
   cartSendBtn.disabled = cart.length === 0 || (!tableId && !deliveryInfo);
+  if (orderMode === 'delivery' && deliveryInfo) {
+    cartOrderContext.textContent = `Delivery • ${deliveryInfo.name}${deliveryInfo.time ? ' · ' + deliveryInfo.time : ''}`;
+  } else if (tableId) {
+    cartOrderContext.textContent = `Table order • ${tableId.replace('table-', 'Table ')}`;
+  } else {
+    cartOrderContext.textContent = 'Choose table or delivery before sending';
+  }
 
   // Update in-cart marks
   document.querySelectorAll<HTMLElement>('.menu-card').forEach(c => {
@@ -1091,6 +1273,17 @@ orderModeOverlay.addEventListener('click', () => {
   pendingCard = null;
   pendingExpandPanel = null;
   closeOrderModeModal();
+});
+document.getElementById('order-mode-close')?.addEventListener('click', () => {
+  pendingEntry = null;
+  pendingCard = null;
+  pendingExpandPanel = null;
+  closeOrderModeModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && orderModeModal.classList.contains('open')) {
+    closeOrderModeModal();
+  }
 });
 
 // Initial render
