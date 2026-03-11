@@ -83,76 +83,85 @@ const milestones = [
     </div>
   </section>
 
-  <!-- Scrollytelling: sticky tracker + milestone cards -->
+  <!-- Scrollytelling: CENTERED timeline with proportional milestones -->
   <section class="pz-journey" aria-label="Viaggio simbolico da Orezzo a Napoli">
     <div class="pz-journey__container">
 
-      <!-- Sticky left tracker -->
-      <div class="pz-journey__tracker">
-        <div class="pz-journey__line">
-          <div class="pz-journey__line-fill" id="journey-line-fill"></div>
-          <div class="pz-journey__pizza" id="journey-pizza" aria-hidden="true">
-            <svg viewBox="0 0 48 48" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="24" cy="24" r="22" fill="#f6d400" stroke="#101e8f" stroke-width="2"/>
-              <circle cx="16" cy="18" r="3" fill="#dc2626" opacity="0.85"/>
-              <circle cx="28" cy="14" r="2.5" fill="#dc2626" opacity="0.85"/>
-              <circle cx="20" cy="28" r="2.8" fill="#dc2626" opacity="0.85"/>
-              <circle cx="32" cy="26" r="2" fill="#dc2626" opacity="0.85"/>
-              <circle cx="24" cy="22" r="2.2" fill="#16a34a" opacity="0.7"/>
-              <circle cx="14" cy="26" r="1.5" fill="#16a34a" opacity="0.7"/>
-              <circle cx="30" cy="32" r="1.8" fill="#16a34a" opacity="0.7"/>
-            </svg>
-          </div>
+      <!-- Central timeline -->
+      <div class="pz-journey__timeline">
+        <div class="pz-journey__rail">
+          <div class="pz-journey__rail-fill" id="journey-line-fill"></div>
         </div>
-        <div class="pz-journey__km-display" id="journey-km-display">
-          <span class="pz-journey__km-value" id="journey-km-value">0</span>
-          <span class="pz-journey__km-label">km</span>
+        <!-- Pizza slice driver -->
+        <div class="pz-journey__pizza" id="journey-pizza" aria-hidden="true">
+          <svg viewBox="0 0 56 56" width="56" height="56" xmlns="http://www.w3.org/2000/svg">
+            <!-- Pizza slice shape -->
+            <path d="M28 4 L50 46 Q28 52 6 46 Z" fill="#f6d400" stroke="var(--blue-deep)" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Crust arc -->
+            <path d="M6 46 Q28 52 50 46" fill="#e2be00" stroke="var(--blue-deep)" stroke-width="2"/>
+            <!-- Toppings -->
+            <circle cx="24" cy="22" r="3.5" fill="#dc2626" opacity="0.9"/>
+            <circle cx="33" cy="28" r="3" fill="#dc2626" opacity="0.85"/>
+            <circle cx="22" cy="34" r="2.8" fill="#dc2626" opacity="0.85"/>
+            <circle cx="28" cy="16" r="2" fill="#16a34a" opacity="0.7"/>
+            <circle cx="18" cy="28" r="1.8" fill="#16a34a" opacity="0.7"/>
+            <circle cx="34" cy="38" r="2.2" fill="#f5f5dc" opacity="0.6"/>
+          </svg>
         </div>
-        <div class="pz-journey__year-display" id="journey-year-display">
-          <span class="pz-journey__year-value" id="journey-year-value">{startYear}</span>
+        <!-- Floating km/year counter -->
+        <div class="pz-journey__counter-float" id="journey-counter-float">
+          <span class="pz-journey__counter-km" id="journey-km-value">0</span>
+          <span class="pz-journey__counter-label">km</span>
+          <span class="pz-journey__counter-year" id="journey-year-value">{startYear}</span>
         </div>
-      </div>
 
-      <!-- Milestone cards (right content) -->
-      <div class="pz-journey__milestones">
-        {milestones.map((m, i) => (
-          <article
-            class={`pz-milestone ${m.isTarget ? 'pz-milestone--target' : ''}`}
-            data-km={m.km}
-            data-year={m.year}
-            data-index={i}
-          >
-            <div class="pz-milestone__icon">{m.icon}</div>
-            <div class="pz-milestone__content">
-              <div class="pz-milestone__meta">
-                <span class="pz-milestone__km">{m.km} km</span>
-                <span class="pz-milestone__year-tag">~{m.year}</span>
+        <!-- Milestone markers on the rail (proportional positioning) -->
+        {milestones.map((m, i) => {
+          const pct = (m.km / trackMaxKm) * 100;
+          const side = i % 2 === 0 ? 'left' : 'right';
+          return (
+            <div
+              class={`pz-marker pz-marker--${side} ${m.isTarget ? 'pz-marker--target' : ''}`}
+              style={`top: ${pct}%`}
+              data-km={m.km}
+              data-year={m.year}
+              data-index={i}
+            >
+              <div class="pz-marker__dot">
+                <span class="pz-marker__icon">{m.icon}</span>
               </div>
-              <h3 class="pz-milestone__title">{m.label}</h3>
-              <p class="pz-milestone__desc">{m.desc}</p>
-              <p class="pz-milestone__fun">{m.fun}</p>
-              {m.km <= totalKm ? (
-                <span class="pz-milestone__badge pz-milestone__badge--reached">✓ Raggiunto</span>
-              ) : (
-                <span class="pz-milestone__badge pz-milestone__badge--future">In arrivo</span>
-              )}
+              <div class="pz-marker__card">
+                <div class="pz-marker__meta">
+                  <span class="pz-marker__km-tag">{m.km} km</span>
+                  <span class="pz-marker__year-tag">~{m.year}</span>
+                  {m.km <= totalKm ? (
+                    <span class="pz-marker__badge pz-marker__badge--reached">✓</span>
+                  ) : (
+                    <span class="pz-marker__badge pz-marker__badge--future">…</span>
+                  )}
+                </div>
+                <h3 class="pz-marker__title">{m.label}</h3>
+                <p class="pz-marker__desc">{m.desc}</p>
+                <p class="pz-marker__fun">{m.fun}</p>
+              </div>
             </div>
-          </article>
-        ))}
+          );
+        })}
 
-        <!-- ETA card -->
-        <article class="pz-milestone pz-milestone--eta" data-km={trackMaxKm} data-year={etaNapoli} data-index={milestones.length}>
-          <div class="pz-milestone__icon">🎯</div>
-          <div class="pz-milestone__content">
-            <span class="pz-milestone__km">Stima arrivo Napoli</span>
-            <h3 class="pz-milestone__title">Anno {etaNapoli}</h3>
-            <p class="pz-milestone__desc">
-              Con {annualKm.toFixed(2).replace('.', ',')} km/anno, mancano {Math.max(0, (napoliDistanceKm - totalKm)).toFixed(1).replace('.', ',')} km.
-              Il filo d'oro continua a srotolarsi.
+        <!-- ETA marker -->
+        <div class="pz-marker pz-marker--left pz-marker--eta" style={`top: ${(trackMaxKm / trackMaxKm) * 100}%`} data-km={trackMaxKm} data-year={etaNapoli} data-index={milestones.length}>
+          <div class="pz-marker__dot"><span class="pz-marker__icon">🎯</span></div>
+          <div class="pz-marker__card">
+            <div class="pz-marker__meta">
+              <span class="pz-marker__km-tag">Stima arrivo</span>
+              <span class="pz-marker__year-tag">~{etaNapoli}</span>
+            </div>
+            <h3 class="pz-marker__title">Napoli — Anno {etaNapoli}</h3>
+            <p class="pz-marker__desc">
+              Mancano {Math.max(0, (napoliDistanceKm - totalKm)).toFixed(1).replace('.', ',')} km. Ogni pizza accorcia il viaggio di 33 cm.
             </p>
-            <p class="pz-milestone__fun">Ogni pizza che ordini accorcia il viaggio di 33 cm. Fai la tua parte.</p>
           </div>
-        </article>
+        </div>
       </div>
     </div>
   </section>
@@ -176,8 +185,8 @@ const milestones = [
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--blue-deep);
-      color: var(--white);
+      background: var(--bg);
+      color: var(--text);
       position: relative;
       overflow: hidden;
       text-align: center;
@@ -187,8 +196,8 @@ const milestones = [
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse at 50% 20%, rgba(246,212,0,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 80%, rgba(25,51,197,0.15) 0%, transparent 50%);
+        radial-gradient(ellipse at 50% 20%, rgba(220,38,38,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(220,38,38,0.06) 0%, transparent 50%);
       pointer-events: none;
     }
     /* Grain */
@@ -199,7 +208,7 @@ const milestones = [
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
       background-size: 150px;
       pointer-events: none;
-      opacity: 0.25;
+      opacity: 0.15;
     }
 
     .pz-hero__inner {
@@ -216,12 +225,12 @@ const milestones = [
       font-weight: 700;
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: var(--accent-gold);
+      color: #dc2626;
       margin-bottom: 1rem;
     }
 
     .pz-hero__title {
-      color: var(--white);
+      color: #991b1b;
       margin-bottom: 1.5rem;
     }
     .pz-hero__script {
@@ -230,17 +239,18 @@ const milestones = [
       font-size: clamp(3.5rem, 10vw, 7rem);
       line-height: 0.95;
       letter-spacing: 0.02em;
+      color: #991b1b;
     }
 
     .pz-hero__subtitle {
       font-size: 1.1rem;
-      color: rgba(255,255,255,0.7);
+      color: var(--text-muted);
       max-width: 560px;
       margin: 0 auto 2.5rem;
       line-height: 1.7;
     }
     .pz-hero__subtitle em {
-      color: var(--accent-gold);
+      color: #dc2626;
       font-family: var(--font-display);
     }
 
@@ -253,10 +263,10 @@ const milestones = [
       font-family: var(--font-display);
       font-size: clamp(4rem, 12vw, 8rem);
       font-weight: 800;
-      color: var(--accent-gold);
+      color: #dc2626;
       line-height: 1;
       letter-spacing: -0.03em;
-      text-shadow: 0 0 60px rgba(246,212,0,0.3);
+      text-shadow: 0 0 60px rgba(220,38,38,0.15);
     }
     .pz-hero__unit {
       display: block;
@@ -265,7 +275,7 @@ const milestones = [
       font-weight: 600;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
+      color: var(--text-muted);
       margin-top: 0.5rem;
     }
 
@@ -285,7 +295,7 @@ const milestones = [
       font-family: var(--font-display);
       font-size: 1.15rem;
       font-weight: 700;
-      color: var(--white);
+      color: #991b1b;
     }
     .pz-hero__stat-label {
       display: block;
@@ -293,7 +303,7 @@ const milestones = [
       font-weight: 600;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.4);
+      color: var(--text-muted);
       margin-top: 0.2rem;
     }
 
@@ -303,12 +313,16 @@ const milestones = [
       flex-direction: column;
       align-items: center;
       gap: 0.5rem;
-      color: rgba(255,255,255,0.35);
+      color: rgba(220,38,38,0.35);
       font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       animation: pzBounce 2s ease-in-out infinite;
+    }
+    .pz-hero__scroll-hint svg {
+      stroke: #dc2626;
+      opacity: 0.4;
     }
     @keyframes pzBounce {
       0%, 100% { transform: translateY(0); }
@@ -316,10 +330,10 @@ const milestones = [
     }
 
     /* ============================================
-       JOURNEY — Scrollytelling section
+       JOURNEY — Centered Timeline
        ============================================ */
     .pz-journey {
-      background: var(--blue-deep);
+      background: var(--bg);
       position: relative;
       padding-block: clamp(4rem, 10vw, 8rem) clamp(6rem, 15vw, 12rem);
     }
@@ -328,203 +342,242 @@ const milestones = [
       max-width: var(--max-width);
       margin-inline: auto;
       padding-inline: clamp(1.25rem, 5vw, 3rem);
-      display: grid;
-      grid-template-columns: 80px 1fr;
-      gap: clamp(1.5rem, 4vw, 3rem);
     }
 
-    /* Sticky tracker (left) */
-    .pz-journey__tracker {
-      position: sticky;
-      top: 50%;
-      transform: translateY(-50%);
-      height: 340px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 10;
-      align-self: start;
-    }
-
-    .pz-journey__line {
+    /* Central timeline rail */
+    .pz-journey__timeline {
       position: relative;
-      width: 4px;
-      height: 200px;
-      background: rgba(255,255,255,0.12);
-      border-radius: 999px;
-      overflow: hidden;
+      /* Height proportional to km (16px per km unit, scaled) */
+      min-height: 6000px;
     }
-    .pz-journey__line-fill {
+
+    .pz-journey__rail {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: rgba(220,38,38,0.12);
+      transform: translateX(-50%);
+      border-radius: 999px;
+    }
+    .pz-journey__rail-fill {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 0%;
-      background: var(--accent-gold);
+      background: linear-gradient(to bottom, #dc2626, #991b1b);
       border-radius: 999px;
       transition: height 0.1s linear;
     }
 
+    /* Pizza slice driver */
     .pz-journey__pizza {
-      position: absolute;
-      top: 0;
+      position: sticky;
+      top: 50vh;
       left: 50%;
-      transform: translate(-50%, -50%);
-      transition: top 0.1s linear;
-      filter: drop-shadow(0 0 12px rgba(246,212,0,0.4));
+      width: 56px;
+      height: 56px;
+      margin-left: -28px;
+      z-index: 10;
+      filter: drop-shadow(0 4px 16px rgba(220,38,38,0.25));
+      transition: transform 0.1s linear;
+      pointer-events: none;
     }
 
-    .pz-journey__km-display {
-      margin-top: 1rem;
+    /* Floating km/year counter */
+    .pz-journey__counter-float {
+      position: sticky;
+      top: calc(50vh + 70px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: max-content;
       text-align: center;
+      z-index: 10;
+      pointer-events: none;
+      background: var(--bg);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      border: 2px solid #dc2626;
     }
-    .pz-journey__km-value {
-      display: block;
+    .pz-journey__counter-km {
       font-family: var(--font-display);
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: 800;
-      color: var(--accent-gold);
+      color: #dc2626;
     }
-    .pz-journey__km-label {
+    .pz-journey__counter-label {
       font-size: 0.65rem;
       font-weight: 700;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.4);
+      color: var(--text-muted);
+      margin-right: 0.5rem;
     }
-
-    .pz-journey__year-display {
-      margin-top: 0.5rem;
-      text-align: center;
-    }
-    .pz-journey__year-value {
-      display: block;
+    .pz-journey__counter-year {
       font-family: var(--font-display);
-      font-size: 1rem;
+      font-size: 0.85rem;
       font-weight: 700;
-      color: rgba(255,255,255,0.6);
+      color: var(--text-muted);
     }
 
-    /* Milestone cards (right) */
-    .pz-journey__milestones {
+    /* Milestone markers */
+    .pz-marker {
+      position: absolute;
       display: flex;
-      flex-direction: column;
-      gap: clamp(2rem, 5vw, 4rem);
-    }
-
-    .pz-milestone {
-      display: flex;
-      gap: 1.25rem;
-      padding: clamp(1.25rem, 3vw, 2rem);
-      border-left: 4px solid transparent;
-      background: rgba(255,255,255,0.03);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      align-items: flex-start;
+      gap: 1rem;
+      width: 50%;
       opacity: 0;
-      transform: translateY(40px) translateX(20px);
-      transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out), border-color 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
-      border-radius: 0;
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-    .pz-milestone.is-active {
-      opacity: 1;
-      transform: translateY(0) translateX(0);
-      border-left: 4px solid var(--accent-gold);
-      background: rgba(255,255,255,0.06);
+      transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
     }
 
-    .pz-milestone__icon {
-      font-size: 2rem;
+    /* Left-side milestones */
+    .pz-marker--left {
+      right: 50%;
+      padding-right: 2rem;
+      flex-direction: row-reverse;
+      text-align: right;
+      transform: translateX(-30px);
+    }
+    .pz-marker--left.is-visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Right-side milestones */
+    .pz-marker--right {
+      left: 50%;
+      padding-left: 2rem;
+      transform: translateX(30px);
+    }
+    .pz-marker--right.is-visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Dot on the rail */
+    .pz-marker__dot {
       flex-shrink: 0;
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 3px solid #dc2626;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 1.3rem;
+      z-index: 5;
+      transition: background 0.3s, transform 0.3s var(--ease-spring);
+    }
+    .pz-marker.is-visible .pz-marker__dot {
+      background: #fef2f2;
+      transform: scale(1.1);
+    }
+    .pz-marker__icon {
+      line-height: 1;
     }
 
-    .pz-milestone__content {
-      flex: 1;
-      min-width: 0;
+    /* Card */
+    .pz-marker__card {
+      background: var(--white);
+      border: 2px solid rgba(220,38,38,0.15);
+      padding: clamp(0.75rem, 2vw, 1.25rem);
+      border-radius: 0;
+      max-width: 380px;
+      transition: border-color 0.4s, box-shadow 0.4s;
     }
-    .pz-milestone__meta {
+    .pz-marker.is-visible .pz-marker__card {
+      border-color: #dc2626;
+      box-shadow: 4px 4px 0 rgba(220,38,38,0.15);
+    }
+
+    .pz-marker__meta {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
       margin-bottom: 0.3rem;
+      flex-wrap: wrap;
     }
-    .pz-milestone__km {
-      display: inline-block;
+    .pz-marker--left .pz-marker__meta {
+      justify-content: flex-end;
+    }
+    .pz-marker__km-tag {
       font-family: var(--font-subline);
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 700;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--accent-gold);
+      color: #dc2626;
     }
-    .pz-milestone__year-tag {
+    .pz-marker__year-tag {
       font-family: var(--font-display);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
-      color: rgba(255,255,255,0.35);
-      letter-spacing: 0.05em;
+      color: var(--text-muted);
     }
-    .pz-milestone__title {
-      font-family: var(--font-display);
-      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    .pz-marker__badge {
+      font-size: 0.65rem;
       font-weight: 700;
-      color: var(--white);
-      margin-bottom: 0.4rem;
-      line-height: 1.2;
-    }
-    .pz-milestone__desc {
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.6);
-      line-height: 1.6;
-      margin-bottom: 0.3rem;
-    }
-    .pz-milestone__fun {
-      font-family: var(--font-script);
-      font-size: 1.2rem;
-      color: var(--accent-gold);
-      line-height: 1.3;
-      margin-bottom: 0.6rem;
-      opacity: 0.85;
-    }
-    .pz-milestone__badge {
-      display: inline-block;
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.2rem 0.6rem;
+      padding: 0.1rem 0.4rem;
       border-radius: 0;
       font-family: var(--font-subline);
     }
-    .pz-milestone__badge--reached {
-      background: rgba(22,163,74,0.2);
-      color: #4ade80;
-      border: 1px solid rgba(22,163,74,0.3);
+    .pz-marker__badge--reached {
+      background: rgba(22,163,74,0.12);
+      color: #16a34a;
+      border: 1px solid rgba(22,163,74,0.25);
     }
-    .pz-milestone__badge--future {
-      background: rgba(246,212,0,0.1);
-      color: var(--accent-gold);
-      border: 1px solid rgba(246,212,0,0.2);
+    .pz-marker__badge--future {
+      background: rgba(220,38,38,0.08);
+      color: #dc2626;
+      border: 1px solid rgba(220,38,38,0.15);
     }
 
-    /* Target milestone (Napoli) glow */
-    .pz-milestone--target.is-active {
-      box-shadow: 0 0 40px rgba(246,212,0,0.15), inset 0 0 30px rgba(246,212,0,0.03);
-      border-left-color: var(--accent-gold);
+    .pz-marker__title {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      font-weight: 700;
+      color: #991b1b;
+      margin-bottom: 0.3rem;
+      line-height: 1.2;
     }
-    .pz-milestone--target .pz-milestone__title {
-      color: var(--accent-gold);
+    .pz-marker__desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 0.25rem;
+    }
+    .pz-marker__fun {
+      font-family: var(--font-script);
+      font-size: 1.1rem;
+      color: #dc2626;
+      line-height: 1.3;
+      opacity: 0.8;
+    }
+
+    /* Target milestone (Napoli) */
+    .pz-marker--target.is-visible .pz-marker__card {
+      box-shadow: 0 0 30px rgba(220,38,38,0.12), 4px 4px 0 rgba(220,38,38,0.2);
+      border-color: #991b1b;
+    }
+    .pz-marker--target .pz-marker__title {
+      color: #dc2626;
+    }
+    .pz-marker--target.is-visible .pz-marker__dot {
+      background: #dc2626;
+      border-color: #991b1b;
+    }
+    .pz-marker--target.is-visible .pz-marker__icon {
+      filter: grayscale(0);
     }
 
     /* ETA card */
-    .pz-milestone--eta.is-active {
-      background: rgba(246,212,0,0.06);
-      border-left-color: rgba(255,255,255,0.3);
+    .pz-marker--eta.is-visible .pz-marker__card {
+      background: #fef2f2;
+      border-color: rgba(220,38,38,0.3);
     }
 
     /* ============================================
@@ -535,17 +588,17 @@ const milestones = [
       bottom: 2rem;
       left: 50%;
       transform: translateX(-50%) translateY(120%);
-      background: var(--accent-gold);
-      color: var(--blue-deep);
+      background: #dc2626;
+      color: var(--white);
       padding: 0.8rem 1.5rem;
-      border: 2px solid var(--blue-deep);
+      border: 2px solid #991b1b;
       font-size: 0.9rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 0.5rem;
       z-index: var(--z-modal);
-      box-shadow: 6px 6px 0 var(--blue-deep);
+      box-shadow: 6px 6px 0 #991b1b;
       transition: transform 0.5s var(--ease-spring);
       white-space: nowrap;
     }
@@ -560,36 +613,50 @@ const milestones = [
        MOBILE RESPONSIVE
        ============================================ */
     @media (max-width: 768px) {
-      .pz-journey__container {
-        grid-template-columns: 40px 1fr;
-        gap: 1rem;
+      .pz-journey__timeline {
+        min-height: 4000px;
       }
-      .pz-journey__tracker {
-        height: 240px;
+      .pz-journey__rail {
+        left: 24px;
+        transform: none;
       }
-      .pz-journey__line {
-        width: 3px;
-        height: 140px;
+      .pz-journey__pizza {
+        left: 24px;
+        margin-left: -28px;
       }
-      .pz-journey__pizza svg {
-        width: 32px;
-        height: 32px;
+      .pz-journey__counter-float {
+        left: 24px;
+        transform: none;
+        margin-left: 40px;
+        font-size: 0.8rem;
       }
-      .pz-journey__km-display {
-        display: none;
+      /* All markers go right on mobile */
+      .pz-marker,
+      .pz-marker--left,
+      .pz-marker--right {
+        left: 24px;
+        right: auto;
+        width: calc(100% - 24px);
+        padding-left: 2.5rem;
+        padding-right: 0;
+        flex-direction: row;
+        text-align: left;
+        transform: translateX(30px);
       }
-      .pz-journey__year-display {
-        display: none;
+      .pz-marker--left.is-visible,
+      .pz-marker--right.is-visible {
+        transform: translateX(0);
       }
-      .pz-milestone {
-        flex-direction: column;
-        gap: 0.75rem;
-        padding: 1rem;
+      .pz-marker--left .pz-marker__meta {
+        justify-content: flex-start;
       }
-      .pz-milestone__icon {
+      .pz-marker__card {
+        max-width: none;
+      }
+      .pz-marker__dot {
         width: 36px;
         height: 36px;
-        font-size: 1.5rem;
+        font-size: 1.1rem;
       }
       .pz-hero__stats {
         gap: 1rem;
@@ -598,15 +665,15 @@ const milestones = [
 
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
-      .pz-milestone {
+      .pz-marker {
         opacity: 1;
-        transform: none;
+        transform: none !important;
       }
       .pz-hero__scroll-hint {
         animation: none;
       }
       .pz-journey__pizza,
-      .pz-journey__line-fill {
+      .pz-journey__rail-fill {
         transition: none;
       }
     }
@@ -637,32 +704,23 @@ const milestones = [
         requestAnimationFrame(animateCounter);
       }
 
-      // ---- SCROLLTRIGGER: MILESTONE REVEAL + YEAR ANIMATION ----
+      // ---- SCROLLTRIGGER: CENTERED TIMELINE ----
       if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
 
-        // Gather milestone data for year interpolation
-        var milestoneEls = document.querySelectorAll('.pz-milestone');
-        var milestoneData = [];
-        milestoneEls.forEach(function(el) {
-          milestoneData.push({
-            km: parseFloat(el.dataset.km) || 0,
-            year: parseInt(el.dataset.year) || 1989
-          });
-        });
-
-        // Reveal milestones
-        milestoneEls.forEach(function(el) {
+        // Reveal markers on scroll
+        var markers = document.querySelectorAll('.pz-marker');
+        markers.forEach(function(el) {
           ScrollTrigger.create({
             trigger: el,
-            start: 'top 80%',
-            onEnter: function() { el.classList.add('is-active'); },
+            start: 'top 82%',
+            onEnter: function() { el.classList.add('is-visible'); },
           });
         });
 
-        // Journey progress tracker with year
+        // Journey progress — fill rail + rotate pizza
         var journeySection = document.querySelector('.pz-journey');
-        var lineFill = document.getElementById('journey-line-fill');
+        var railFill = document.getElementById('journey-line-fill');
         var pizza = document.getElementById('journey-pizza');
         var kmValue = document.getElementById('journey-km-value');
         var yearValue = document.getElementById('journey-year-value');
@@ -670,7 +728,7 @@ const milestones = [
         var startYr = 1989;
         var kmPerYear = (52 * 300 * 33) / 100000;
 
-        if (journeySection && lineFill && pizza && kmValue) {
+        if (journeySection && railFill && pizza && kmValue) {
           ScrollTrigger.create({
             trigger: journeySection,
             start: 'top top',
@@ -678,8 +736,7 @@ const milestones = [
             scrub: 1,
             onUpdate: function(self) {
               var pct = self.progress * 100;
-              lineFill.style.height = pct + '%';
-              pizza.style.top = pct + '%';
+              railFill.style.height = pct + '%';
 
               // Map scroll progress to km
               var currentKm = Math.round(self.progress * maxKm);
@@ -691,9 +748,9 @@ const milestones = [
                 yearValue.textContent = year;
               }
 
-              // Rotate pizza with scroll
-              var rotation = self.progress * 720;
-              pizza.style.transform = 'translate(-50%, -50%) rotate(' + rotation + 'deg)';
+              // Rotate pizza slice with scroll
+              var rotation = self.progress * 1080;
+              pizza.style.transform = 'rotate(' + rotation + 'deg)';
             },
           });
         }
