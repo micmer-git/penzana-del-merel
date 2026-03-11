@@ -111,24 +111,32 @@ const milestones = [
 
         <div class="pz-journey__counter-float" id="journey-counter-float">
           <span class="pz-journey__counter-km" id="journey-km-value">0,0</span>
-          <span class="pz-journey__counter-label">km percorsi</span>
+          <span class="pz-journey__counter-label" id="journey-unit-label">metri percorsi</span>
           <span class="pz-journey__counter-year" id="journey-year-value">{startYear}</span>
         </div>
+
+        {milestones.slice(1).map((milestone, index) => {
+          const previous = milestones[index];
+          const midpointKm = (previous.km + milestone.km) / 2;
+          const pct = (midpointKm / trackMaxKm) * 100;
+          return (
+            <p class="pz-note" style={`top: ${pct}%;`}>
+              {milestone.preview}
+            </p>
+          );
+        })}
 
         {milestones.map((milestone, index) => {
           const pct = (milestone.km / trackMaxKm) * 100;
           const side = index % 2 === 0 ? 'left' : 'right';
           const flowOffset = index * 5.2;
-          const teaseY = -(5 + (index % 3) * 1.8);
-          const teaseX = side === 'left' ? -(3.5 + (index % 2) * 1.2) : (3.5 + (index % 2) * 1.2);
           return (
             <article
               class={`pz-marker pz-marker--${side} ${milestone.isTarget ? 'pz-marker--target' : ''}`}
-              style={`top: calc(${pct}% + ${flowOffset}rem); --tease-y:${teaseY}rem; --tease-x:${teaseX}rem;`}
+              style={`top: calc(${pct}% + ${flowOffset}rem);`}
               data-km={milestone.km}
               data-year={milestone.year}
             >
-              <p class="pz-marker__tease">{milestone.preview}</p>
               <div class="pz-marker__body">
                 <div class="pz-marker__dot">
                   <span class="pz-marker__icon">{milestone.icon}</span>
@@ -154,11 +162,10 @@ const milestones = [
 
         <article
           class="pz-marker pz-marker--left pz-marker--eta"
-          style={`top: calc(100% + ${milestones.length * 5.2 + 2}rem); --tease-y:-4.5rem; --tease-x:-4rem;`}
+          style={`top: calc(100% + ${milestones.length * 5.2 + 2}rem);`}
           data-km={trackMaxKm}
           data-year={etaNapoli}
         >
-          <p class="pz-marker__tease">La rotta è già tracciata. Il resto lo fa il forno.</p>
           <div class="pz-marker__body">
             <div class="pz-marker__dot"><span class="pz-marker__icon">🎯</span></div>
             <div class="pz-marker__card">
@@ -214,12 +221,11 @@ const milestones = [
     .pz-journey__counter-km { font-family: var(--font-display); font-size: 1.45rem; line-height: 1; color: var(--blue-mid); }
     .pz-journey__counter-label { font-family: var(--font-subline); font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
     .pz-journey__counter-year { font-family: var(--font-display); font-size: 0.88rem; color: var(--blue-deep); }
+    .pz-note { position: absolute; left: calc(50% + 1.4rem); max-width: min(30ch, 32vw); padding: 0.5rem 0.8rem; background: rgba(242, 123, 167, 0.14); color: var(--blue-mid); font-family: var(--font-subline); font-size: 0.66rem; letter-spacing: 0.08em; line-height: 1.6; text-transform: uppercase; transform: translateY(-50%) rotate(-1.8deg); z-index: 1; }
     .pz-marker { position: absolute; width: min(42vw, 520px); opacity: 0; transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
     .pz-marker--left { left: calc(50% - min(42vw, 520px) - 3.75rem); transform: translateX(-2rem); }
     .pz-marker--right { left: calc(50% + 3.75rem); transform: translateX(2rem); }
     .pz-marker.is-visible { opacity: 1; transform: translateX(0); }
-    .pz-marker__tease { position: absolute; top: var(--tease-y); left: 0; max-width: 18ch; padding: 0.55rem 0.8rem; background: rgba(242, 123, 167, 0.14); color: var(--blue-mid); font-family: var(--font-subline); font-size: 0.72rem; letter-spacing: 0.08em; line-height: 1.6; text-transform: uppercase; transform: translateX(var(--tease-x)) rotate(-2deg); }
-    .pz-marker--left .pz-marker__tease { left: auto; right: 0; text-align: right; }
     .pz-marker__body { display: flex; align-items: flex-start; gap: 1.1rem; }
     .pz-marker--left .pz-marker__body { flex-direction: row-reverse; text-align: right; }
     .pz-marker__dot { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border-radius: 999px; border: 3px solid var(--blue-mid); background: var(--white); box-shadow: 0 0 0 8px rgba(255, 240, 243, 0.95); }
@@ -234,7 +240,7 @@ const milestones = [
     .pz-marker__badge--reached { background: rgba(22, 163, 74, 0.12); border-color: rgba(22, 163, 74, 0.18); color: #15803d; }
     .pz-marker__title { margin-bottom: 0.45rem; font-size: clamp(1.2rem, 2vw, 1.55rem); color: var(--blue-deep); }
     .pz-marker__bodycopy { margin-bottom: 0.45rem; font-size: 0.92rem; line-height: 1.65; color: var(--text-muted); }
-    .pz-marker__fun { font-family: var(--font-script); font-size: 1.2rem; line-height: 1.28; color: var(--blue-mid); opacity: 0.92; }
+    .pz-marker__fun { font-family: var(--font-subline); font-size: 0.78rem; line-height: 1.45; letter-spacing: 0.11em; text-transform: uppercase; color: var(--blue-mid); opacity: 0.92; }
     .pz-marker--target .pz-marker__card, .pz-marker--eta .pz-marker__card { border-color: rgba(194, 24, 79, 0.32); background: rgba(255, 248, 250, 0.98); }
     .pz-toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(120%); z-index: var(--z-modal); display: flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.35rem; border: 2px solid var(--blue-deep); background: var(--blue-mid); color: var(--white); box-shadow: 6px 6px 0 var(--blue-deep); transition: transform 0.45s var(--ease-spring); white-space: nowrap; }
     .pz-toast.is-visible { transform: translateX(-50%) translateY(0); }
@@ -246,9 +252,9 @@ const milestones = [
       .pz-journey__rail { left: 2rem; transform: none; }
       .pz-journey__pizza { left: 2rem; margin-left: -32px; }
       .pz-journey__counter-float { left: 4.6rem; transform: none; min-width: 148px; }
+      .pz-note { left: 4.7rem; max-width: calc(100% - 5.5rem); font-size: 0.62rem; }
       .pz-marker, .pz-marker--left, .pz-marker--right { left: 4.5rem; width: calc(100% - 5.25rem); transform: translateX(1.25rem); }
       .pz-marker.is-visible { transform: translateX(0); }
-      .pz-marker__tease, .pz-marker--left .pz-marker__tease { left: 0; right: auto; max-width: 22ch; text-align: left; transform: translateX(0) rotate(-2deg); }
       .pz-marker__body, .pz-marker--left .pz-marker__body { flex-direction: row; text-align: left; }
       .pz-marker__meta, .pz-marker--left .pz-marker__meta { justify-content: flex-start; }
       .pz-hero__subcount { font-size: 0.7rem; letter-spacing: 0.1em; }
@@ -301,18 +307,29 @@ const milestones = [
       const railFill = document.getElementById('journey-line-fill');
       const pizzaBody = document.getElementById('journey-pizza-body');
       const journeyKm = document.getElementById('journey-km-value');
+      const journeyUnitLabel = document.getElementById('journey-unit-label');
       const journeyYear = document.getElementById('journey-year-value');
       let ticking = false;
 
+      const formatJourneyDistance = (km) => {
+        if (km < 1) {
+          const roundedMeters = Math.round((km * 1000) / 10) * 10;
+          return { value: `${roundedMeters} m`, label: 'metri percorsi' };
+        }
+        return { value: `${formatKm(km)} km`, label: 'km percorsi' };
+      };
+
       const updateJourney = () => {
         ticking = false;
-        if (!journeySection || !railFill || !journeyKm || !journeyYear) return;
+        if (!journeySection || !railFill || !journeyKm || !journeyYear || !journeyUnitLabel) return;
         const rect = journeySection.getBoundingClientRect();
         const travel = Math.max(rect.height - window.innerHeight, 1);
         const progress = Math.min(Math.max(-rect.top / travel, 0), 1);
         const currentKm = progress * trackMaxKm;
+        const distance = formatJourneyDistance(currentKm);
         railFill.style.height = `${progress * 100}%`;
-        journeyKm.textContent = formatKm(currentKm);
+        journeyKm.textContent = distance.value;
+        journeyUnitLabel.textContent = distance.label;
         journeyYear.textContent = `${Math.round(startYear + currentKm / annualKm)}`;
         if (pizzaBody) {
           pizzaBody.style.transform = `rotate(${progress * 1080}deg)`;
