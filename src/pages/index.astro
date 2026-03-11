@@ -53,6 +53,28 @@ const bgImages = [
   </section>
 
 
+  <!-- WhatsApp choice modal -->
+  <div class="modal-overlay" id="wa-choice-modal" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="wa-choice-title">
+      <h2 id="wa-choice-title">Come possiamo aiutarti?</h2>
+      <p>Scegli cosa vuoi fare e ti portiamo sulla strada giusta.</p>
+      <div class="wa-choice-grid">
+        <button type="button" class="wa-choice-card" id="wa-choice-booking">
+          <span class="wa-choice-icon">📅</span>
+          <span class="wa-choice-label">Prenotazione</span>
+          <span class="wa-choice-desc">Prenota un tavolo</span>
+        </button>
+        <button type="button" class="wa-choice-card" id="wa-choice-menu">
+          <span class="wa-choice-icon">🍕</span>
+          <span class="wa-choice-label">Ordine</span>
+          <span class="wa-choice-desc">Ordina dal menu</span>
+        </button>
+      </div>
+      <button type="button" class="wa-choice-close" id="wa-choice-close">Chiudi</button>
+    </div>
+  </div>
+
+  <!-- Booking form modal -->
   <div class="modal-overlay" id="booking-modal" hidden>
     <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="booking-title">
       <h2 id="booking-title">Prenota il tuo tavolo</h2>
@@ -92,7 +114,8 @@ const bgImages = [
     </div>
   </div>
 
-  <script define:vars={{ whatsappNumber: WHATSAPP_NUMBER }}>
+  <script define:vars={{ whatsappNumber: WHATSAPP_NUMBER, base: '/penzana-del-merel' }}>
+    // Hero slider
     const slider = document.querySelector('[data-hero-slider]');
     const rawImages = slider?.getAttribute('data-images');
     const images = rawImages ? JSON.parse(rawImages) : [];
@@ -105,26 +128,46 @@ const bgImages = [
       }, 5000);
     }
 
-    const modal = document.getElementById('booking-modal');
+    // Modal helpers
+    const lock = () => document.body.classList.add('scroll-locked');
+    const unlock = () => document.body.classList.remove('scroll-locked');
+
+    // Choice modal
+    const choiceModal = document.getElementById('wa-choice-modal');
     const openBtn = document.getElementById('open-booking-modal');
+    const choiceClose = document.getElementById('wa-choice-close');
+    const choiceBooking = document.getElementById('wa-choice-booking');
+    const choiceMenu = document.getElementById('wa-choice-menu');
+
+    const openChoice = () => { choiceModal?.removeAttribute('hidden'); lock(); };
+    const closeChoice = () => { choiceModal?.setAttribute('hidden', ''); unlock(); };
+
+    openBtn?.addEventListener('click', openChoice);
+    choiceClose?.addEventListener('click', closeChoice);
+    choiceModal?.addEventListener('click', (e) => { if (e.target === choiceModal) closeChoice(); });
+
+    // Choice → booking form
+    choiceBooking?.addEventListener('click', () => {
+      closeChoice();
+      bookingModal?.removeAttribute('hidden');
+      lock();
+    });
+
+    // Choice → menu page
+    choiceMenu?.addEventListener('click', () => {
+      closeChoice();
+      window.location.href = base + '/menu/';
+    });
+
+    // Booking modal
+    const bookingModal = document.getElementById('booking-modal');
     const closeBtn = document.getElementById('close-booking-modal');
     const form = document.getElementById('booking-form');
 
-    const openModal = () => {
-      modal?.removeAttribute('hidden');
-      document.body.classList.add('scroll-locked');
-    };
+    const closeBooking = () => { bookingModal?.setAttribute('hidden', ''); unlock(); };
 
-    const closeModal = () => {
-      modal?.setAttribute('hidden', '');
-      document.body.classList.remove('scroll-locked');
-    };
-
-    openBtn?.addEventListener('click', openModal);
-    closeBtn?.addEventListener('click', closeModal);
-    modal?.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
-    });
+    closeBtn?.addEventListener('click', closeBooking);
+    bookingModal?.addEventListener('click', (e) => { if (e.target === bookingModal) closeBooking(); });
 
     form?.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -148,8 +191,13 @@ const bgImages = [
 
       const message = encodeURIComponent(lines.join('\n'));
       window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
-      closeModal();
+      closeBooking();
       form.reset();
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeChoice(); closeBooking(); }
     });
   </script>
 
