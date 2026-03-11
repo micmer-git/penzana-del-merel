@@ -1,4 +1,4 @@
----
+﻿---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const base = '/penzana-del-merel';
@@ -18,36 +18,33 @@ const yearsToNapoli = Math.ceil((napoliDistanceKm - totalKm) / annualKm);
 const etaNapoli = currentYear + Math.max(0, yearsToNapoli);
 const trackMaxKm = 900;
 
-// Milestones along the actual Orezzo → Napoli route (A4 → A1 autostrada)
 const milestones = [
-  { km: 0, label: 'La Penzana (Orezzo)', desc: 'Dove tutto è iniziato: forno acceso, impasto pronto, il viaggio ha inizio.', icon: '🏠', year: 1989, fun: 'Pizza numero uno: probabilmente bruciata. Ma con amore.' },
-  { km: 3, label: 'Gazzaniga', desc: 'Tre chilometri di pizza. Il profumo arriva già in paese.', icon: '⛰️', year: Math.round(startYear + 3 / annualKm), fun: 'La valle intera sa che stasera è pizza.' },
-  { km: 12, label: 'Bergamo — Città Alta', desc: 'Le mura venete conquistate, impasto dopo impasto.', icon: '🏰', year: Math.round(startYear + 12 / annualKm), fun: 'Una pizza larga quanto Piazza Vecchia? Ci siamo quasi.' },
-  { km: 42.2, label: 'La Maratona della Pizza', desc: '42,195 km di impasto steso. Una maratona senza scarpe, solo farina.', icon: '🏃', year: Math.round(startYear + 42.2 / annualKm), fun: 'Kipchoge fa i 42 km in 2 ore. Noi ci abbiamo messo qualche anno.' },
-  { km: 60, label: 'Milano — Il Duomo', desc: 'Sotto lo sguardo della Madonnina, il filo d\'oro brilla.', icon: '🏛️', year: Math.round(startYear + 60 / annualKm), fun: 'Milano chiede: "Ma è gourmet?" Noi: "È buona."' },
-  { km: 130, label: 'Piacenza', desc: 'Dove l\'Emilia inizia. Terra di salumi, tortelli, e rispetto per l\'impasto.', icon: '🧀', year: Math.round(startYear + 130 / annualKm), fun: 'Piacenza approva: la pizza con lo stracchino funziona.' },
-  { km: 180, label: 'Parma', desc: 'Parmigiano e prosciutto: ingredienti che parlano da soli.', icon: '🍖', year: Math.round(startYear + 180 / annualKm), fun: 'Verdi componeva opere. Noi componiamo pizze. Stessa passione.' },
-  { km: 260, label: 'Bologna — Le Due Torri', desc: 'La dotta, la grassa, la rossa. Il filo d\'oro attraversa il cuore d\'Italia.', icon: '🏗️', year: Math.round(startYear + 260 / annualKm), fun: 'Bologna ha i tortellini. Noi abbiamo la Diavola. Pace fatta.' },
-  { km: 360, label: 'Firenze — Ponte Vecchio', desc: 'Rinascimento e pizza: due eccellenze italiane che non passano mai di moda.', icon: '🎨', year: Math.round(startYear + 360 / annualKm), fun: 'Leonardo avrebbe inventato una macchina per stendere l\'impasto.' },
-  { km: 430, label: 'Siena — Piazza del Campo', desc: 'A metà del Palio, il filo d\'oro attraversa le contrade.', icon: '🐎', year: Math.round(startYear + 430 / annualKm), fun: 'Il Palio dura 90 secondi. Una pizza lievita 24 ore. Chi vince?' },
-  { km: 500, label: 'Orvieto', desc: 'Mezzo migliaio di chilometri. La cattedrale ci guarda dall\'alto.', icon: '⛪', year: Math.round(startYear + 500 / annualKm), fun: '500 km = 1.515.151 pizze. Più o meno.' },
-  { km: 560, label: 'Roma — Il Colosseo', desc: 'Tutti i fili portano a Roma. Il Colosseo ha visto gladiatori, noi sforniamo pizze.', icon: '🏟️', year: Math.round(startYear + 560 / annualKm), fun: '"Pollice su" diceva il pubblico. Anche per la nostra Margherita.' },
-  { km: 650, label: 'Cassino — Abbazia di Montecassino', desc: 'Tra storia e spiritualità, il filo d\'oro prosegue verso sud.', icon: '📿', year: Math.round(startYear + 650 / annualKm), fun: 'I monaci facevano il pane. Noi facciamo la pizza. Evoluzione.' },
-  { km: 720, label: 'Caserta — La Reggia', desc: 'Il palazzo dei re. La pizza è democratica: uguale per tutti.', icon: '👑', year: Math.round(startYear + 720 / annualKm), fun: 'La Reggia ha 1.200 stanze. Noi abbiamo 1 forno. Basta e avanza.' },
-  { km: 780, label: 'Aversa', desc: 'L\'ultima tappa prima di Napoli. La tensione sale, l\'impasto lievita.', icon: '🔥', year: Math.round(startYear + 780 / annualKm), fun: 'Si sente già il profumo del Vesuvio. O è il nostro forno?' },
-  { km: 800, label: 'Napoli — Via dei Tribunali', desc: 'La patria della pizza. Il filo d\'oro ha raggiunto casa.', icon: '🌋', isTarget: true, year: Math.round(startYear + 800 / annualKm), fun: 'Tarcisio aveva ragione. Ce l\'abbiamo fatta.' },
+  { km: 0, label: 'La Penzana (Orezzo)', preview: 'Il forno si accende e il filo d’oro parte dal borgo.', body: 'Dove tutto è iniziato: mani infarinate, brace viva, profumo di casa.', icon: '🏠', year: 1989, fun: 'Pizza numero uno: forse storta. Sicuramente memorabile.' },
+  { km: 3, label: 'Gazzaniga', preview: 'Il profumo arriva già in paese.', body: 'Tre chilometri di pizza messi in fila: abbastanza per farsi notare in valle.', icon: '⛰️', year: Math.round(startYear + 3 / annualKm), fun: 'Qui la domanda è una sola: ne portate ancora?' },
+  { km: 12, label: 'Bergamo — Città Alta', preview: 'Le mura si lasciano avvicinare, impasto dopo impasto.', body: 'Il filo raggiunge la città alta e si arrampica con calma tra pietra e farina.', icon: '🏰', year: Math.round(startYear + 12 / annualKm), fun: 'Una rotonda di pizza in Piazza Vecchia? Quasi.' },
+  { km: 42.2, label: 'La Maratona della Pizza', preview: 'Quarantadue chilometri di corsa lenta, ma con più lievitazione.', body: 'Una maratona simbolica fatta di impasti stesi e serate che finiscono tardi.', icon: '🏃', year: Math.round(startYear + 42.2 / annualKm), fun: 'Niente scarpe tecniche: solo pala, forno e costanza.' },
+  { km: 60, label: 'Milano — Il Duomo', preview: 'La linea arriva in città e si fa vedere bene.', body: 'Sotto la Madonnina il filo resta semplice: pizza buona, senza sovrastrutture.', icon: '🏛️', year: Math.round(startYear + 60 / annualKm), fun: 'A Milano chiedono se è gourmet. A Orezzo basta che sia buonissima.' },
+  { km: 130, label: 'Piacenza', preview: 'Si entra in Emilia con rispetto per l’impasto.', body: 'La strada si allunga e il viaggio comincia a parlare diverse cucine.', icon: '🧀', year: Math.round(startYear + 130 / annualKm), fun: 'Tra salumi e pizza, l’intesa è immediata.' },
+  { km: 180, label: 'Parma', preview: 'Prosciutto, parmigiano, forno acceso: qui si capisce tutto.', body: 'Il filo d’oro continua senza cambiare accento: artigianale, diretto, sincero.', icon: '🍖', year: Math.round(startYear + 180 / annualKm), fun: 'Verdi scriveva opere. Noi scriviamo serate riuscite.' },
+  { km: 260, label: 'Bologna — Le Due Torri', preview: 'La strada si tinge di rosso e il filo si fa ancora più deciso.', body: 'Attraversa il cuore d’Italia tenendo insieme tradizione e fame vera.', icon: '🏗️', year: Math.round(startYear + 260 / annualKm), fun: 'Bologna ha i tortellini. Noi portiamo la Diavola. Pari.' },
+  { km: 360, label: 'Firenze — Ponte Vecchio', preview: 'Il viaggio prende eleganza, ma resta concreto.', body: 'Rinascimento e pizza condividono una dote: non stancano mai.', icon: '🎨', year: Math.round(startYear + 360 / annualKm), fun: 'Leonardo avrebbe progettato una macchina per stendere l’impasto.' },
+  { km: 430, label: 'Siena — Piazza del Campo', preview: 'Il filo curva tra le contrade e continua a crescere.', body: 'Ogni pizza tiene il ritmo del viaggio: lento, preciso, ostinato.', icon: '🐎', year: Math.round(startYear + 430 / annualKm), fun: 'Il Palio è rapidissimo. La lievitazione no, e va bene così.' },
+  { km: 500, label: 'Orvieto', preview: 'Mezzo migliaio di chilometri: qui il filo inizia a stupire davvero.', body: 'A questa altezza il viaggio sembra impossibile solo a chi non conosce la costanza.', icon: '⛪', year: Math.round(startYear + 500 / annualKm), fun: 'Cinque cento chilometri di pizza sono una misura che va rispettata.' },
+  { km: 560, label: 'Roma — Il Colosseo', preview: 'Tutti i fili portano a Roma, anche quelli fatti di impasto.', body: 'La capitale osserva, il forno continua, la rotta non cambia.', icon: '🏟️', year: Math.round(startYear + 560 / annualKm), fun: 'Il pubblico alza il pollice: Margherita salva tutti.' },
+  { km: 650, label: 'Cassino — Montecassino', preview: 'Più a sud, più il viaggio sa di promessa mantenuta.', body: 'Tra memoria e silenzio il filo d’oro resta acceso e va avanti.', icon: '🕍', year: Math.round(startYear + 650 / annualKm), fun: 'Pane, pizza, pazienza: certe cose stanno sempre bene insieme.' },
+  { km: 720, label: 'Caserta — La Reggia', preview: 'La strada si allarga, il filo no: resta essenziale.', body: 'Un palazzo da re e una pizza per tutti: equilibrio perfetto.', icon: '👑', year: Math.round(startYear + 720 / annualKm), fun: 'La Reggia ha mille stanze. A noi basta il forno giusto.' },
+  { km: 780, label: 'Aversa', preview: 'L’aria cambia: Napoli ormai si sente vicina.', body: 'Ultima salita emotiva prima della patria simbolica della pizza.', icon: '🔥', year: Math.round(startYear + 780 / annualKm), fun: 'Qui la tensione cresce come l’impasto fatto bene.' },
+  { km: 800, label: 'Napoli — Via dei Tribunali', preview: 'Il traguardo appare prima nel profumo, poi nella testa.', body: 'La patria della pizza è lì davanti: Tarcisio ci aveva visto lungo.', icon: '🌋', isTarget: true, year: Math.round(startYear + 800 / annualKm), fun: 'Arrivarci con un filo di pizze è poesia pratica.' },
 ];
 ---
 
 <BaseLayout
   title="Pizzometro — Il Filo d'Oro"
-  description="Dal 1989 ad oggi: quanta strada farebbero tutte le pizze della Penzana messe in fila? Un viaggio scrollytelling da Orezzo fino a Napoli."
+  description="Dal 1989 ad oggi: quanta strada farebbero tutte le pizze della Penzana messe in fila? Un viaggio verticale da Orezzo fino a Napoli."
   lang="it"
   pageType="website"
   currentPath={`${base}/pizzometro/`}
 >
-
-  <!-- Hero: animated km counter -->
   <section class="pz-hero" aria-labelledby="pz-heading">
     <div class="pz-hero__inner">
       <span class="pz-hero__kicker">Il Filo d'Oro</span>
@@ -55,18 +52,20 @@ const milestones = [
         <span class="pz-hero__script">Pizzometro</span>
       </h1>
       <p class="pz-hero__subtitle">
-        Dal {startYear}, ogni pizza sfornata aggiunge 33 cm al nostro filo d'oro.<br />
+        Dal {startYear}, ogni pizza sfornata aggiunge 33 cm al nostro filo d’oro.<br />
         Tarcisio diceva: <em>"Arriveremo fino a Napoli."</em>
       </p>
+
       <div class="pz-hero__counter" aria-live="polite">
-        <span class="pz-hero__number" id="km-counter" data-target={totalKm.toFixed(1)}>0</span>
+        <span class="pz-hero__number" id="km-counter" data-target={totalKm.toFixed(1)}>0,0</span>
         <span class="pz-hero__unit">km percorsi</span>
+        <span class="pz-hero__subcount">
+          <strong id="pizza-counter" data-target={pizzasDelivered}>{pizzasDelivered.toLocaleString('it-IT')}</strong>
+          pizze sfornate in totale
+        </span>
       </div>
+
       <div class="pz-hero__stats">
-        <div class="pz-hero__stat">
-          <span class="pz-hero__stat-value">{pizzasDelivered.toLocaleString('it-IT')}</span>
-          <span class="pz-hero__stat-label">pizze sfornate</span>
-        </div>
         <div class="pz-hero__stat">
           <span class="pz-hero__stat-value">{startYear} → {currentYear}</span>
           <span class="pz-hero__stat-label">anni di tradizione</span>
@@ -75,7 +74,12 @@ const milestones = [
           <span class="pz-hero__stat-value">{annualKm.toFixed(1).replace('.', ',')} km</span>
           <span class="pz-hero__stat-label">ogni anno</span>
         </div>
+        <div class="pz-hero__stat">
+          <span class="pz-hero__stat-value">33 cm</span>
+          <span class="pz-hero__stat-label">per ogni pizza</span>
+        </div>
       </div>
+
       <div class="pz-hero__scroll-hint" aria-hidden="true">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
         <span>Scorri per viaggiare</span>
@@ -83,741 +87,277 @@ const milestones = [
     </div>
   </section>
 
-  <!-- Scrollytelling: CENTERED timeline with proportional milestones -->
   <section class="pz-journey" aria-label="Viaggio simbolico da Orezzo a Napoli">
     <div class="pz-journey__container">
-
-      <!-- Central timeline -->
-      <div class="pz-journey__timeline">
+      <div class="pz-journey__timeline" id="journey-timeline">
         <div class="pz-journey__rail">
           <div class="pz-journey__rail-fill" id="journey-line-fill"></div>
         </div>
-        <!-- Pizza slice driver -->
+
         <div class="pz-journey__pizza" id="journey-pizza" aria-hidden="true">
-          <svg viewBox="0 0 56 56" width="56" height="56" xmlns="http://www.w3.org/2000/svg">
-            <!-- Pizza slice shape -->
-            <path d="M28 4 L50 46 Q28 52 6 46 Z" fill="#f6d400" stroke="var(--blue-deep)" stroke-width="2" stroke-linejoin="round"/>
-            <!-- Crust arc -->
-            <path d="M6 46 Q28 52 50 46" fill="#e2be00" stroke="var(--blue-deep)" stroke-width="2"/>
-            <!-- Toppings -->
-            <circle cx="24" cy="22" r="3.5" fill="#dc2626" opacity="0.9"/>
-            <circle cx="33" cy="28" r="3" fill="#dc2626" opacity="0.85"/>
-            <circle cx="22" cy="34" r="2.8" fill="#dc2626" opacity="0.85"/>
-            <circle cx="28" cy="16" r="2" fill="#16a34a" opacity="0.7"/>
-            <circle cx="18" cy="28" r="1.8" fill="#16a34a" opacity="0.7"/>
-            <circle cx="34" cy="38" r="2.2" fill="#f5f5dc" opacity="0.6"/>
-          </svg>
+          <div class="pz-journey__pizza-body" id="journey-pizza-body">
+            <svg viewBox="0 0 56 56" width="56" height="56" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 4 L50 46 Q28 52 6 46 Z" fill="#f6d400" stroke="var(--blue-deep)" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M6 46 Q28 52 50 46" fill="#e2be00" stroke="var(--blue-deep)" stroke-width="2"/>
+              <circle cx="24" cy="22" r="3.5" fill="#dc2626" opacity="0.9"/>
+              <circle cx="33" cy="28" r="3" fill="#dc2626" opacity="0.85"/>
+              <circle cx="22" cy="34" r="2.8" fill="#dc2626" opacity="0.85"/>
+              <circle cx="28" cy="16" r="2" fill="#16a34a" opacity="0.7"/>
+              <circle cx="18" cy="28" r="1.8" fill="#16a34a" opacity="0.7"/>
+              <circle cx="34" cy="38" r="2.2" fill="#f5f5dc" opacity="0.6"/>
+            </svg>
+          </div>
         </div>
-        <!-- Floating km/year counter -->
+
         <div class="pz-journey__counter-float" id="journey-counter-float">
-          <span class="pz-journey__counter-km" id="journey-km-value">0</span>
-          <span class="pz-journey__counter-label">km</span>
+          <span class="pz-journey__counter-km" id="journey-km-value">0,0</span>
+          <span class="pz-journey__counter-label">km percorsi</span>
           <span class="pz-journey__counter-year" id="journey-year-value">{startYear}</span>
         </div>
 
-        <!-- Milestone markers on the rail (proportional positioning) -->
-        {milestones.map((m, i) => {
-          const pct = (m.km / trackMaxKm) * 100;
-          const side = i % 2 === 0 ? 'left' : 'right';
+        {milestones.map((milestone, index) => {
+          const pct = (milestone.km / trackMaxKm) * 100;
+          const side = index % 2 === 0 ? 'left' : 'right';
+          const flowOffset = index * 5.2;
+          const teaseY = -(5 + (index % 3) * 1.8);
+          const teaseX = side === 'left' ? -(3.5 + (index % 2) * 1.2) : (3.5 + (index % 2) * 1.2);
           return (
-            <div
-              class={`pz-marker pz-marker--${side} ${m.isTarget ? 'pz-marker--target' : ''}`}
-              style={`top: ${pct}%`}
-              data-km={m.km}
-              data-year={m.year}
-              data-index={i}
+            <article
+              class={`pz-marker pz-marker--${side} ${milestone.isTarget ? 'pz-marker--target' : ''}`}
+              style={`top: calc(${pct}% + ${flowOffset}rem); --tease-y:${teaseY}rem; --tease-x:${teaseX}rem;`}
+              data-km={milestone.km}
+              data-year={milestone.year}
             >
-              <div class="pz-marker__dot">
-                <span class="pz-marker__icon">{m.icon}</span>
-              </div>
-              <div class="pz-marker__card">
-                <div class="pz-marker__meta">
-                  <span class="pz-marker__km-tag">{m.km} km</span>
-                  <span class="pz-marker__year-tag">~{m.year}</span>
-                  {m.km <= totalKm ? (
-                    <span class="pz-marker__badge pz-marker__badge--reached">✓</span>
-                  ) : (
-                    <span class="pz-marker__badge pz-marker__badge--future">…</span>
-                  )}
+              <p class="pz-marker__tease">{milestone.preview}</p>
+              <div class="pz-marker__body">
+                <div class="pz-marker__dot">
+                  <span class="pz-marker__icon">{milestone.icon}</span>
                 </div>
-                <h3 class="pz-marker__title">{m.label}</h3>
-                <p class="pz-marker__desc">{m.desc}</p>
-                <p class="pz-marker__fun">{m.fun}</p>
+                <div class="pz-marker__card">
+                  <div class="pz-marker__meta">
+                    <span class="pz-marker__km-tag">{milestone.km} km</span>
+                    <span class="pz-marker__year-tag">~{milestone.year}</span>
+                    {milestone.km <= totalKm ? (
+                      <span class="pz-marker__badge pz-marker__badge--reached">raggiunta</span>
+                    ) : (
+                      <span class="pz-marker__badge pz-marker__badge--future">in vista</span>
+                    )}
+                  </div>
+                  <h2 class="pz-marker__title">{milestone.label}</h2>
+                  <p class="pz-marker__bodycopy">{milestone.body}</p>
+                  <p class="pz-marker__fun">{milestone.fun}</p>
+                </div>
               </div>
-            </div>
+            </article>
           );
         })}
 
-        <!-- ETA marker -->
-        <div class="pz-marker pz-marker--left pz-marker--eta" style={`top: ${(trackMaxKm / trackMaxKm) * 100}%`} data-km={trackMaxKm} data-year={etaNapoli} data-index={milestones.length}>
-          <div class="pz-marker__dot"><span class="pz-marker__icon">🎯</span></div>
-          <div class="pz-marker__card">
-            <div class="pz-marker__meta">
-              <span class="pz-marker__km-tag">Stima arrivo</span>
-              <span class="pz-marker__year-tag">~{etaNapoli}</span>
+        <article
+          class="pz-marker pz-marker--left pz-marker--eta"
+          style={`top: calc(100% + ${milestones.length * 5.2 + 2}rem); --tease-y:-4.5rem; --tease-x:-4rem;`}
+          data-km={trackMaxKm}
+          data-year={etaNapoli}
+        >
+          <p class="pz-marker__tease">La rotta è già tracciata. Il resto lo fa il forno.</p>
+          <div class="pz-marker__body">
+            <div class="pz-marker__dot"><span class="pz-marker__icon">🎯</span></div>
+            <div class="pz-marker__card">
+              <div class="pz-marker__meta">
+                <span class="pz-marker__km-tag">stima arrivo</span>
+                <span class="pz-marker__year-tag">~{etaNapoli}</span>
+              </div>
+              <h2 class="pz-marker__title">Napoli — Anno {etaNapoli}</h2>
+              <p class="pz-marker__bodycopy">
+                Mancano {Math.max(0, (napoliDistanceKm - totalKm)).toFixed(1).replace('.', ',')} km. Ogni pizza accorcia il viaggio di 33 cm.
+              </p>
             </div>
-            <h3 class="pz-marker__title">Napoli — Anno {etaNapoli}</h3>
-            <p class="pz-marker__desc">
-              Mancano {Math.max(0, (napoliDistanceKm - totalKm)).toFixed(1).replace('.', ',')} km. Ogni pizza accorcia il viaggio di 33 cm.
-            </p>
           </div>
-        </div>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- Post-order toast (hidden by default) -->
   <div class="pz-toast" id="pz-toast" role="alert" aria-live="assertive" hidden>
     <span class="pz-toast__icon">🍕</span>
     <span class="pz-toast__text" id="pz-toast-text"></span>
   </div>
 
   <style>
-    /* ============================================
-       PIZZOMETRO — IL FILO D'ORO
-       Scrollytelling experience
-       ============================================ */
-
-    /* -- Hero -- */
-    .pz-hero {
-      min-height: 100svh;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg);
-      color: var(--text);
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-    }
-    .pz-hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 50% 20%, rgba(220,38,38,0.04) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 80%, rgba(220,38,38,0.06) 0%, transparent 50%);
-      pointer-events: none;
-    }
-    /* Grain */
-    .pz-hero::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      background-size: 150px;
-      pointer-events: none;
-      opacity: 0.15;
-    }
-
-    .pz-hero__inner {
-      position: relative;
-      z-index: 2;
-      padding: 2rem clamp(1.25rem, 5vw, 3rem);
-      max-width: 800px;
-    }
-
-    .pz-hero__kicker {
-      display: inline-block;
-      font-family: var(--font-subline);
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: #dc2626;
-      margin-bottom: 1rem;
-    }
-
-    .pz-hero__title {
-      color: #991b1b;
-      margin-bottom: 1.5rem;
-    }
-    .pz-hero__script {
-      font-family: var(--font-script);
-      font-weight: 400;
-      font-size: clamp(3.5rem, 10vw, 7rem);
-      line-height: 0.95;
-      letter-spacing: 0.02em;
-      color: #991b1b;
-    }
-
-    .pz-hero__subtitle {
-      font-size: 1.1rem;
-      color: var(--text-muted);
-      max-width: 560px;
-      margin: 0 auto 2.5rem;
-      line-height: 1.7;
-    }
-    .pz-hero__subtitle em {
-      color: #dc2626;
-      font-family: var(--font-display);
-    }
-
-    /* Counter */
-    .pz-hero__counter {
-      margin-bottom: 2.5rem;
-    }
-    .pz-hero__number {
-      display: block;
-      font-family: var(--font-display);
-      font-size: clamp(4rem, 12vw, 8rem);
-      font-weight: 800;
-      color: #dc2626;
-      line-height: 1;
-      letter-spacing: -0.03em;
-      text-shadow: 0 0 60px rgba(220,38,38,0.15);
-    }
-    .pz-hero__unit {
-      display: block;
-      font-family: var(--font-subline);
-      font-size: 0.9rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-top: 0.5rem;
-    }
-
-    /* Stats row */
-    .pz-hero__stats {
-      display: flex;
-      justify-content: center;
-      gap: clamp(1.5rem, 4vw, 3rem);
-      margin-bottom: 3rem;
-      flex-wrap: wrap;
-    }
-    .pz-hero__stat {
-      text-align: center;
-    }
-    .pz-hero__stat-value {
-      display: block;
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #991b1b;
-    }
-    .pz-hero__stat-label {
-      display: block;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-top: 0.2rem;
-    }
-
-    /* Scroll hint */
-    .pz-hero__scroll-hint {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      color: rgba(220,38,38,0.35);
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      animation: pzBounce 2s ease-in-out infinite;
-    }
-    .pz-hero__scroll-hint svg {
-      stroke: #dc2626;
-      opacity: 0.4;
-    }
-    @keyframes pzBounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(8px); }
-    }
-
-    /* ============================================
-       JOURNEY — Centered Timeline
-       ============================================ */
-    .pz-journey {
-      background: var(--bg);
-      position: relative;
-      padding-block: clamp(4rem, 10vw, 8rem) clamp(6rem, 15vw, 12rem);
-    }
-
-    .pz-journey__container {
-      max-width: var(--max-width);
-      margin-inline: auto;
-      padding-inline: clamp(1.25rem, 5vw, 3rem);
-    }
-
-    /* Central timeline rail */
-    .pz-journey__timeline {
-      position: relative;
-      /* Height proportional to km (16px per km unit, scaled) */
-      min-height: 6000px;
-    }
-
-    .pz-journey__rail {
-      position: absolute;
-      left: 50%;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: rgba(220,38,38,0.12);
-      transform: translateX(-50%);
-      border-radius: 999px;
-    }
-    .pz-journey__rail-fill {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 0%;
-      background: linear-gradient(to bottom, #dc2626, #991b1b);
-      border-radius: 999px;
-      transition: height 0.1s linear;
-    }
-
-    /* Pizza slice driver */
-    .pz-journey__pizza {
-      position: sticky;
-      top: 50vh;
-      left: 50%;
-      width: 56px;
-      height: 56px;
-      margin-left: -28px;
-      z-index: 10;
-      filter: drop-shadow(0 4px 16px rgba(220,38,38,0.25));
-      transition: transform 0.1s linear;
-      pointer-events: none;
-    }
-
-    /* Floating km/year counter */
-    .pz-journey__counter-float {
-      position: sticky;
-      top: calc(50vh + 70px);
-      left: 50%;
-      transform: translateX(-50%);
-      width: max-content;
-      text-align: center;
-      z-index: 10;
-      pointer-events: none;
-      background: var(--bg);
-      padding: 0.35rem 0.75rem;
-      border-radius: 999px;
-      border: 2px solid #dc2626;
-    }
-    .pz-journey__counter-km {
-      font-family: var(--font-display);
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: #dc2626;
-    }
-    .pz-journey__counter-label {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-right: 0.5rem;
-    }
-    .pz-journey__counter-year {
-      font-family: var(--font-display);
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-
-    /* Milestone markers */
-    .pz-marker {
-      position: absolute;
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      width: 50%;
-      opacity: 0;
-      transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
-    }
-
-    /* Left-side milestones */
-    .pz-marker--left {
-      right: 50%;
-      padding-right: 2rem;
-      flex-direction: row-reverse;
-      text-align: right;
-      transform: translateX(-30px);
-    }
-    .pz-marker--left.is-visible {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    /* Right-side milestones */
-    .pz-marker--right {
-      left: 50%;
-      padding-left: 2rem;
-      transform: translateX(30px);
-    }
-    .pz-marker--right.is-visible {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    /* Dot on the rail */
-    .pz-marker__dot {
-      flex-shrink: 0;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: var(--bg);
-      border: 3px solid #dc2626;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      z-index: 5;
-      transition: background 0.3s, transform 0.3s var(--ease-spring);
-    }
-    .pz-marker.is-visible .pz-marker__dot {
-      background: #fef2f2;
-      transform: scale(1.1);
-    }
-    .pz-marker__icon {
-      line-height: 1;
-    }
-
-    /* Card */
-    .pz-marker__card {
-      background: var(--white);
-      border: 2px solid rgba(220,38,38,0.15);
-      padding: clamp(0.75rem, 2vw, 1.25rem);
-      border-radius: 0;
-      max-width: 380px;
-      transition: border-color 0.4s, box-shadow 0.4s;
-    }
-    .pz-marker.is-visible .pz-marker__card {
-      border-color: #dc2626;
-      box-shadow: 4px 4px 0 rgba(220,38,38,0.15);
-    }
-
-    .pz-marker__meta {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.3rem;
-      flex-wrap: wrap;
-    }
-    .pz-marker--left .pz-marker__meta {
-      justify-content: flex-end;
-    }
-    .pz-marker__km-tag {
-      font-family: var(--font-subline);
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #dc2626;
-    }
-    .pz-marker__year-tag {
-      font-family: var(--font-display);
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-    .pz-marker__badge {
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 0.1rem 0.4rem;
-      border-radius: 0;
-      font-family: var(--font-subline);
-    }
-    .pz-marker__badge--reached {
-      background: rgba(22,163,74,0.12);
-      color: #16a34a;
-      border: 1px solid rgba(22,163,74,0.25);
-    }
-    .pz-marker__badge--future {
-      background: rgba(220,38,38,0.08);
-      color: #dc2626;
-      border: 1px solid rgba(220,38,38,0.15);
-    }
-
-    .pz-marker__title {
-      font-family: var(--font-display);
-      font-size: clamp(1rem, 2vw, 1.35rem);
-      font-weight: 700;
-      color: #991b1b;
-      margin-bottom: 0.3rem;
-      line-height: 1.2;
-    }
-    .pz-marker__desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-      margin-bottom: 0.25rem;
-    }
-    .pz-marker__fun {
-      font-family: var(--font-script);
-      font-size: 1.1rem;
-      color: #dc2626;
-      line-height: 1.3;
-      opacity: 0.8;
-    }
-
-    /* Target milestone (Napoli) */
-    .pz-marker--target.is-visible .pz-marker__card {
-      box-shadow: 0 0 30px rgba(220,38,38,0.12), 4px 4px 0 rgba(220,38,38,0.2);
-      border-color: #991b1b;
-    }
-    .pz-marker--target .pz-marker__title {
-      color: #dc2626;
-    }
-    .pz-marker--target.is-visible .pz-marker__dot {
-      background: #dc2626;
-      border-color: #991b1b;
-    }
-    .pz-marker--target.is-visible .pz-marker__icon {
-      filter: grayscale(0);
-    }
-
-    /* ETA card */
-    .pz-marker--eta.is-visible .pz-marker__card {
-      background: #fef2f2;
-      border-color: rgba(220,38,38,0.3);
-    }
-
-    /* ============================================
-       POST-ORDER TOAST
-       ============================================ */
-    .pz-toast {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(120%);
-      background: #dc2626;
-      color: var(--white);
-      padding: 0.8rem 1.5rem;
-      border: 2px solid #991b1b;
-      font-size: 0.9rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      z-index: var(--z-modal);
-      box-shadow: 6px 6px 0 #991b1b;
-      transition: transform 0.5s var(--ease-spring);
-      white-space: nowrap;
-    }
-    .pz-toast.is-visible {
-      transform: translateX(-50%) translateY(0);
-    }
-    .pz-toast__icon {
-      font-size: 1.3rem;
-    }
-
-    /* ============================================
-       MOBILE RESPONSIVE
-       ============================================ */
+    .pz-hero { min-height: 100svh; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); color: var(--text); position: relative; overflow: clip; text-align: center; }
+    .pz-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 18%, rgba(242, 123, 167, 0.24), transparent 48%), radial-gradient(circle at 82% 82%, rgba(194, 24, 79, 0.14), transparent 42%); pointer-events: none; }
+    .pz-hero__inner { position: relative; z-index: 1; max-width: 820px; padding: 2rem clamp(1.25rem, 5vw, 3rem); }
+    .pz-hero__kicker { display: inline-block; margin-bottom: 1rem; font-family: var(--font-subline); font-size: 0.78rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--blue-mid); }
+    .pz-hero__title { margin-bottom: 1.5rem; color: var(--blue-deep); }
+    .pz-hero__script { font-family: var(--font-script); font-size: clamp(3.7rem, 10vw, 7.2rem); line-height: 0.95; color: var(--blue-deep); }
+    .pz-hero__subtitle { max-width: 580px; margin: 0 auto 2.5rem; color: var(--text-muted); font-size: 1.08rem; line-height: 1.7; }
+    .pz-hero__subtitle em { color: var(--blue-mid); font-style: normal; font-family: var(--font-display); }
+    .pz-hero__counter { display: grid; gap: 0.35rem; justify-items: center; margin-bottom: 2.4rem; }
+    .pz-hero__number { font-family: var(--font-display); font-size: clamp(4.2rem, 12vw, 8.4rem); font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: #dc2626; text-shadow: 0 0 60px rgba(220, 38, 38, 0.14); }
+    .pz-hero__unit { font-family: var(--font-subline); font-size: 0.88rem; letter-spacing: 0.26em; text-transform: uppercase; color: #dc2626; }
+    .pz-hero__subcount { display: inline-flex; align-items: baseline; gap: 0.55rem; padding: 0.5rem 0.95rem; border: 2px solid rgba(242, 123, 167, 0.55); background: rgba(255, 255, 255, 0.72); color: var(--blue-deep); font-family: var(--font-subline); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; }
+    .pz-hero__subcount strong { font-family: var(--font-display); font-size: 1.2rem; color: var(--blue-mid); letter-spacing: 0; }
+    .pz-hero__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-bottom: 2.8rem; }
+    .pz-hero__stat { padding: 1rem; background: rgba(255, 255, 255, 0.68); border: 2px solid rgba(242, 123, 167, 0.35); }
+    .pz-hero__stat-value { display: block; font-family: var(--font-display); font-size: 1.25rem; color: var(--blue-deep); }
+    .pz-hero__stat-label { display: block; margin-top: 0.15rem; font-family: var(--font-subline); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
+    .pz-hero__scroll-hint { display: inline-flex; flex-direction: column; align-items: center; gap: 0.45rem; color: var(--blue-light); font-family: var(--font-subline); font-size: 0.76rem; letter-spacing: 0.18em; text-transform: uppercase; animation: pzBounce 2.2s ease-in-out infinite; }
+    .pz-hero__scroll-hint svg { stroke: currentColor; }
+    @keyframes pzBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+    .pz-journey { position: relative; padding: clamp(4rem, 8vw, 6rem) 0 clamp(6rem, 10vw, 8rem); background: linear-gradient(180deg, rgba(255, 240, 243, 1) 0%, rgba(255, 245, 247, 1) 34%, rgba(255, 240, 243, 1) 100%); }
+    .pz-journey__container { max-width: min(1400px, calc(100vw - 2rem)); margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem); }
+    .pz-journey__timeline { position: relative; min-height: 21600px; padding-bottom: 24rem; }
+    .pz-journey__rail { position: absolute; left: 50%; top: 0; bottom: 0; width: 6px; transform: translateX(-50%); background: rgba(242, 123, 167, 0.24); border-radius: 999px; }
+    .pz-journey__rail-fill { position: absolute; inset: 0 0 auto; height: 0%; border-radius: inherit; background: linear-gradient(180deg, var(--blue-light), var(--blue-mid)); }
+    .pz-journey__pizza { position: sticky; top: 50vh; left: 50%; width: 64px; height: 64px; margin-left: -32px; z-index: 3; pointer-events: none; }
+    .pz-journey__pizza-body { width: 64px; height: 64px; filter: drop-shadow(0 6px 18px rgba(194, 24, 79, 0.28)); transform-origin: center; }
+    .pz-journey__counter-float { position: sticky; top: calc(50vh + 76px); left: 50%; transform: translateX(-50%); z-index: 3; display: grid; justify-items: center; gap: 0.18rem; min-width: 170px; padding: 0.6rem 0.85rem; border: 2px solid rgba(194, 24, 79, 0.28); background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+    .pz-journey__counter-km { font-family: var(--font-display); font-size: 1.45rem; line-height: 1; color: var(--blue-mid); }
+    .pz-journey__counter-label { font-family: var(--font-subline); font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+    .pz-journey__counter-year { font-family: var(--font-display); font-size: 0.88rem; color: var(--blue-deep); }
+    .pz-marker { position: absolute; width: min(42vw, 520px); opacity: 0; transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+    .pz-marker--left { left: calc(50% - min(42vw, 520px) - 3.75rem); transform: translateX(-2rem); }
+    .pz-marker--right { left: calc(50% + 3.75rem); transform: translateX(2rem); }
+    .pz-marker.is-visible { opacity: 1; transform: translateX(0); }
+    .pz-marker__tease { position: absolute; top: var(--tease-y); left: 0; max-width: 18ch; padding: 0.55rem 0.8rem; background: rgba(242, 123, 167, 0.14); color: var(--blue-mid); font-family: var(--font-subline); font-size: 0.72rem; letter-spacing: 0.08em; line-height: 1.6; text-transform: uppercase; transform: translateX(var(--tease-x)) rotate(-2deg); }
+    .pz-marker--left .pz-marker__tease { left: auto; right: 0; text-align: right; }
+    .pz-marker__body { display: flex; align-items: flex-start; gap: 1.1rem; }
+    .pz-marker--left .pz-marker__body { flex-direction: row-reverse; text-align: right; }
+    .pz-marker__dot { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border-radius: 999px; border: 3px solid var(--blue-mid); background: var(--white); box-shadow: 0 0 0 8px rgba(255, 240, 243, 0.95); }
+    .pz-marker__icon { font-size: 1.35rem; line-height: 1; }
+    .pz-marker__card { width: min(100%, 430px); padding: 1.05rem 1.15rem 1.1rem; background: rgba(255, 255, 255, 0.96); border: 2px solid rgba(194, 24, 79, 0.14); box-shadow: 8px 8px 0 rgba(242, 123, 167, 0.16); }
+    .pz-marker__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.45rem; }
+    .pz-marker--left .pz-marker__meta { justify-content: flex-end; }
+    .pz-marker__km-tag, .pz-marker__badge { font-family: var(--font-subline); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; }
+    .pz-marker__km-tag { color: var(--blue-mid); }
+    .pz-marker__year-tag { font-family: var(--font-display); font-size: 0.78rem; color: var(--text-muted); }
+    .pz-marker__badge { padding: 0.15rem 0.45rem; border: 1px solid rgba(194, 24, 79, 0.18); background: rgba(242, 123, 167, 0.12); color: var(--blue-mid); }
+    .pz-marker__badge--reached { background: rgba(22, 163, 74, 0.12); border-color: rgba(22, 163, 74, 0.18); color: #15803d; }
+    .pz-marker__title { margin-bottom: 0.45rem; font-size: clamp(1.2rem, 2vw, 1.55rem); color: var(--blue-deep); }
+    .pz-marker__bodycopy { margin-bottom: 0.45rem; font-size: 0.92rem; line-height: 1.65; color: var(--text-muted); }
+    .pz-marker__fun { font-family: var(--font-script); font-size: 1.2rem; line-height: 1.28; color: var(--blue-mid); opacity: 0.92; }
+    .pz-marker--target .pz-marker__card, .pz-marker--eta .pz-marker__card { border-color: rgba(194, 24, 79, 0.32); background: rgba(255, 248, 250, 0.98); }
+    .pz-toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(120%); z-index: var(--z-modal); display: flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.35rem; border: 2px solid var(--blue-deep); background: var(--blue-mid); color: var(--white); box-shadow: 6px 6px 0 var(--blue-deep); transition: transform 0.45s var(--ease-spring); white-space: nowrap; }
+    .pz-toast.is-visible { transform: translateX(-50%) translateY(0); }
+    .pz-toast__icon { font-size: 1.25rem; }
+    @media (max-width: 1080px) { .pz-marker { width: min(44vw, 460px); } }
+    @media (max-width: 900px) { .pz-hero__stats { grid-template-columns: 1fr; } }
     @media (max-width: 768px) {
-      .pz-journey__timeline {
-        min-height: 4000px;
-      }
-      .pz-journey__rail {
-        left: 24px;
-        transform: none;
-      }
-      .pz-journey__pizza {
-        left: 24px;
-        margin-left: -28px;
-      }
-      .pz-journey__counter-float {
-        left: 24px;
-        transform: none;
-        margin-left: 40px;
-        font-size: 0.8rem;
-      }
-      /* All markers go right on mobile */
-      .pz-marker,
-      .pz-marker--left,
-      .pz-marker--right {
-        left: 24px;
-        right: auto;
-        width: calc(100% - 24px);
-        padding-left: 2.5rem;
-        padding-right: 0;
-        flex-direction: row;
-        text-align: left;
-        transform: translateX(30px);
-      }
-      .pz-marker--left.is-visible,
-      .pz-marker--right.is-visible {
-        transform: translateX(0);
-      }
-      .pz-marker--left .pz-marker__meta {
-        justify-content: flex-start;
-      }
-      .pz-marker__card {
-        max-width: none;
-      }
-      .pz-marker__dot {
-        width: 36px;
-        height: 36px;
-        font-size: 1.1rem;
-      }
-      .pz-hero__stats {
-        gap: 1rem;
-      }
+      .pz-journey__timeline { min-height: 14000px; padding-bottom: 16rem; }
+      .pz-journey__rail { left: 2rem; transform: none; }
+      .pz-journey__pizza { left: 2rem; margin-left: -32px; }
+      .pz-journey__counter-float { left: 4.6rem; transform: none; min-width: 148px; }
+      .pz-marker, .pz-marker--left, .pz-marker--right { left: 4.5rem; width: calc(100% - 5.25rem); transform: translateX(1.25rem); }
+      .pz-marker.is-visible { transform: translateX(0); }
+      .pz-marker__tease, .pz-marker--left .pz-marker__tease { left: 0; right: auto; max-width: 22ch; text-align: left; transform: translateX(0) rotate(-2deg); }
+      .pz-marker__body, .pz-marker--left .pz-marker__body { flex-direction: row; text-align: left; }
+      .pz-marker__meta, .pz-marker--left .pz-marker__meta { justify-content: flex-start; }
+      .pz-hero__subcount { font-size: 0.7rem; letter-spacing: 0.1em; }
     }
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      .pz-marker {
-        opacity: 1;
-        transform: none !important;
-      }
-      .pz-hero__scroll-hint {
-        animation: none;
-      }
-      .pz-journey__pizza,
-      .pz-journey__rail-fill {
-        transition: none;
-      }
-    }
+    @media (prefers-reduced-motion: reduce) { .pz-hero__scroll-hint { animation: none; } .pz-marker { opacity: 1; transform: none !important; } }
   </style>
 
-  <!-- GSAP + ScrollTrigger CDN -->
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
-  <script is:inline>
+  <script is:inline define:vars={{ startYear, annualKm, trackMaxKm }}>
     document.addEventListener('DOMContentLoaded', () => {
-      // ---- HERO COUNTER ANIMATION ----
-      const counterEl = document.getElementById('km-counter');
-      if (counterEl) {
-        const target = parseFloat(counterEl.dataset.target);
-        const duration = 2500;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const kmCounter = document.getElementById('km-counter');
+      const pizzaCounter = document.getElementById('pizza-counter');
+      const formatKm = (value) => Number(value).toFixed(1).replace('.', ',');
+      const formatPizzas = (value) => Math.round(value).toLocaleString('it-IT');
+
+      const animateNumber = (element, target, duration, formatter) => {
+        if (!element) return;
+        if (reducedMotion) {
+          element.textContent = formatter(target);
+          return;
+        }
         const start = performance.now();
-
-        function animateCounter(now) {
-          const elapsed = now - start;
-          const progress = Math.min(elapsed / duration, 1);
-          // Ease out cubic
+        const step = (now) => {
+          const progress = Math.min((now - start) / duration, 1);
           const eased = 1 - Math.pow(1 - progress, 3);
-          const current = (eased * target).toFixed(1).replace('.', ',');
-          counterEl.textContent = current;
-          if (progress < 1) requestAnimationFrame(animateCounter);
-        }
-        requestAnimationFrame(animateCounter);
+          element.textContent = formatter(target * eased);
+          if (progress < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      };
+
+      animateNumber(kmCounter, parseFloat(kmCounter?.dataset.target || '0'), 2600, formatKm);
+      animateNumber(pizzaCounter, parseFloat(pizzaCounter?.dataset.target || '0'), 2600, formatPizzas);
+
+      const markers = Array.from(document.querySelectorAll('.pz-marker'));
+      if (reducedMotion || !('IntersectionObserver' in window)) {
+        markers.forEach((marker) => marker.classList.add('is-visible'));
+      } else {
+        const revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+        markers.forEach((marker) => revealObserver.observe(marker));
       }
 
-      // ---- SCROLLTRIGGER: CENTERED TIMELINE ----
-      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-        gsap.registerPlugin(ScrollTrigger);
+      const journeySection = document.querySelector('.pz-journey');
+      const railFill = document.getElementById('journey-line-fill');
+      const pizzaBody = document.getElementById('journey-pizza-body');
+      const journeyKm = document.getElementById('journey-km-value');
+      const journeyYear = document.getElementById('journey-year-value');
+      let ticking = false;
 
-        // Reveal markers on scroll
-        var markers = document.querySelectorAll('.pz-marker');
-        markers.forEach(function(el) {
-          ScrollTrigger.create({
-            trigger: el,
-            start: 'top 82%',
-            onEnter: function() { el.classList.add('is-visible'); },
-          });
-        });
-
-        // Journey progress — fill rail + rotate pizza
-        var journeySection = document.querySelector('.pz-journey');
-        var railFill = document.getElementById('journey-line-fill');
-        var pizza = document.getElementById('journey-pizza');
-        var kmValue = document.getElementById('journey-km-value');
-        var yearValue = document.getElementById('journey-year-value');
-        var maxKm = 900;
-        var startYr = 1989;
-        var kmPerYear = (52 * 300 * 33) / 100000;
-
-        if (journeySection && railFill && pizza && kmValue) {
-          ScrollTrigger.create({
-            trigger: journeySection,
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 1,
-            onUpdate: function(self) {
-              var pct = self.progress * 100;
-              railFill.style.height = pct + '%';
-
-              // Map scroll progress to km
-              var currentKm = Math.round(self.progress * maxKm);
-              kmValue.textContent = currentKm;
-
-              // Map km to year
-              if (yearValue) {
-                var year = Math.round(startYr + currentKm / kmPerYear);
-                yearValue.textContent = year;
-              }
-
-              // Rotate pizza slice with scroll
-              var rotation = self.progress * 1080;
-              pizza.style.transform = 'rotate(' + rotation + 'deg)';
-            },
-          });
+      const updateJourney = () => {
+        ticking = false;
+        if (!journeySection || !railFill || !journeyKm || !journeyYear) return;
+        const rect = journeySection.getBoundingClientRect();
+        const travel = Math.max(rect.height - window.innerHeight, 1);
+        const progress = Math.min(Math.max(-rect.top / travel, 0), 1);
+        const currentKm = progress * trackMaxKm;
+        railFill.style.height = `${progress * 100}%`;
+        journeyKm.textContent = formatKm(currentKm);
+        journeyYear.textContent = `${Math.round(startYear + currentKm / annualKm)}`;
+        if (pizzaBody) {
+          pizzaBody.style.transform = `rotate(${progress * 1080}deg)`;
         }
-      }
+      };
 
-      // ---- POST-ORDER TOAST ----
-      var params = new URLSearchParams(window.location.search);
-      var addedPizzas = parseInt(params.get('addedPizzas'), 10);
+      const requestJourneyUpdate = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(updateJourney);
+      };
+
+      updateJourney();
+      window.addEventListener('scroll', requestJourneyUpdate, { passive: true });
+      window.addEventListener('resize', requestJourneyUpdate);
+
+      const params = new URLSearchParams(window.location.search);
+      const addedPizzas = parseInt(params.get('addedPizzas') || '0', 10);
       if (addedPizzas > 0) {
-        var toast = document.getElementById('pz-toast');
-        var toastText = document.getElementById('pz-toast-text');
+        const toast = document.getElementById('pz-toast');
+        const toastText = document.getElementById('pz-toast-text');
         if (toast && toastText) {
-          var addedMeters = (addedPizzas * 33 / 100).toFixed(1).replace('.', ',');
-          toastText.textContent = '+' + addedPizzas + ' pizze ordinate! Il filo d\u2019oro cresce di ' + addedMeters + ' m';
+          const addedMeters = (addedPizzas * 33 / 100).toFixed(1).replace('.', ',');
+          toastText.textContent = `+${addedPizzas} pizze ordinate! Il filo d’oro cresce di ${addedMeters} m`;
           toast.removeAttribute('hidden');
-
-          // Animate counter from (total - added) to total
-          if (counterEl) {
-            var totalTarget = parseFloat(counterEl.dataset.target);
-            var addedKm = (addedPizzas * 33) / 100000;
-            var fromKm = totalTarget - addedKm;
-            counterEl.textContent = fromKm.toFixed(1).replace('.', ',');
-
-            setTimeout(function() {
-              var dur = 1500;
-              var s = performance.now();
-              function recount(now) {
-                var elapsed = now - s;
-                var p = Math.min(elapsed / dur, 1);
-                var eased = 1 - Math.pow(1 - p, 3);
-                var val = (fromKm + eased * addedKm).toFixed(1).replace('.', ',');
-                counterEl.textContent = val;
-                if (p < 1) requestAnimationFrame(recount);
-              }
-              requestAnimationFrame(recount);
-            }, 500);
-          }
-
-          // Show toast
-          requestAnimationFrame(function() {
-            requestAnimationFrame(function() {
-              toast.classList.add('is-visible');
-            });
-          });
-
-          // Auto-dismiss and open WhatsApp if stored
-          setTimeout(function() {
+          requestAnimationFrame(() => { requestAnimationFrame(() => { toast.classList.add('is-visible'); }); });
+          setTimeout(() => {
             toast.classList.remove('is-visible');
-            setTimeout(function() {
+            setTimeout(() => {
               toast.setAttribute('hidden', '');
-              // Open stored WhatsApp URL from menu order
-              var storedWaUrl = sessionStorage.getItem('pz_wa_url');
+              const storedWaUrl = sessionStorage.getItem('pz_wa_url');
               if (storedWaUrl) {
                 sessionStorage.removeItem('pz_wa_url');
-                var a = document.createElement('a');
-                a.href = storedWaUrl;
-                a.target = '_blank';
-                a.rel = 'noopener noreferrer';
-                a.style.position = 'fixed';
-                a.style.opacity = '0';
-                a.style.pointerEvents = 'none';
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(function() { a.remove(); }, 200);
+                const link = document.createElement('a');
+                link.href = storedWaUrl;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.style.position = 'fixed';
+                link.style.opacity = '0';
+                document.body.appendChild(link);
+                link.click();
+                setTimeout(() => link.remove(), 200);
               }
-            }, 600);
-          }, 5000);
+            }, 500);
+          }, 4600);
         }
       }
     });
