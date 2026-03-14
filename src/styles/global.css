@@ -753,6 +753,8 @@ body.home-onepager .layout-bottom-marquee {
   display: flex;
   align-items: center;
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 .marquee-track {
   display: flex;
