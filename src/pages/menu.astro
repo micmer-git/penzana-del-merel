@@ -1744,26 +1744,19 @@ updateCartUI();
     searchInput.focus();
   });
 
-  // Click result → scroll to menu card
+  // Click result → add directly to cart
   searchResults.addEventListener('click', function(e) {
     var result = e.target.closest('.menu-search-result');
     if (!result) return;
     var itemId = result.dataset.itemId;
-    var card = document.querySelector('.menu-card[data-item-id="' + itemId + '"]');
-    if (card) {
-      // Show correct panel
-      var panel = card.closest('.menu-panel');
-      if (panel && !panel.classList.contains('active')) {
-        document.querySelectorAll('.menu-panel').forEach(function(p) { p.classList.remove('active'); });
-        document.querySelectorAll('.menu-tab').forEach(function(t) { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
-        panel.classList.add('active');
-        var tabBtn = document.querySelector('.menu-tab[data-section="' + panel.dataset.section + '"]');
-        if (tabBtn) { tabBtn.classList.add('active'); tabBtn.setAttribute('aria-selected','true'); }
+    var item = allItems.find(function(i) { return i.id === itemId; });
+    if (item) {
+      // Find the card's add button and click it (triggers quick-add logic)
+      var card = document.querySelector('.menu-card[data-item-id="' + itemId + '"]');
+      if (card) {
+        var addBtn = card.querySelector('.add-btn');
+        if (addBtn) addBtn.click();
       }
-      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      card.style.transition = 'box-shadow 0.3s';
-      card.style.boxShadow = '0 0 0 3px var(--accent-gold)';
-      setTimeout(function() { card.style.boxShadow = ''; }, 1500);
     }
     searchInput.value = '';
     searchResults.hidden = true;

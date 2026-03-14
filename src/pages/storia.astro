@@ -27,6 +27,21 @@ const chapters = [
     quote: "Calici di rosso al banco, partite di bocce, l'ombra del secolare ippocastano. Qui il tempo poteva ancora rallentare.",
   },
   {
+    year: '1968',
+    title: 'Lo Sci Club Orezzo',
+    paragraphs: [
+      "Tarcisio non si ferma alla cucina. Nel 1968 fonda lo Sci Club Orezzo, portando la passione per la montagna e lo sport nel cuore del borgo.",
+      "Quello che nasce come un gruppo di appassionati diventa un punto di riferimento della valle. Nel 1983, Efrem Merelli conquista il Campionato Italiano di sci: un risultato che parla della stessa determinazione che tiene acceso il forno ogni sera.",
+    ],
+    quote: "Dalla neve al forno: la stessa disciplina, la stessa montagna, la stessa famiglia.",
+    image: {
+      src: `${base}/img/orezzo_snow.jpg`,
+      alt: 'Orezzo innevata — il borgo dove è nato lo Sci Club',
+      caption: 'Orezzo sotto la neve — Sci Club Orezzo, fondato nel 1968',
+    },
+    link: { href: 'https://www.scicluborezzo.com/', label: 'Sci Club Orezzo →' },
+  },
+  {
     year: '1989',
     title: 'La passione per il forno',
     paragraphs: [
@@ -101,6 +116,9 @@ const chapters = [
               ))}
               {chapter.quote && (
                 <blockquote class="pullquote">{chapter.quote}</blockquote>
+              )}
+              {chapter.link && (
+                <a href={chapter.link.href} target="_blank" rel="noopener noreferrer" class="story-event__link">{chapter.link.label}</a>
               )}
             </div>
           </article>
@@ -242,6 +260,21 @@ const chapters = [
       color: var(--text-muted);
       font-style: italic;
     }
+
+    .story-event__link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-family: var(--font-subline);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--blue-mid);
+      border-bottom: 2px solid var(--accent-gold);
+      padding-bottom: 0.15rem;
+      transition: color var(--transition), border-color var(--transition);
+    }
+    .story-event__link:hover { color: var(--blue-deep); border-color: var(--blue-mid); }
 
     .story-cta {
       position: relative;
