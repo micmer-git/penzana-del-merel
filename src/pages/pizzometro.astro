@@ -123,12 +123,20 @@ const funMilestones: Milestone[] = [
   { km: (1000000 * 33) / 100000, label: '1.000.000 Pizze', body: 'Un milione di pizze. A quel punto il filo d\'oro non è più un filo, è un\'autostrada.', icon: '💎', fun: 'Un milione di motivi per tornare a Orezzo.', year: Math.round(startYear + ((1000000 * 33) / 100000) / annualKm), type: 'fun' },
 ];
 
+const birthComments: Record<string, { body: string; fun: string }> = {
+  Michele: { body: 'Ecco il primogenito.', fun: 'Il primo Merelli della nuova generazione. Il forno ha un erede.' },
+  Luca: { body: 'Siamo stati veloci...', fun: 'Due in due anni. La famiglia non perde tempo.' },
+  Alessandro: { body: 'Non c\'è due senza tre. Lui canterà.', fun: 'Tre fratelli, tre caratteri, una sola pizza preferita: la Margherita.' },
+  Giacomo: { body: 'Quattro, quasi pronti per il calcetto. Non si fermano proprio a... sfornare pizze.', fun: 'Il quarto arriva e il tavolo si allunga.' },
+  Chiara: { body: 'Finalmente la principessa!', fun: 'Cinque Merelli. La squadra è completa.' },
+};
+
 const birthMilestones: Milestone[] = births.map(b => ({
   km: (b.birthYear - startYear) * annualKm,
   label: `Nasce ${b.name}`,
-  body: `${b.birthYear} — un Merelli in più al tavolo.`,
+  body: birthComments[b.name]?.body || `${b.birthYear} — un Merelli in più al tavolo.`,
   icon: '👶',
-  fun: `La famiglia cresce, il filo si allunga.`,
+  fun: birthComments[b.name]?.fun || 'La famiglia cresce, il filo si allunga.',
   year: b.birthYear,
   type: 'birth' as const,
 }));
@@ -184,7 +192,7 @@ const dreamComments = [
 ---
 
 <BaseLayout
-  title="Pizzometro — Il Filo d'Oro"
+  title="Pizzometro — Il Filo di (Pomo)d'Oro"
   description="Dal 1989 ad oggi: quanta strada farebbero tutte le pizze della Penzana messe in fila? Un viaggio verticale da Orezzo fino a Napoli, attraverso la Val Seriana e l'Italia intera."
   lang="it"
   pageType="website"
@@ -192,12 +200,12 @@ const dreamComments = [
 >
   <section class="pz-hero" aria-labelledby="pz-heading">
     <div class="pz-hero__inner">
-      <span class="pz-hero__kicker">Il Filo d'Oro</span>
+      <span class="pz-hero__kicker">Il Filo di (Pomo)d'Oro</span>
       <h1 id="pz-heading" class="pz-hero__title">
         <span class="pz-hero__script">Pizzometro</span>
       </h1>
       <p class="pz-hero__subtitle">
-        Dal {startYear}, ogni pizza sfornata aggiunge 33 cm al nostro filo d'oro.<br />
+        Dal {startYear}, ogni pizza sfornata aggiunge 33 cm al nostro filo di (pomo)d'oro.<br />
         Tarcisio diceva: <em>"Arriveremo fino a Napoli."</em>
       </p>
 
@@ -298,7 +306,7 @@ const dreamComments = [
               data-year={ms.year}
             >
               {showQuoteOutside && (
-                <p class="pz-typo-quote">{ms.body}</p>
+                <p class="pz-typo-quote" set:html={ms.body.replace(/\.\s*/g, '.<br/>')} />
               )}
               <div class="pz-marker__body">
                 <div class="pz-marker__dot">
@@ -366,7 +374,7 @@ const dreamComments = [
             <p class="pz-beyond__comment">{dreamComments[i % dreamComments.length]}</p>
           )}
           <article class="pz-marker pz-marker--dream is-visible">
-            <p class="pz-typo-quote">{dm.body}</p>
+            <p class="pz-typo-quote" set:html={dm.body.replace(/\.\s*/g, '.<br/>')} />
             <div class="pz-marker__body">
               <div class="pz-marker__dot">
                 <span class="pz-marker__icon">{dm.icon}</span>
@@ -390,7 +398,7 @@ const dreamComments = [
 
       <div class="pz-beyond__end">
         <span class="pz-beyond__end-icon">🍕</span>
-        <p>Il filo d'oro non finisce. Ogni pizza lo allunga di 33 cm.</p>
+        <p>Il filo di (pomo)d'oro non finisce. Ogni pizza lo allunga di 33 cm.</p>
       </div>
     </div>
   </section>
@@ -401,7 +409,7 @@ const dreamComments = [
   </div>
 
   <style>
-    .pz-hero { min-height: 100svh; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); color: var(--text); position: relative; overflow: clip; text-align: center; }
+    .pz-hero { min-height: 100svh; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); color: var(--text); position: relative; overflow: clip; text-align: center; padding-top: 56px; }
     .pz-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 18%, rgba(242, 123, 167, 0.24), transparent 48%), radial-gradient(circle at 82% 82%, rgba(194, 24, 79, 0.14), transparent 42%); pointer-events: none; }
     .pz-hero__inner { position: relative; z-index: 1; max-width: 820px; padding: 2rem clamp(1.25rem, 5vw, 3rem); }
     .pz-hero__kicker { display: inline-block; margin-bottom: 1rem; font-family: var(--font-subline); font-size: 0.78rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--blue-mid); }
@@ -410,8 +418,8 @@ const dreamComments = [
     .pz-hero__subtitle { max-width: 580px; margin: 0 auto 2.5rem; color: var(--text-muted); font-size: 1.08rem; line-height: 1.7; }
     .pz-hero__subtitle em { color: var(--blue-mid); font-style: normal; font-family: var(--font-display); }
     .pz-hero__counter { display: grid; gap: 0.35rem; justify-items: center; margin-bottom: 2.4rem; }
-    .pz-hero__number { font-family: var(--font-display); font-size: clamp(4.2rem, 12vw, 8.4rem); font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: #dc2626; text-shadow: 0 0 60px rgba(220, 38, 38, 0.14); }
-    .pz-hero__unit { font-family: var(--font-subline); font-size: 0.88rem; letter-spacing: 0.26em; text-transform: uppercase; color: #dc2626; }
+    .pz-hero__number { font-family: var(--font-display); font-size: clamp(4.2rem, 12vw, 8.4rem); font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: var(--blue-deep); text-shadow: 0 0 60px rgba(143, 15, 47, 0.14); }
+    .pz-hero__unit { font-family: var(--font-subline); font-size: 0.88rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--blue-deep); }
     .pz-hero__subcount { display: inline-flex; align-items: baseline; gap: 0.55rem; padding: 0.5rem 0.95rem; border: 2px solid rgba(242, 123, 167, 0.55); background: rgba(255, 255, 255, 0.72); color: var(--blue-deep); font-family: var(--font-subline); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; }
     .pz-hero__subcount strong { font-family: var(--font-display); font-size: 1.2rem; color: var(--blue-mid); letter-spacing: 0; }
     .pz-hero__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-bottom: 2.8rem; }
@@ -432,10 +440,10 @@ const dreamComments = [
     /* Pizza + stats grouped, sticky */
     .pz-journey__pizza { position: sticky; top: 40vh; left: 50%; width: 64px; margin-left: -32px; z-index: 3; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
     .pz-journey__pizza-body { width: 64px; height: 64px; filter: drop-shadow(0 6px 18px rgba(194, 24, 79, 0.28)); transform-origin: center; }
-    .pz-journey__pizza-stats { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; white-space: nowrap; }
-    .pz-journey__counter-km { font-family: var(--font-display); font-size: 1.3rem; line-height: 1; color: var(--blue-mid); text-shadow: 0 1px 8px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,0.8); }
-    .pz-journey__counter-label { font-family: var(--font-subline); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
-    .pz-journey__counter-year { font-family: var(--font-display); font-size: 0.82rem; color: var(--blue-deep); }
+    .pz-journey__pizza-stats { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; white-space: nowrap; padding: 0.35rem 0.65rem; background: rgba(255, 255, 255, 0.92); border: 1.5px solid rgba(194, 24, 79, 0.2); backdrop-filter: blur(8px); }
+    .pz-journey__counter-km { font-family: var(--font-display); font-size: 1.3rem; line-height: 1; color: var(--blue-deep); }
+    .pz-journey__counter-label { display: none; }
+    .pz-journey__counter-year { font-family: var(--font-display); font-size: 0.82rem; color: var(--blue-mid); }
 
     /* Milestone markers — positioned by top% */
     .pz-marker { position: absolute; width: min(42vw, 520px); opacity: 0; transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
@@ -455,7 +463,7 @@ const dreamComments = [
     .pz-marker__badge { padding: 0.15rem 0.45rem; border: 1px solid rgba(194, 24, 79, 0.18); background: rgba(242, 123, 167, 0.12); color: var(--blue-mid); }
     .pz-marker__badge--reached { background: rgba(22, 163, 74, 0.12); border-color: rgba(22, 163, 74, 0.18); color: #15803d; }
     .pz-marker__title { margin-bottom: 0.45rem; font-size: clamp(1.2rem, 2vw, 1.55rem); color: var(--blue-deep); }
-    .pz-marker__bodycopy { margin-bottom: 0.45rem; font-size: 0.92rem; line-height: 1.65; color: var(--text-muted); }
+    .pz-marker__bodycopy { margin-bottom: 0.45rem; font-size: 0.88rem; line-height: 1.55; color: var(--text-muted); font-style: italic; }
     .pz-marker__fun { font-family: var(--font-subline); font-size: 0.78rem; line-height: 1.45; letter-spacing: 0.11em; text-transform: uppercase; color: var(--blue-mid); opacity: 0.92; }
     .pz-marker--target .pz-marker__card, .pz-marker--eta .pz-marker__card { border-color: rgba(194, 24, 79, 0.32); background: rgba(255, 248, 250, 0.98); }
 
@@ -471,13 +479,14 @@ const dreamComments = [
     /* Typographic quotes outside cards */
     .pz-typo-quote {
       font-family: var(--font-script);
-      font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+      font-size: clamp(2rem, 5vw, 2.8rem);
       color: var(--blue-deep);
-      line-height: 1.15;
+      line-height: 1.2;
       margin-bottom: 1.4rem;
       opacity: 0.82;
       text-align: center;
-      max-width: min(100%, 500px);
+      max-width: min(100%, 520px);
+      word-spacing: 0.08em;
     }
 
     /* Dream / post-Napoli milestones */
@@ -500,7 +509,7 @@ const dreamComments = [
     .pz-driver__btn:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
     .pz-driver__btn.is-active { background: var(--blue-mid); border-color: var(--blue-mid); color: var(--white); }
     .pz-driver__info { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--blue-mid); background: rgba(255, 255, 255, 0.7); color: var(--blue-mid); font-weight: 800; font-size: 0.85rem; cursor: pointer; flex-shrink: 0; }
-    .pz-driver__popup { position: absolute; top: 42px; right: 0; max-width: 520px; text-align: left; padding: 0.85rem 1rem; border: 2px solid var(--blue-mid); background: rgba(255, 255, 255, 0.96); color: var(--blue-deep); font-size: 0.82rem; line-height: 1.55; box-shadow: 4px 4px 0 rgba(242, 123, 167, 0.2); z-index: 20; }
+    .pz-driver__popup { position: absolute; top: 42px; left: 50%; transform: translateX(-50%); max-width: 520px; text-align: left; padding: 0.85rem 1rem; border: 2px solid var(--blue-mid); background: rgba(255, 255, 255, 0.96); color: var(--blue-deep); font-size: 0.82rem; line-height: 1.55; box-shadow: 4px 4px 0 rgba(242, 123, 167, 0.2); z-index: 20; }
     .pz-driver__close { position: absolute; right: 6px; top: 2px; border: 0; background: transparent; color: var(--blue-deep); font-size: 1.15rem; cursor: pointer; }
 
     /* Post-Napoli beyond section */
@@ -523,7 +532,8 @@ const dreamComments = [
       .pz-marker.is-visible:not(.pz-marker--dream) { transform: translateX(0); }
       .pz-marker__body, .pz-marker--left .pz-marker__body { flex-direction: row; text-align: left; }
       .pz-marker__meta, .pz-marker--left .pz-marker__meta { justify-content: flex-start; }
-      .pz-typo-quote { font-size: clamp(1.1rem, 4vw, 1.5rem); text-align: left; }
+      .pz-typo-quote { font-size: clamp(1.6rem, 5.5vw, 2.2rem); text-align: left; }
+      .pz-driver__popup { left: 0; right: 0; transform: none; max-width: calc(100vw - 2rem); }
       .pz-hero__subcount { font-size: 0.7rem; letter-spacing: 0.1em; }
       .pz-hero__stat { padding: 0.65rem 0.5rem; }
       .pz-hero__stat-value { font-size: 1rem; }
