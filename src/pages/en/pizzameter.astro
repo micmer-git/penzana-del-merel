@@ -18,6 +18,55 @@ const yearsToNapoli = Math.ceil((napoliDistanceKm - totalKm) / annualKm);
 const etaNapoli = currentYear + Math.max(0, yearsToNapoli);
 const trackMaxKm = 900;
 
+// --- Driver models ---
+const familyEntries = [
+  { name: 'Michele', year: 1994 + 4 },
+  { name: 'Luca', year: 1995 + 4 },
+  { name: 'Alessandro', year: 1998 + 4 },
+  { name: 'Giacomo', year: 2004 + 4 },
+  { name: 'Chiara', year: 2007 + 4 },
+];
+
+function weeksBetween(from: Date, to: Date) {
+  return Math.max(0, Math.floor((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24 * 7)));
+}
+
+function computeBrunoModel(nowDate: Date) {
+  const perWeek = 5;
+  const weeks = weeksBetween(new Date(startYear, 0, 1), nowDate);
+  const pizzas = weeks * perWeek;
+  const km = (pizzas * pizzaDiameterCm) / 100000;
+  const annual = (52 * perWeek * pizzaDiameterCm) / 100000;
+  const yearsToNap = Math.ceil((napoliDistanceKm - km) / annual);
+  return { pizzasPerWeek: perWeek, pizzasDelivered: pizzas, totalKm: km, annualKm: annual, etaNapoli: currentYear + Math.max(0, yearsToNap) };
+}
+
+function computeFamilyModel(nowDate: Date) {
+  let pizzas = 0;
+  let last = new Date(startYear, 0, 1);
+  let people = 3;
+  const perPerson = 3;
+  const sorted = [...familyEntries].sort((a, b) => a.year - b.year);
+
+  for (const e of sorted) {
+    const eventDate = new Date(e.year, 0, 1);
+    if (eventDate > nowDate) break;
+    pizzas += weeksBetween(last, eventDate) * people * perPerson;
+    people += 1;
+    last = eventDate;
+  }
+
+  pizzas += weeksBetween(last, nowDate) * people * perPerson;
+  const perWeekNow = people * perPerson;
+  const km = (pizzas * pizzaDiameterCm) / 100000;
+  const annual = (52 * perWeekNow * pizzaDiameterCm) / 100000;
+  const yearsToNap = Math.ceil((napoliDistanceKm - km) / annual);
+  return { pizzasPerWeek: perWeekNow, pizzasDelivered: pizzas, totalKm: km, annualKm: annual, etaNapoli: currentYear + Math.max(0, yearsToNap) };
+}
+
+const brunoModel = computeBrunoModel(now);
+const familyModel = computeFamilyModel(now);
+
 const milestones = [
   { km: 0, label: 'La Penzana (Orezzo)', desc: 'Where it all began: oven lit, dough ready, the journey begins.', icon: '🏠', year: 1989, fun: 'Pizza number one: probably burnt. But made with love.' },
   { km: 3, label: 'Gazzaniga', desc: 'Three kilometres of pizza. The aroma reaches the next town.', icon: '⛰️', year: Math.round(startYear + 3 / annualKm), fun: 'The whole valley knows it\'s pizza night.' },
@@ -57,21 +106,42 @@ const milestones = [
         Since {startYear}, every pizza baked adds 33 cm to our golden thread.<br />
         Tarcisio used to say: <em>"We'll make it all the way to Naples."</em>
       </p>
+      <div class="pz-driver" aria-label="Filometro driver selector">
+        <span class="pz-driver__label">Who drives the filometro?</span>
+        <div class="pz-driver__controls">
+          <button type="button" class="pz-driver__btn is-active" data-mode="bruno" id="driver-btn-bruno">Bruno</button>
+          <button type="button" class="pz-driver__btn" data-mode="family" id="driver-btn-family">Merelli Family</button>
+          <button type="button" class="pz-driver__info" id="filometro-info-btn" aria-label="Formula info">i</button>
+        </div>
+        <div class="pz-driver__popup" id="filometro-popup" hidden>
+          <button type="button" class="pz-driver__close" id="filometro-popup-close" aria-label="Close">&times;</button>
+          <strong>Bruno</strong> — loyal customer, 5 pizzas per week since 1989.<br/>
+          <strong>Merelli Family</strong> — 3 people &times; 3 pizzas/week, then +1 person (and +3 pizzas/week) for each child after age 4: Michele (1998), Luca (1999), Alessandro (2002), Giacomo (2008), Chiara (2011).
+        </div>
+      </div>
+
       <div class="pz-hero__counter" aria-live="polite">
-        <span class="pz-hero__number" id="km-counter" data-target={totalKm.toFixed(1)}>0</span>
+        <span class="pz-hero__number" id="km-counter"
+          data-target={brunoModel.totalKm.toFixed(1)}
+          data-bruno={brunoModel.totalKm.toFixed(1)}
+          data-family={familyModel.totalKm.toFixed(1)}>0</span>
         <span class="pz-hero__unit">km travelled</span>
       </div>
       <div class="pz-hero__stats">
         <div class="pz-hero__stat">
-          <span class="pz-hero__stat-value">{pizzasDelivered.toLocaleString('en-US')}</span>
+          <span class="pz-hero__stat-value"><span id="stat-pizzas"
+            data-bruno={brunoModel.pizzasDelivered}
+            data-family={familyModel.pizzasDelivered}>{brunoModel.pizzasDelivered.toLocaleString('en-US')}</span></span>
           <span class="pz-hero__stat-label">pizzas baked</span>
         </div>
         <div class="pz-hero__stat">
-          <span class="pz-hero__stat-value">{startYear} — {currentYear}</span>
+          <span class="pz-hero__stat-value">{startYear} &mdash; {currentYear}</span>
           <span class="pz-hero__stat-label">years of tradition</span>
         </div>
         <div class="pz-hero__stat">
-          <span class="pz-hero__stat-value">{annualKm.toFixed(1)} km</span>
+          <span class="pz-hero__stat-value"><span id="stat-annual"
+            data-bruno={brunoModel.annualKm.toFixed(1)}
+            data-family={familyModel.annualKm.toFixed(1)}>{brunoModel.annualKm.toFixed(1)}</span> km</span>
           <span class="pz-hero__stat-label">every year</span>
         </div>
       </div>
@@ -144,11 +214,15 @@ const milestones = [
           <div class="pz-marker__card">
             <div class="pz-marker__meta">
               <span class="pz-marker__km-tag">Estimated arrival</span>
-              <span class="pz-marker__year-tag">~{etaNapoli}</span>
+              <span class="pz-marker__year-tag">~<span id="eta-year"
+                data-bruno={brunoModel.etaNapoli}
+                data-family={familyModel.etaNapoli}>{etaNapoli}</span></span>
             </div>
-            <h3 class="pz-marker__title">Naples — Year {etaNapoli}</h3>
+            <h3 class="pz-marker__title">Naples — Year <span id="eta-title-year">{etaNapoli}</span></h3>
             <p class="pz-marker__desc">
-              {Math.max(0, (napoliDistanceKm - totalKm)).toFixed(1)} km remain. Every pizza shortens the journey by 33 cm.
+              <span id="eta-remaining"
+                data-bruno={Math.max(0, (napoliDistanceKm - brunoModel.totalKm)).toFixed(1)}
+                data-family={Math.max(0, (napoliDistanceKm - familyModel.totalKm)).toFixed(1)}>{Math.max(0, (napoliDistanceKm - brunoModel.totalKm)).toFixed(1)}</span> km remain. Every pizza shortens the journey by 33 cm.
             </p>
           </div>
         </div>
@@ -269,16 +343,18 @@ const milestones = [
       margin-top: 0.5rem;
     }
 
-    /* Stats row */
+    /* Stats row — always inline */
     .pz-hero__stats {
-      display: flex;
-      justify-content: center;
-      gap: clamp(1.5rem, 4vw, 3rem);
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
       margin-bottom: 3rem;
-      flex-wrap: wrap;
     }
     .pz-hero__stat {
       text-align: center;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.68);
+      border: 2px solid rgba(220,38,38,0.15);
     }
     .pz-hero__stat-value {
       display: block;
@@ -296,6 +372,17 @@ const milestones = [
       color: var(--text-muted);
       margin-top: 0.2rem;
     }
+
+    /* Driver toggle */
+    .pz-driver { margin: 0 auto 1.5rem; max-width: 680px; text-align: center; }
+    .pz-driver__label { display: block; margin-bottom: 0.5rem; font-family: var(--font-subline, sans-serif); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #991b1b; }
+    .pz-driver__controls { display: flex; align-items: center; gap: 0.5rem; justify-content: center; position: relative; }
+    .pz-driver__btn { padding: 0.55rem 1.1rem; border: 2px solid rgba(220,38,38,0.25); background: rgba(255, 255, 255, 0.7); font-family: var(--font-subline, sans-serif); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; transition: all 0.25s ease; }
+    .pz-driver__btn:hover { border-color: #dc2626; color: #dc2626; }
+    .pz-driver__btn.is-active { background: #dc2626; border-color: #dc2626; color: #fff; }
+    .pz-driver__info { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #dc2626; background: rgba(255, 255, 255, 0.7); color: #dc2626; font-weight: 800; font-size: 0.85rem; cursor: pointer; flex-shrink: 0; }
+    .pz-driver__popup { position: absolute; top: 42px; right: 0; max-width: 480px; text-align: left; padding: 0.85rem 1rem; border: 2px solid #dc2626; background: rgba(255, 255, 255, 0.96); color: #991b1b; font-size: 0.82rem; line-height: 1.55; box-shadow: 4px 4px 0 rgba(220,38,38,0.2); z-index: 20; }
+    .pz-driver__close { position: absolute; right: 6px; top: 2px; border: 0; background: transparent; color: #991b1b; font-size: 1.15rem; cursor: pointer; }
 
     /* Scroll hint */
     .pz-hero__scroll-hint {
@@ -647,9 +734,11 @@ const milestones = [
         height: 36px;
         font-size: 1.1rem;
       }
-      .pz-hero__stats {
-        gap: 1rem;
-      }
+      .pz-hero__stat { padding: 0.65rem 0.5rem; }
+      .pz-hero__stat-value { font-size: 1rem; }
+      .pz-hero__stat-label { font-size: 0.62rem; }
+      .pz-driver__btn { padding: 0.45rem 0.7rem; font-size: 0.68rem; }
+      .pz-driver__popup { max-width: calc(100vw - 3rem); left: 0; right: 0; }
     }
 
     /* Reduced motion */
@@ -668,145 +757,141 @@ const milestones = [
     }
   </style>
 
-  <!-- GSAP + ScrollTrigger CDN -->
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
   <script is:inline>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', function() {
+      var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var kmCounter = document.getElementById('km-counter');
+      var statPizzas = document.getElementById('stat-pizzas');
+      var statAnnual = document.getElementById('stat-annual');
+      var etaYear = document.getElementById('eta-year');
+      var etaTitleYear = document.getElementById('eta-title-year');
+      var etaRemaining = document.getElementById('eta-remaining');
+      var startYr = 1989;
+      var maxKm = 900;
+      var currentAnnualKm = (52 * 300 * 33) / 100000;
+
+      var formatKm = function(v) { return Number(v).toFixed(1); };
+      var formatPizzas = function(v) { return Math.round(v).toLocaleString('en-US'); };
+
       // ---- HERO COUNTER ANIMATION ----
-      const counterEl = document.getElementById('km-counter');
-      if (counterEl) {
-        const target = parseFloat(counterEl.dataset.target);
-        const duration = 2500;
-        const start = performance.now();
-
-        function animateCounter(now) {
-          const elapsed = now - start;
-          const progress = Math.min(elapsed / duration, 1);
-          // Ease out cubic
-          const eased = 1 - Math.pow(1 - progress, 3);
-          const current = (eased * target).toFixed(1).replace('.', ',');
-          counterEl.textContent = current;
-          if (progress < 1) requestAnimationFrame(animateCounter);
+      if (kmCounter) {
+        var target = parseFloat(kmCounter.dataset.target);
+        if (reducedMotion) {
+          kmCounter.textContent = formatKm(target);
+        } else {
+          var duration = 2500;
+          var animStart = performance.now();
+          function animateCounter(now) {
+            var elapsed = now - animStart;
+            var progress = Math.min(elapsed / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            kmCounter.textContent = formatKm(eased * target);
+            if (progress < 1) requestAnimationFrame(animateCounter);
+          }
+          requestAnimationFrame(animateCounter);
         }
-        requestAnimationFrame(animateCounter);
       }
 
-      // ---- SCROLLTRIGGER: CENTERED TIMELINE ----
-      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-        gsap.registerPlugin(ScrollTrigger);
+      // ---- DRIVER TOGGLE ----
+      var driverBtns = document.querySelectorAll('.pz-driver__btn');
+      var infoBtn = document.getElementById('filometro-info-btn');
+      var popup = document.getElementById('filometro-popup');
+      var popupClose = document.getElementById('filometro-popup-close');
 
-        // Reveal markers on scroll
-        var markers = document.querySelectorAll('.pz-marker');
-        markers.forEach(function(el) {
-          ScrollTrigger.create({
-            trigger: el,
-            start: 'top 82%',
-            onEnter: function() { el.classList.add('is-visible'); },
-          });
+      function applyMode(mode) {
+        if (!kmCounter) return;
+        var km = parseFloat(kmCounter.dataset[mode] || kmCounter.dataset.target || '0');
+        var pizzas = parseInt((statPizzas && statPizzas.dataset[mode]) || '0', 10);
+        var annual = parseFloat((statAnnual && statAnnual.dataset[mode]) || '0');
+        var eta = parseInt((etaYear && etaYear.dataset[mode]) || '0', 10);
+        var rem = parseFloat((etaRemaining && etaRemaining.dataset[mode]) || '0');
+
+        kmCounter.dataset.target = km.toFixed(1);
+        kmCounter.textContent = formatKm(km);
+        if (statPizzas) statPizzas.textContent = formatPizzas(pizzas);
+        if (statAnnual) statAnnual.textContent = formatKm(annual);
+        if (etaYear) etaYear.textContent = String(eta);
+        if (etaTitleYear) etaTitleYear.textContent = String(eta);
+        if (etaRemaining) etaRemaining.textContent = rem.toFixed(1);
+        currentAnnualKm = annual;
+
+        driverBtns.forEach(function(btn) {
+          btn.classList.toggle('is-active', btn.dataset.mode === mode);
         });
-
-        // Journey progress — fill rail + rotate pizza
-        var journeySection = document.querySelector('.pz-journey');
-        var railFill = document.getElementById('journey-line-fill');
-        var pizza = document.getElementById('journey-pizza');
-        var kmValue = document.getElementById('journey-km-value');
-        var yearValue = document.getElementById('journey-year-value');
-        var maxKm = 900;
-        var startYr = 1989;
-        var kmPerYear = (52 * 300 * 33) / 100000;
-
-        if (journeySection && railFill && pizza && kmValue) {
-          ScrollTrigger.create({
-            trigger: journeySection,
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 1,
-            onUpdate: function(self) {
-              var pct = self.progress * 100;
-              railFill.style.height = pct + '%';
-
-              // Map scroll progress to km
-              var currentKm = Math.round(self.progress * maxKm);
-              kmValue.textContent = currentKm;
-
-              // Map km to year
-              if (yearValue) {
-                var year = Math.round(startYr + currentKm / kmPerYear);
-                yearValue.textContent = year;
-              }
-
-              // Rotate pizza slice with scroll
-              var rotation = self.progress * 1080;
-              pizza.style.transform = 'rotate(' + rotation + 'deg)';
-            },
-          });
-        }
       }
+
+      driverBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() { applyMode(btn.dataset.mode); });
+      });
+
+      if (infoBtn && popup) {
+        infoBtn.addEventListener('click', function() { popup.toggleAttribute('hidden'); });
+      }
+      if (popupClose && popup) {
+        popupClose.addEventListener('click', function() { popup.setAttribute('hidden', ''); });
+      }
+
+      // ---- SCROLL: MARKERS + JOURNEY ----
+      var markers = document.querySelectorAll('.pz-marker');
+      if (reducedMotion) {
+        markers.forEach(function(el) { el.classList.add('is-visible'); });
+      } else {
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+        markers.forEach(function(el) { observer.observe(el); });
+      }
+
+      var journeySection = document.querySelector('.pz-journey');
+      var railFill = document.getElementById('journey-line-fill');
+      var pizza = document.getElementById('journey-pizza');
+      var kmValue = document.getElementById('journey-km-value');
+      var yearValue = document.getElementById('journey-year-value');
+      var ticking = false;
+
+      function updateJourney() {
+        ticking = false;
+        if (!journeySection || !railFill || !kmValue) return;
+        var rect = journeySection.getBoundingClientRect();
+        var travel = Math.max(rect.height - window.innerHeight, 1);
+        var progress = Math.min(Math.max(-rect.top / travel, 0), 1);
+        var currentKm = progress * maxKm;
+        railFill.style.height = (progress * 100) + '%';
+        kmValue.textContent = Math.round(currentKm);
+        if (yearValue) yearValue.textContent = Math.round(startYr + currentKm / currentAnnualKm);
+        if (pizza) pizza.style.transform = 'rotate(' + (progress * 1080) + 'deg)';
+      }
+
+      function requestUpdate() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(updateJourney);
+      }
+
+      updateJourney();
+      window.addEventListener('scroll', requestUpdate, { passive: true });
+      window.addEventListener('resize', requestUpdate);
 
       // ---- POST-ORDER TOAST ----
       var params = new URLSearchParams(window.location.search);
-      var addedPizzas = parseInt(params.get('addedPizzas'), 10);
+      var addedPizzas = parseInt(params.get('addedPizzas') || '0', 10);
       if (addedPizzas > 0) {
         var toast = document.getElementById('pz-toast');
         var toastText = document.getElementById('pz-toast-text');
         if (toast && toastText) {
-          var addedMeters = (addedPizzas * 33 / 100).toFixed(1).replace('.', ',');
+          var addedMeters = (addedPizzas * 33 / 100).toFixed(1);
           toastText.textContent = '+' + addedPizzas + ' pizzas ordered! The golden thread grows by ' + addedMeters + ' m';
           toast.removeAttribute('hidden');
-
-          // Animate counter from (total - added) to total
-          if (counterEl) {
-            var totalTarget = parseFloat(counterEl.dataset.target);
-            var addedKm = (addedPizzas * 33) / 100000;
-            var fromKm = totalTarget - addedKm;
-            counterEl.textContent = fromKm.toFixed(1).replace('.', ',');
-
-            setTimeout(function() {
-              var dur = 1500;
-              var s = performance.now();
-              function recount(now) {
-                var elapsed = now - s;
-                var p = Math.min(elapsed / dur, 1);
-                var eased = 1 - Math.pow(1 - p, 3);
-                var val = (fromKm + eased * addedKm).toFixed(1).replace('.', ',');
-                counterEl.textContent = val;
-                if (p < 1) requestAnimationFrame(recount);
-              }
-              requestAnimationFrame(recount);
-            }, 500);
-          }
-
-          // Show toast
-          requestAnimationFrame(function() {
-            requestAnimationFrame(function() {
-              toast.classList.add('is-visible');
-            });
-          });
-
-          // Auto-dismiss and open WhatsApp if stored
+          requestAnimationFrame(function() { requestAnimationFrame(function() { toast.classList.add('is-visible'); }); });
           setTimeout(function() {
             toast.classList.remove('is-visible');
-            setTimeout(function() {
-              toast.setAttribute('hidden', '');
-              // Open stored WhatsApp URL from menu order
-              var storedWaUrl = sessionStorage.getItem('pz_wa_url');
-              if (storedWaUrl) {
-                sessionStorage.removeItem('pz_wa_url');
-                var a = document.createElement('a');
-                a.href = storedWaUrl;
-                a.target = '_blank';
-                a.rel = 'noopener noreferrer';
-                a.style.position = 'fixed';
-                a.style.opacity = '0';
-                a.style.pointerEvents = 'none';
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(function() { a.remove(); }, 200);
-              }
-            }, 600);
-          }, 5000);
+            setTimeout(function() { toast.setAttribute('hidden', ''); }, 500);
+          }, 4600);
         }
       }
     });
