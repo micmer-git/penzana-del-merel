@@ -112,9 +112,14 @@ const menuDataJSON = JSON.stringify(
                     </div>
                     <div class="menu-card-right">
                       <div class="menu-card-price">{priceDisplay}</div>
-                      <button class="add-btn" aria-label={`Aggiungi ${item.nameIT}`} data-id={item.id}>
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v8M6 10h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-                      </button>
+                      <div class="menu-card-btns">
+                        <button class="edit-btn" aria-label={`Personalizza ${item.nameIT}`} data-id={item.id} title="Personalizza">
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 11h2M3 8h4M3 5h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 4l-1 8H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button class="add-btn" aria-label={`Aggiungi ${item.nameIT}`} data-id={item.id} title="Aggiungi al carrello">
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v8M6 10h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <!-- Expand panel -->
@@ -280,10 +285,10 @@ const menuDataJSON = JSON.stringify(
   font-weight: 500;
 }
 
-/* Tabs wrapper */
+/* Tabs + search sticky wrapper */
 .menu-tabs-wrapper {
   background: var(--white);
-  border-bottom: 1px solid var(--slate-xlight);
+  border-bottom: none;
   position: sticky;
   top: 56px;
   z-index: var(--z-sticky);
@@ -411,7 +416,29 @@ const menuDataJSON = JSON.stringify(
   white-space: nowrap;
 }
 
-/* Add button */
+/* Button group */
+.menu-card-btns { display: flex; gap: 0.35rem; align-items: center; }
+
+/* Edit button (= / customize) */
+.edit-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 0;
+  border: 1.5px solid var(--slate-xlight);
+  background: var(--white);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-out);
+  min-width: 44px;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+}
+.edit-btn:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
+
+/* Add button (+ quick add) */
 .add-btn {
   width: 38px;
   height: 38px;
@@ -1028,11 +1055,14 @@ const menuDataJSON = JSON.stringify(
   border-bottom: none;
 }
 
-/* Menu search */
+/* Menu search — sticky below tabs */
 .menu-search-wrapper {
   background: var(--white);
   padding: 0.75rem 0;
   border-bottom: 1px solid var(--slate-xlight);
+  position: sticky;
+  top: calc(56px + 51px);
+  z-index: calc(var(--z-sticky) - 1);
 }
 .menu-search-bar {
   position: relative;
@@ -1254,8 +1284,39 @@ document.querySelectorAll<HTMLElement>('.menu-card').forEach(card => {
     });
   });
 
-  addBtn?.addEventListener('click', (e) => { e.stopPropagation(); openExpand(); });
-  card.querySelector('.menu-card-main')?.addEventListener('click', () => openExpand());
+  // + button: quick add to cart (1 unit, base price, no mods)
+  addBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const hasSizes = itemData?.sizes && itemData.sizes.length > 1;
+    const entry: CartEntry = {
+      id: itemId + '_' + Date.now(),
+      name: itemData?.name || itemId,
+      price: hasSizes ? itemData!.sizes![0].price : (itemData?.price || 0),
+      qty: 1,
+      removed: [],
+      added: [],
+      note: '',
+      sizeLabel: hasSizes ? itemData!.sizes![0].label : '',
+    };
+    if (cart.length === 0 && !orderMode) {
+      pendingEntry = entry;
+      pendingCard = card;
+      pendingExpandPanel = expandPanel;
+      showOrderModeModal();
+      return;
+    }
+    cart.push(entry);
+    card.classList.add('in-cart');
+    card.animate([{transform:'scale(0.97)'},{transform:'scale(1)'}], {duration:200, easing:'ease-out'});
+    updateCartUI();
+  });
+
+  // Edit button (=): opens expand panel for customization
+  const editBtn = card.querySelector('.edit-btn') as HTMLElement;
+  editBtn?.addEventListener('click', (e) => { e.stopPropagation(); openExpand(); });
+
+  // Clicking the card name/desc area also opens expand
+  card.querySelector('.menu-card-info')?.addEventListener('click', () => openExpand());
 
   const addIngInput = expandPanel.querySelector('.add-ingredient-input') as HTMLInputElement;
   addIngInput?.addEventListener('keydown', (e) => {
