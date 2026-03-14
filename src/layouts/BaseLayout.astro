@@ -47,6 +47,11 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
+  <meta name="keywords" content="pizzeria Val Seriana, pizza Bergamo, ristorante Orezzo, forno a legna, pizza artigianale, La Penzana del Merel, pizzeria bergamasca, cucina bergamasca, consegna pizza Val Seriana" />
+  <meta name="geo.region" content="IT-BG" />
+  <meta name="geo.placename" content="Orezzo, Val Seriana, Bergamo" />
+  <meta name="geo.position" content="45.806;9.823" />
+  <meta name="ICBM" content="45.806, 9.823" />
   <link rel="canonical" href={canonicalUrl} />
 
   <link rel="alternate" hreflang="it" href={`${siteUrl}${itPath}`} />
@@ -75,7 +80,7 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
       "@context": "https://schema.org",
       "@type": "Restaurant",
       "name": "La Penzana del Merel",
-      "description": "Pizzeria di famiglia nel cuore della Valle Seriana, aperta dal 1959.",
+      "description": "Pizzeria di famiglia nel cuore della Val Seriana, Bergamo. Forno a legna dal 1959. Pizza artigianale, cucina bergamasca, consegna a domicilio.",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "Via alla Chiesa, 4",
@@ -88,13 +93,20 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
       "url": "https://micmer-git.github.io/penzana-del-merel/",
       "menu": "https://micmer-git.github.io/penzana-del-merel/menu/",
       "servesCuisine": ["Pizza", "Italian", "Bergamasca"],
+      "priceRange": "€€",
       "acceptsReservations": true,
+      "areaServed": [
+        { "@type": "City", "name": "Bergamo" },
+        { "@type": "Place", "name": "Val Seriana" },
+        { "@type": "Place", "name": "Orezzo" },
+        { "@type": "Place", "name": "Gazzaniga" }
+      ],
       "geo": {
         "@type": "GeoCoordinates",
         "latitude": 45.806,
         "longitude": 9.823
       },
-      "sameAs": ["https://www.facebook.com/LaPenzanaDelMerel/"]
+      "sameAs": ["https://www.facebook.com/LaPenzanaDelMerel/", "https://www.instagram.com/lapenzanadelmerel/"]
     })} />
   )}
 </head>

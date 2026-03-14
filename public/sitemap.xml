@@ -43,6 +43,14 @@
   </url>
 
   <url>
+    <loc>https://micmer-git.github.io/penzana-del-merel/pizzometro/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://micmer-git.github.io/penzana-del-merel/pizzometro/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://micmer-git.github.io/penzana-del-merel/en/pizzameter/"/>
+  </url>
+
+  <url>
     <loc>https://micmer-git.github.io/penzana-del-merel/galleria/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
