@@ -112,7 +112,7 @@ const bgImages = [
     </div>
   </div>
 
-  <script define:vars={{ whatsappNumber: WHATSAPP_NUMBER, menuPath }}>
+  <script is:inline define:vars={{ whatsappNumber: WHATSAPP_NUMBER, menuPath }}>
     const openExternalLink = (url) => {
       const link = document.createElement('a');
       link.href = url;
@@ -198,12 +198,12 @@ const bgImages = [
     bookingForm?.addEventListener('submit', (event) => {
       event.preventDefault();
 
-      const name = (document.getElementById('booking-name') as HTMLInputElement).value.trim();
-      const guests = (document.getElementById('booking-guests') as HTMLInputElement).value.trim();
-      const date = (document.getElementById('booking-date') as HTMLInputElement).value.trim();
-      const time = (document.getElementById('booking-time') as HTMLInputElement).value.trim();
-      const phone = (document.getElementById('booking-phone') as HTMLInputElement).value.trim();
-      const notes = (document.getElementById('booking-notes') as HTMLTextAreaElement).value.trim();
+      const name = (document.getElementById('booking-name')).value.trim();
+      const guests = (document.getElementById('booking-guests')).value.trim();
+      const date = (document.getElementById('booking-date')).value.trim();
+      const time = (document.getElementById('booking-time')).value.trim();
+      const phone = (document.getElementById('booking-phone')).value.trim();
+      const notes = (document.getElementById('booking-notes')).value.trim();
 
       const lines = [
         'Ciao La Penzana del Merel! Vorrei prenotare un tavolo:',
@@ -221,7 +221,7 @@ const bgImages = [
       const message = encodeURIComponent(lines.join('\n'));
       openExternalLink(`https://wa.me/${whatsappNumber}?text=${message}`);
       closeBooking();
-      (bookingForm as HTMLFormElement).reset();
+      bookingForm.reset();
     });
 
     document.addEventListener('keydown', (event) => {
