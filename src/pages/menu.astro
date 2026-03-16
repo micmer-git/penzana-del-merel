@@ -322,6 +322,9 @@ const menuDataJSON = JSON.stringify(
   justify-content: center;
   padding: 1.5rem;
 }
+.pdm-overlay[hidden] {
+  display: none !important;
+}
 .pdm-modal {
   position: relative;
   background: var(--white);
@@ -1281,22 +1284,21 @@ const menuDataJSON = JSON.stringify(
   window.__MENU_DATA = menuDataJSON;
 </script>
 
-<script>
-// Pizza del Mese popup — show once per session
-(function() {
-  const KEY = 'pdm_seen';
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function() {
+  var KEY = 'pdm_seen';
   if (!sessionStorage.getItem(KEY)) {
-    const overlay = document.getElementById('pdm-overlay');
-    const closeBtn = document.getElementById('pdm-close');
+    var overlay = document.getElementById('pdm-overlay');
+    var closeBtn = document.getElementById('pdm-close');
     if (overlay) {
       overlay.removeAttribute('hidden');
-      const dismiss = () => { overlay.setAttribute('hidden', ''); sessionStorage.setItem(KEY, '1'); };
-      closeBtn?.addEventListener('click', dismiss);
-      overlay.addEventListener('click', (e) => { if (e.target === overlay) dismiss(); });
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !overlay.hasAttribute('hidden')) dismiss(); });
+      function dismiss() { overlay.setAttribute('hidden', ''); sessionStorage.setItem(KEY, '1'); }
+      closeBtn.addEventListener('click', dismiss);
+      overlay.addEventListener('click', function(e) { if (e.target === overlay) dismiss(); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && !overlay.hasAttribute('hidden')) dismiss(); });
     }
   }
-})();
+});
 </script>
 
 <script>
