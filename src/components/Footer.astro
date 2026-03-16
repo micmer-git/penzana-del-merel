@@ -68,7 +68,7 @@ const menuPath = lang === 'it' ? `${base}/menu/` : `${base}/en/menu/`;
       </div>
 
       <div>
-        <div class="footer-heading">Contatti</div>
+        <div class="footer-heading">{lang === 'it' ? 'Contatti' : 'Contact'}</div>
         <p style="font-size:0.85rem; line-height:1.6;">
           {c.address}<br />
           <a href={`tel:${c.phone.replace(/\s/g,'')}`} style="color:rgba(255,255,255,0.7);">{c.phone}</a>
