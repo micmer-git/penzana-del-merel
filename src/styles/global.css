@@ -1567,10 +1567,19 @@ body.home-onepager .layout-bottom-marquee {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  /* Keep badge spin and marquee alive — decorative, not distracting */
+  .hero-booking-badge .circle-text {
+    animation: spinBadge 14s linear infinite !important;
+    animation-duration: 14s !important;
+    animation-iteration-count: infinite !important;
+  }
+  .marquee-track {
+    animation: marqueeScroll 28s linear infinite !important;
+    animation-duration: 28s !important;
+    animation-iteration-count: infinite !important;
+  }
   .reveal { opacity: 1; transform: none; }
-  /* legacy */
-.hero-mountains { display: none; }
-  .marquee-track { animation: none; }
+  .hero-mountains { display: none; }
 }
 
 
