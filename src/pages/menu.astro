@@ -107,7 +107,8 @@ const menuDataJSON = JSON.stringify(
                 <div class={`menu-card${isSpecial ? ' menu-card--special' : ''}`} data-item-id={item.id} data-item-name={item.nameIT} data-item-price={item.price} data-item-desc={item.descIT || ''} data-has-sizes={sizes ? 'true' : undefined} data-no-customize={noCustomize ? 'true' : undefined}>
                   <div class="menu-card-main">
                     <div class="menu-card-info">
-                      <div class="menu-card-name">{item.nameIT}{isSpecial && <span class="menu-special-badge">{specialLabel}</span>}</div>
+                      <div class="menu-card-name">{item.nameIT}</div>
+                      {isSpecial && <div class="menu-special-note">{specialLabel}</div>}
                       {(item.descIT || '') !== '' && (
                         <div class="menu-card-desc">{item.descIT}</div>
                       )}
@@ -288,25 +289,21 @@ const menuDataJSON = JSON.stringify(
 <style>
 /* ---- Menu page scoped styles ---- */
 
-/* Special pizza badge */
+/* Special pizza */
 .menu-card--special {
+  border-color: #dc2626;
   border-left: 3px solid #dc2626;
 }
 .menu-card--special:hover {
   border-left-color: #dc2626;
+  border-color: #dc2626;
 }
-.menu-special-badge {
-  display: inline-block;
-  margin-left: 0.5rem;
-  padding: 0.1rem 0.5rem;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.menu-special-note {
+  font-size: 0.76rem;
+  font-style: italic;
   color: #dc2626;
-  border: 1.5px solid #dc2626;
-  background: rgba(220, 38, 38, 0.08);
-  vertical-align: middle;
+  margin-top: 0.1rem;
+  line-height: 1.4;
 }
 
 /* Pizza del Mese popup */
