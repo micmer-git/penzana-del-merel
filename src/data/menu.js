@@ -45,12 +45,12 @@ export const MENU = {
         items: [
           { id: 'amatriciana', nameIT: 'Amatriciana', nameEN: 'Amatriciana', price: 9.5, descIT: 'Pelati, mozzarella, cipolle, grana e pancetta', descEN: 'Tomato, mozzarella, onions, grana & pancetta' },
           { id: 'asparagi-uovo', nameIT: 'Asparagi e Uovo', nameEN: 'Asparagus & Egg', price: 9.5, descIT: 'Pelati, mozzarella, asparagi e uovo', descEN: 'Tomato, mozzarella, asparagus & egg' },
-          { id: 'donizetti', nameIT: 'Donizetti', nameEN: 'Donizetti', price: 9.5, descIT: 'Pelati, mozzarella, taleggio, polenta e pancetta', descEN: 'Tomato, mozzarella, taleggio, polenta & pancetta' },
+          { id: 'donizetti', nameIT: 'Donizetti', nameEN: 'Donizetti', price: 9.5, descIT: 'Pelati, mozzarella, taleggio, polenta e pancetta', descEN: 'Tomato, mozzarella, taleggio, polenta & pancetta', special: true, specialLabelIT: 'Omaggio al grande di Bergamo', specialLabelEN: 'Tribute to the great Bergamo composer' },
           { id: 'fantasy', nameIT: 'Fantasy', nameEN: 'Fantasy', price: 9.5, descIT: "Pelati, mozzarella e l'ispirazione del pizzaiolo", descEN: "Tomato, mozzarella & the pizza maker's inspiration" },
           { id: 'fruttimare', nameIT: 'Frutti di Mare', nameEN: 'Seafood', price: 12.0, descIT: 'Pelati, mozzarella e frutti di mare misti', descEN: 'Tomato, mozzarella & mixed seafood' },
           { id: 'messicana', nameIT: 'Messicana', nameEN: 'Mexican', price: 9.0, descIT: 'Pelati, mozzarella, fagioli e pancetta', descEN: 'Tomato, mozzarella, beans & pancetta' },
-          { id: 'merel', nameIT: 'Merel', nameEN: 'Merel (house special)', price: 9.0, descIT: 'Pelati, mozzarella, salame, tonno e carciofi', descEN: 'Tomato, mozzarella, salami, tuna & artichokes' },
-          { id: 'paradiso', nameIT: 'Paradiso', nameEN: 'Paradise', price: 9.0, descIT: 'Mozzarella, mele e Gorgonzola', descEN: 'Mozzarella, apple & Gorgonzola' },
+          { id: 'merel', nameIT: 'Merel', nameEN: 'Merel (house special)', price: 9.0, descIT: 'Pelati, mozzarella, salame, tonno e carciofi', descEN: 'Tomato, mozzarella, salami, tuna & artichokes', special: true, specialLabelIT: 'La pizza di casa', specialLabelEN: 'The house pizza' },
+          { id: 'paradiso', nameIT: 'Paradiso', nameEN: 'Paradise', price: 9.0, descIT: 'Mozzarella, mele e Gorgonzola', descEN: 'Mozzarella, apple & Gorgonzola', special: true, specialLabelIT: 'Da provare', specialLabelEN: 'Worth trying' },
         ],
       },
       {

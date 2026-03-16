@@ -98,14 +98,16 @@ const menuDataJSON = JSON.stringify(
               {category.items.map(item => {
                 const sizes = (item as any).sizes;
                 const noCustomize = (item as any).noCustomize;
+                const isSpecial = (item as any).special;
+                const specialLabel = (item as any).specialLabelIT;
                 const priceDisplay = sizes && sizes.length > 1
                   ? `${Math.min(...sizes.map(s => s.price)).toFixed(2).replace('.',',')} – ${Math.max(...sizes.map(s => s.price)).toFixed(2).replace('.',',')} \u20AC`
                   : `${item.price.toFixed(2).replace('.',',')} \u20AC`;
                 return (
-                <div class="menu-card" data-item-id={item.id} data-item-name={item.nameIT} data-item-price={item.price} data-item-desc={item.descIT || ''} data-has-sizes={sizes ? 'true' : undefined} data-no-customize={noCustomize ? 'true' : undefined}>
+                <div class={`menu-card${isSpecial ? ' menu-card--special' : ''}`} data-item-id={item.id} data-item-name={item.nameIT} data-item-price={item.price} data-item-desc={item.descIT || ''} data-has-sizes={sizes ? 'true' : undefined} data-no-customize={noCustomize ? 'true' : undefined}>
                   <div class="menu-card-main">
                     <div class="menu-card-info">
-                      <div class="menu-card-name">{item.nameIT}</div>
+                      <div class="menu-card-name">{item.nameIT}{isSpecial && <span class="menu-special-badge">{specialLabel}</span>}</div>
                       {(item.descIT || '') !== '' && (
                         <div class="menu-card-desc">{item.descIT}</div>
                       )}
@@ -239,6 +241,22 @@ const menuDataJSON = JSON.stringify(
     </div>
   </div>
 
+  <!-- Pizza del Mese popup -->
+  <div class="pdm-overlay" id="pdm-overlay" hidden>
+    <div class="pdm-modal" role="dialog" aria-modal="true" aria-labelledby="pdm-title">
+      <button type="button" class="pdm-close" id="pdm-close" aria-label="Chiudi">&times;</button>
+      <div class="pdm-image-wrap">
+        <img src={`${base}/img/pizza_front_2_example.png`} alt="Pizza del Mese" class="pdm-image" />
+      </div>
+      <div class="pdm-content">
+        <span class="pdm-kicker">Pizza del Mese</span>
+        <h2 id="pdm-title" class="pdm-title">La Rossa</h2>
+        <p class="pdm-desc">Burrata, olive taggiasche, crudo — messi a freddo su base rossa.</p>
+        <div class="pdm-price">13,00 &euro;</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Cart drawer -->
   <div id="cart-overlay" class="cart-overlay" aria-hidden="true"></div>
   <div id="cart-drawer" class="cart-drawer" role="dialog" aria-label="Carrello" aria-hidden="true">
@@ -269,6 +287,114 @@ const menuDataJSON = JSON.stringify(
 
 <style>
 /* ---- Menu page scoped styles ---- */
+
+/* Special pizza badge */
+.menu-card--special {
+  border-left: 3px solid #dc2626;
+}
+.menu-card--special:hover {
+  border-left-color: #dc2626;
+}
+.menu-special-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #dc2626;
+  border: 1.5px solid #dc2626;
+  background: rgba(220, 38, 38, 0.08);
+  vertical-align: middle;
+}
+
+/* Pizza del Mese popup */
+.pdm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(8, 15, 70, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.pdm-modal {
+  position: relative;
+  background: var(--white);
+  border: 3px solid #dc2626;
+  box-shadow: 8px 8px 0 #dc2626;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  padding: 2rem 1.5rem 1.5rem;
+}
+.pdm-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  width: 36px;
+  height: 36px;
+  border: 2px solid #dc2626;
+  background: transparent;
+  color: #dc2626;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  transition: all 0.2s;
+}
+.pdm-close:hover {
+  background: #dc2626;
+  color: var(--white);
+}
+.pdm-image-wrap {
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #dc2626;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.2);
+}
+.pdm-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pdm-kicker {
+  display: block;
+  font-family: var(--font-subline);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #dc2626;
+  margin-bottom: 0.35rem;
+}
+.pdm-title {
+  font-size: 1.8rem;
+  color: #991b1b;
+  margin-bottom: 0.5rem;
+}
+.pdm-desc {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+.pdm-price {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #dc2626;
+}
 
 /* Hero compact */
 .hero-compact { padding-block: clamp(2.5rem, 6vw, 4rem); }
@@ -1153,6 +1279,24 @@ const menuDataJSON = JSON.stringify(
 <script define:vars={{ waNumber, menuDataJSON }}>
   window.__WA_NUMBER = waNumber;
   window.__MENU_DATA = menuDataJSON;
+</script>
+
+<script>
+// Pizza del Mese popup — show once per session
+(function() {
+  const KEY = 'pdm_seen';
+  if (!sessionStorage.getItem(KEY)) {
+    const overlay = document.getElementById('pdm-overlay');
+    const closeBtn = document.getElementById('pdm-close');
+    if (overlay) {
+      overlay.removeAttribute('hidden');
+      const dismiss = () => { overlay.setAttribute('hidden', ''); sessionStorage.setItem(KEY, '1'); };
+      closeBtn?.addEventListener('click', dismiss);
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) dismiss(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !overlay.hasAttribute('hidden')) dismiss(); });
+    }
+  }
+})();
 </script>
 
 <script>
