@@ -1,6 +1,9 @@
 // Central site configuration
 export const WHATSAPP_NUMBER = '393487024985';
 
+// Order logging server (set to null to disable logging)
+export const ORDER_API = 'http://localhost:3003';
+
 export const SITE = {
   name: 'La Penzana del Merel',
   nameLong: 'La Penzana del Merel — Orezzo',

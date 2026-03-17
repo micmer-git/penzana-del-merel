@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ordini — La Penzana del Merel</title>
+<style>
+  :root {
+    --blue-deep: #8f0f2f;
+    --blue-mid: #c2184f;
+    --accent-gold: #f7b8cd;
+    --bg: #faf8f5;
+    --white: #fff;
+    --text: #1e1e2e;
+    --text-muted: #6b7280;
+    --slate-xlight: #e8e6e1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  header {
+    background: var(--blue-deep);
+    color: var(--white);
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  header h1 { font-size: 1.3rem; font-weight: 700; }
+  .stats-bar {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.85rem;
+    opacity: 0.9;
+  }
+  .stats-bar strong { font-size: 1.1rem; }
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--white);
+    border-bottom: 2px solid var(--slate-xlight);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .tab {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-muted);
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab.active { color: var(--blue-deep); border-bottom-color: var(--blue-deep); }
+  .tab:hover { color: var(--blue-mid); }
+  main { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+  /* Orders list */
+  .order-card {
+    background: var(--white);
+    border: 1px solid var(--slate-xlight);
+    border-left: 4px solid var(--blue-deep);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    transition: box-shadow 0.2s;
+  }
+  .order-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .order-customer {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--blue-deep);
+  }
+  .order-meta {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-align: right;
+  }
+  .order-items {
+    font-size: 0.88rem;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+  .order-items li {
+    list-style: none;
+    padding: 0.15rem 0;
+  }
+  .order-items li::before { content: '\2022 '; color: var(--blue-mid); }
+  .order-mods { font-size: 0.78rem; color: var(--text-muted); font-style: italic; }
+  .order-total {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px solid var(--slate-xlight);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .pizza-badge {
+    background: var(--accent-gold);
+    color: var(--blue-deep);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 99px;
+  }
+  .order-notes {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+    font-style: italic;
+  }
+  .delete-btn {
+    background: none;
+    border: 1px solid var(--slate-xlight);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .delete-btn:hover { border-color: #dc2626; color: #dc2626; }
+
+  /* Ranking */
+  .ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .ranking-table th {
+    background: var(--blue-deep);
+    color: var(--white);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .ranking-table td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--slate-xlight);
+    font-size: 0.9rem;
+  }
+  .ranking-table tr:hover td { background: rgba(247,184,205,0.08); }
+  .rank-num {
+    font-weight: 800;
+    color: var(--blue-deep);
+    font-size: 1.1rem;
+  }
+  .rank-1 .rank-num { color: #d4a017; }
+  .rank-2 .rank-num { color: #94a3b8; }
+  .rank-3 .rank-num { color: #b45309; }
+  .rank-name { font-weight: 600; }
+
+  /* Filo stats */
+  .filo-card {
+    background: linear-gradient(135deg, var(--blue-deep), var(--blue-mid));
+    color: var(--white);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .filo-card h2 { font-size: 1rem; opacity: 0.8; margin-bottom: 0.5rem; }
+  .filo-number { font-size: 2.5rem; font-weight: 800; }
+  .filo-sub { font-size: 0.85rem; opacity: 0.7; margin-top: 0.25rem; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .date-filter {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .date-filter label { font-size: 0.85rem; font-weight: 600; }
+  .date-filter select, .date-filter input {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--slate-xlight);
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>La Penzana del Merel — Ordini</h1>
+  <div class="stats-bar">
+    <span>Ordini: <strong id="stat-orders">0</strong></span>
+    <span>Pizze: <strong id="stat-pizzas">0</strong></span>
+    <span>Filo d'oro: <strong id="stat-filo">0 m</strong></span>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-tab="orders">Ordini</button>
+  <button class="tab" data-tab="ranking">Classifica</button>
+  <button class="tab" data-tab="filo">Filo d'Oro</button>
+</div>
+
+<main>
+  <!-- Orders panel -->
+  <div class="panel active" id="panel-orders">
+    <div class="date-filter">
+      <label>Filtra:</label>
+      <select id="filter-period">
+        <option value="today">Oggi</option>
+        <option value="week">Questa settimana</option>
+        <option value="month">Questo mese</option>
+        <option value="all" selected>Tutti</option>
+      </select>
+    </div>
+    <div id="orders-list"></div>
+  </div>
+
+  <!-- Ranking panel -->
+  <div class="panel" id="panel-ranking">
+    <div id="ranking-content"></div>
+  </div>
+
+  <!-- Filo panel -->
+  <div class="panel" id="panel-filo">
+    <div id="filo-content"></div>
+  </div>
+</main>
+
+<script>
+const API = window.location.origin;
+const PIZZA_DIAMETER_CM = 33;
+
+let allOrders = [];
+let stats = {};
+
+// ---- Tabs ----
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ---- Fetch data ----
+async function loadData() {
+  try {
+    const [ordersRes, statsRes] = await Promise.all([
+      fetch(API + '/api/orders'),
+      fetch(API + '/api/stats'),
+    ]);
+    allOrders = await ordersRes.json();
+    stats = await statsRes.json();
+  } catch (err) {
+    console.error('Failed to load data:', err);
+    allOrders = [];
+    stats = { totalPizzas: 0, totalOrders: 0, ranking: [] };
+  }
+
+  updateHeader();
+  renderOrders();
+  renderRanking();
+  renderFilo();
+}
+
+function updateHeader() {
+  document.getElementById('stat-orders').textContent = stats.totalOrders || 0;
+  document.getElementById('stat-pizzas').textContent = stats.totalPizzas || 0;
+  const meters = ((stats.totalPizzas || 0) * PIZZA_DIAMETER_CM / 100).toFixed(1);
+  document.getElementById('stat-filo').textContent = meters + ' m';
+}
+
+// ---- Orders ----
+function renderOrders() {
+  const container = document.getElementById('orders-list');
+  const filter = document.getElementById('filter-period').value;
+  const now = new Date();
+  const filtered = allOrders.filter(o => {
+    const d = new Date(o.timestamp);
+    if (filter === 'today') return d.toDateString() === now.toDateString();
+    if (filter === 'week') {
+      const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7);
+      return d >= weekAgo;
+    }
+    if (filter === 'month') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-state">Nessun ordine trovato.</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(o => {
+    const date = new Date(o.timestamp);
+    const timeStr = date.toLocaleString('it-IT', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    const modeLabel = o.orderMode === 'delivery'
+      ? 'Consegna — ' + (o.deliveryAddress || '')
+      : o.tableId ? o.tableId.replace('table-', 'Tavolo ') : 'Tavolo ?';
+
+    const itemsHtml = (o.items || []).map(item => {
+      const size = item.size ? ' (' + item.size + ')' : '';
+      const mods = [];
+      if (item.removed && item.removed.length) mods.push('senza: ' + item.removed.join(', '));
+      if (item.added && item.added.length) mods.push('con: ' + item.added.join(', '));
+      const modsHtml = mods.length ? '<span class="order-mods"> — ' + mods.join(' | ') + '</span>' : '';
+      const noteHtml = item.note ? '<span class="order-mods"> — ' + item.note + '</span>' : '';
+      return '<li>' + item.name + size + ' x' + item.qty + ' — ' + formatPrice(item.price * item.qty) + modsHtml + noteHtml + '</li>';
+    }).join('');
+
+    const notesHtml = o.notes ? '<div class="order-notes">Note: ' + escapeHtml(o.notes) + '</div>' : '';
+
+    return '<div class="order-card">' +
+      '<div class="order-header">' +
+        '<div><span class="order-customer">' + escapeHtml(o.customerName) + '</span>' +
+        '<div style="font-size:0.78rem;color:var(--text-muted)">' + modeLabel + '</div></div>' +
+        '<div class="order-meta">' + timeStr +
+        '<br><button class="delete-btn" data-id="' + o.id + '">Elimina</button></div>' +
+      '</div>' +
+      '<ul class="order-items">' + itemsHtml + '</ul>' +
+      notesHtml +
+      '<div class="order-total">' +
+        '<span>Totale: ' + formatPrice(o.totalPrice) + '</span>' +
+        (o.pizzaCount > 0 ? '<span class="pizza-badge">' + o.pizzaCount + ' pizze</span>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  // Delete handlers
+  container.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Eliminare questo ordine?')) return;
+      await fetch(API + '/api/orders/' + btn.dataset.id, { method: 'DELETE' });
+      loadData();
+    });
+  });
+}
+
+document.getElementById('filter-period').addEventListener('change', renderOrders);
+
+// ---- Ranking ----
+function renderRanking() {
+  const container = document.getElementById('ranking-content');
+  const ranking = stats.ranking || [];
+
+  if (ranking.length === 0) {
+    container.innerHTML = '<div class="empty-state">Nessun dato disponibile.</div>';
+    return;
+  }
+
+  let html = '<table class="ranking-table"><thead><tr>' +
+    '<th>#</th><th>Nome</th><th>Pizze</th><th>Ordini</th><th>Spesa Totale</th>' +
+    '</tr></thead><tbody>';
+
+  ranking.forEach((r, i) => {
+    const rankClass = i < 3 ? ' rank-' + (i + 1) : '';
+    const medal = i === 0 ? ' \uD83E\uDD47' : i === 1 ? ' \uD83E\uDD48' : i === 2 ? ' \uD83E\uDD49' : '';
+    html += '<tr class="' + rankClass + '">' +
+      '<td><span class="rank-num">' + (i + 1) + '</span>' + medal + '</td>' +
+      '<td class="rank-name">' + escapeHtml(r.name) + '</td>' +
+      '<td>' + r.pizzas + '</td>' +
+      '<td>' + r.orders + '</td>' +
+      '<td>' + formatPrice(r.totalSpent) + '</td>' +
+      '</tr>';
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+// ---- Filo d'oro ----
+function renderFilo() {
+  const totalPizzas = stats.totalPizzas || 0;
+  const totalCm = totalPizzas * PIZZA_DIAMETER_CM;
+  const meters = (totalCm / 100).toFixed(1);
+  const km = (totalCm / 100000).toFixed(3);
+
+  const container = document.getElementById('filo-content');
+  container.innerHTML =
+    '<div class="filo-card">' +
+      '<h2>Il Filo d\'Oro delle Pizze Ordinate</h2>' +
+      '<div class="filo-number">' + meters + ' m</div>' +
+      '<div class="filo-sub">' + totalPizzas + ' pizze \u00D7 33 cm = ' + km + ' km</div>' +
+      '<div class="filo-sub" style="margin-top:0.75rem;opacity:0.6">Diametro pizza: 33 cm | Aggiornato in tempo reale dagli ordini</div>' +
+    '</div>';
+}
+
+// ---- Helpers ----
+function formatPrice(n) { return (n || 0).toFixed(2).replace('.', ',') + ' \u20AC'; }
+function escapeHtml(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+// ---- Init ----
+loadData();
+// Auto-refresh every 30s
+setInterval(loadData, 30000);
+</script>
+</body>
+</html>
