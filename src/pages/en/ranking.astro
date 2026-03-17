@@ -53,9 +53,8 @@ const orderApi = ORDER_API || 'http://localhost:3003';
       <div id="filo-content"></div>
     </div>
 
-    <div class="cl-empty" id="cl-offline" style="display:none">
-      <p>Order server is currently offline.</p>
-      <p style="font-size:0.85rem;color:var(--text-muted)">Make sure the server is running on <code>localhost:3003</code></p>
+    <div class="cl-demo-badge" id="cl-demo-badge" style="display:none">
+      <span>Demo data</span>
     </div>
   </div>
 
@@ -110,6 +109,8 @@ const orderApi = ORDER_API || 'http://localhost:3003';
 .filo-bar { height: 100%; background: linear-gradient(90deg, var(--accent-gold), var(--blue-mid)); border-radius: 6px; transition: width 1s var(--ease-out); }
 .filo-targets { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); }
 .cl-empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+.cl-demo-badge { text-align: center; margin-bottom: 1rem; }
+.cl-demo-badge span { background: var(--accent-gold); color: var(--blue-deep); font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.05em; }
 </style>
 
 <script define:vars={{ orderApi }}>
@@ -132,16 +133,38 @@ document.querySelectorAll('.cl-tab').forEach(tab => {
   });
 });
 
+const DEMO_STATS = {
+  totalPizzas: 347,
+  ranking: [
+    { name: 'Marco B.', pizzas: 42, orders: 18, totalSpent: 378.00 },
+    { name: 'Famiglia Rossi', pizzas: 35, orders: 12, totalSpent: 315.00 },
+    { name: 'Giulia T.', pizzas: 28, orders: 14, totalSpent: 252.00 },
+    { name: 'Andrea & Sara', pizzas: 24, orders: 8, totalSpent: 216.00 },
+    { name: 'Luca P.', pizzas: 21, orders: 10, totalSpent: 189.00 },
+    { name: 'Nonna Maria', pizzas: 19, orders: 9, totalSpent: 171.00 },
+    { name: 'Paolo F.', pizzas: 16, orders: 7, totalSpent: 144.00 },
+  ],
+};
+const DEMO_ORDERS = [
+  { customerName: 'Marco B.', timestamp: new Date(Date.now() - 3600000).toISOString(), orderMode: 'dine-in', tableId: 'table-03', items: [{ name: 'Margherita DOP', size: 'large', qty: 2, price: 9.50 }, { name: 'Diavola', qty: 1, price: 10.00 }], totalPrice: 29.00, pizzaCount: 3 },
+  { customerName: 'Giulia T.', timestamp: new Date(Date.now() - 7200000).toISOString(), orderMode: 'dine-in', tableId: 'table-07', items: [{ name: 'Quattro Formaggi', qty: 1, price: 11.00 }, { name: 'Focaccia Rosmarino', qty: 1, price: 5.50 }], totalPrice: 16.50, pizzaCount: 1 },
+  { customerName: 'Famiglia Rossi', timestamp: new Date(Date.now() - 18000000).toISOString(), orderMode: 'dine-in', tableId: 'table-12', items: [{ name: 'Pizza del Mese', qty: 2, price: 12.00 }, { name: 'Margherita', qty: 2, price: 8.50 }, { name: 'Tiramisu', qty: 1, price: 6.00 }], totalPrice: 47.00, pizzaCount: 4 },
+];
+
+let isDemo = false;
+
 async function loadData() {
   try {
     const [ordersRes, statsRes] = await Promise.all([fetch(`${API}/api/orders`), fetch(`${API}/api/stats`)]);
     allOrders = await ordersRes.json();
     stats = await statsRes.json();
-    (document.getElementById('cl-offline') as HTMLElement).style.display = 'none';
+    isDemo = false;
   } catch {
-    (document.getElementById('cl-offline') as HTMLElement).style.display = 'block';
-    return;
+    allOrders = DEMO_ORDERS;
+    stats = DEMO_STATS;
+    isDemo = true;
   }
+  (document.getElementById('cl-demo-badge') as HTMLElement).style.display = isDemo ? 'block' : 'none';
   renderPodium(); renderRanking(); renderOrders(); renderFilo();
 }
 
