@@ -1,7 +1,6 @@
 // Penzana del Merel — Order Logging Server
 // Production: Turso (libSQL) for persistent storage
 // Local dev: JSON file fallback when TURSO_URL is not set
-// Run: node server.js
 
 import http from 'node:http';
 import fs from 'node:fs';
@@ -13,7 +12,14 @@ const PORT = process.env.PORT || 3003;
 const ORDERS_FILE = path.join(__dirname, 'orders.json');
 const ADMIN_FILE = path.join(__dirname, 'public', 'ordini.html');
 
-// Allowed origins for CORS
+// Never let an unhandled error kill the process
+process.on('uncaughtException', (err) => {
+  console.error('[FATAL] uncaughtException:', err);
+});
+process.on('unhandledRejection', (err) => {
+  console.error('[FATAL] unhandledRejection:', err);
+});
+
 const ALLOWED_ORIGINS = [
   'https://micmer-git.github.io',
   'http://localhost:4321',
@@ -23,37 +29,49 @@ const ALLOWED_ORIGINS = [
 // ---- Storage abstraction ----
 
 let db = null;
-const useTurso = !!(process.env.TURSO_URL && process.env.TURSO_AUTH_TOKEN);
+let useTurso = false;
 
 async function initStorage() {
-  if (useTurso) {
-    const { createClient } = await import('@libsql/client');
-    db = createClient({
-      url: process.env.TURSO_URL,
-      authToken: process.env.TURSO_AUTH_TOKEN,
-    });
-    await db.execute(`
-      CREATE TABLE IF NOT EXISTS orders (
-        id TEXT PRIMARY KEY,
-        timestamp TEXT NOT NULL,
-        customer_name TEXT NOT NULL DEFAULT 'Anonimo',
-        order_mode TEXT NOT NULL DEFAULT 'table',
-        table_id TEXT,
-        delivery_address TEXT,
-        delivery_time TEXT,
-        items TEXT NOT NULL DEFAULT '[]',
-        total_price REAL NOT NULL DEFAULT 0,
-        pizza_count INTEGER NOT NULL DEFAULT 0,
-        notes TEXT DEFAULT ''
-      )
-    `);
-    console.log('Storage: Turso (persistent)');
+  if (process.env.TURSO_URL && process.env.TURSO_AUTH_TOKEN) {
+    try {
+      const { createClient } = await import('@libsql/client');
+      // Ensure URL uses libsql:// protocol for HTTP transport
+      let url = process.env.TURSO_URL;
+      if (url.startsWith('libsql://')) {
+        url = url.replace('libsql://', 'https://');
+      }
+      db = createClient({
+        url,
+        authToken: process.env.TURSO_AUTH_TOKEN,
+      });
+      await db.execute(`
+        CREATE TABLE IF NOT EXISTS orders (
+          id TEXT PRIMARY KEY,
+          timestamp TEXT NOT NULL,
+          customer_name TEXT NOT NULL DEFAULT 'Anonimo',
+          order_mode TEXT NOT NULL DEFAULT 'table',
+          table_id TEXT,
+          delivery_address TEXT,
+          delivery_time TEXT,
+          items TEXT NOT NULL DEFAULT '[]',
+          total_price REAL NOT NULL DEFAULT 0,
+          pizza_count INTEGER NOT NULL DEFAULT 0,
+          notes TEXT DEFAULT ''
+        )
+      `);
+      useTurso = true;
+      console.log('[OK] Storage: Turso (persistent) — connected to', process.env.TURSO_URL);
+    } catch (err) {
+      console.error('[WARN] Turso init failed, falling back to JSON:', err.message);
+      db = null;
+      useTurso = false;
+    }
   } else {
-    console.log('Storage: JSON file (local dev)');
+    console.log('[OK] Storage: JSON file (local dev)');
   }
 }
 
-// ---- Data helpers ----
+// ---- Data helpers (JSON file) ----
 
 function readOrdersFile() {
   try {
@@ -66,6 +84,8 @@ function readOrdersFile() {
 function saveOrdersFile(orders) {
   fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2), 'utf-8');
 }
+
+// ---- Data helpers (Turso) ----
 
 function rowToOrder(row) {
   return {
@@ -85,8 +105,13 @@ function rowToOrder(row) {
 
 async function readOrders() {
   if (!useTurso) return readOrdersFile();
-  const result = await db.execute('SELECT * FROM orders ORDER BY timestamp DESC');
-  return result.rows.map(rowToOrder);
+  try {
+    const result = await db.execute('SELECT * FROM orders ORDER BY timestamp DESC');
+    return result.rows.map(rowToOrder);
+  } catch (err) {
+    console.error('[ERR] Turso readOrders:', err.message);
+    return [];
+  }
 }
 
 async function saveOrder(order) {
@@ -101,8 +126,8 @@ async function saveOrder(order) {
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     args: [
       order.id, order.timestamp, order.customerName, order.orderMode,
-      order.tableId, order.deliveryAddress, order.deliveryTime,
-      JSON.stringify(order.items), order.totalPrice, order.pizzaCount, order.notes,
+      order.tableId || '', order.deliveryAddress || '', order.deliveryTime || '',
+      JSON.stringify(order.items), order.totalPrice, order.pizzaCount, order.notes || '',
     ],
   });
 }
@@ -159,6 +184,7 @@ function parseBody(req) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const pathname = url.pathname;
+  console.log(`[REQ] ${req.method} ${pathname}`);
 
   setCors(req, res);
 
@@ -167,9 +193,14 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
-  // ---- POST /api/orders ----
-  if (req.method === 'POST' && pathname === '/api/orders') {
-    try {
+  try {
+    // ---- Health check (first — fast response for Render) ----
+    if (req.method === 'GET' && pathname === '/health') {
+      return sendJson(res, 200, { ok: true, storage: useTurso ? 'turso' : 'json', uptime: process.uptime() });
+    }
+
+    // ---- POST /api/orders ----
+    if (req.method === 'POST' && pathname === '/api/orders') {
       const data = await parseBody(req);
       const order = {
         id: generateId(),
@@ -195,25 +226,18 @@ const server = http.createServer(async (req, res) => {
       };
 
       await saveOrder(order);
+      console.log(`[ORDER] ${order.customerName} — ${order.pizzaCount} pizzas`);
       return sendJson(res, 201, { ok: true, id: order.id, pizzaCount: order.pizzaCount });
-    } catch (err) {
-      return sendJson(res, 400, { ok: false, error: err.message });
     }
-  }
 
-  // ---- GET /api/orders ----
-  if (req.method === 'GET' && pathname === '/api/orders') {
-    try {
+    // ---- GET /api/orders ----
+    if (req.method === 'GET' && pathname === '/api/orders') {
       const orders = await readOrders();
       return sendJson(res, 200, orders);
-    } catch (err) {
-      return sendJson(res, 500, { error: err.message });
     }
-  }
 
-  // ---- GET /api/stats ----
-  if (req.method === 'GET' && pathname === '/api/stats') {
-    try {
+    // ---- GET /api/stats ----
+    if (req.method === 'GET' && pathname === '/api/stats') {
       const orders = await readOrders();
       const totalPizzas = orders.reduce((s, o) => s + (o.pizzaCount || 0), 0);
       const totalOrders = orders.length;
@@ -229,50 +253,44 @@ const server = http.createServer(async (req, res) => {
       const ranking = Object.values(byCustomer).sort((a, b) => b.pizzas - a.pizzas);
 
       return sendJson(res, 200, { totalPizzas, totalOrders, ranking });
-    } catch (err) {
-      return sendJson(res, 500, { error: err.message });
     }
-  }
 
-  // ---- DELETE /api/orders/:id ----
-  if (req.method === 'DELETE' && pathname.startsWith('/api/orders/')) {
-    try {
+    // ---- DELETE /api/orders/:id ----
+    if (req.method === 'DELETE' && pathname.startsWith('/api/orders/')) {
       const id = pathname.split('/').pop();
       const deleted = await deleteOrder(id);
       if (!deleted) return sendJson(res, 404, { ok: false, error: 'Not found' });
       return sendJson(res, 200, { ok: true });
-    } catch (err) {
-      return sendJson(res, 500, { error: err.message });
     }
-  }
 
-  // ---- Admin dashboard ----
-  if (req.method === 'GET' && (pathname === '/' || pathname === '/ordini')) {
-    try {
+    // ---- Admin dashboard ----
+    if (req.method === 'GET' && (pathname === '/' || pathname === '/ordini')) {
       const html = fs.readFileSync(ADMIN_FILE, 'utf-8');
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(html);
-    } catch {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-      return res.end('Admin page not found');
+    }
+
+    sendJson(res, 404, { error: 'Not found' });
+  } catch (err) {
+    console.error(`[ERR] ${req.method} ${pathname}:`, err.message);
+    if (!res.headersSent) {
+      sendJson(res, 500, { error: err.message });
     }
   }
-
-  // ---- Health check ----
-  if (req.method === 'GET' && pathname === '/health') {
-    return sendJson(res, 200, { ok: true, storage: useTurso ? 'turso' : 'json' });
-  }
-
-  sendJson(res, 404, { error: 'Not found' });
 });
 
+// Keep alive — prevent Render free tier from aggressive spin-down
+setInterval(() => {
+  console.log(`[ALIVE] uptime=${Math.round(process.uptime())}s storage=${useTurso ? 'turso' : 'json'}`);
+}, 4 * 60 * 1000); // every 4 min
+
 initStorage().then(() => {
-  server.listen(PORT, () => {
-    console.log(`Penzana Order Server running on http://localhost:${PORT}`);
-    console.log(`Admin dashboard: http://localhost:${PORT}/ordini`);
-    console.log(`Storage: ${useTurso ? 'Turso' : 'JSON file'}`);
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`[OK] Penzana Order Server on port ${PORT}`);
+    console.log(`[OK] Admin: http://localhost:${PORT}/ordini`);
+    console.log(`[OK] Storage: ${useTurso ? 'Turso' : 'JSON file'}`);
   });
 }).catch(err => {
-  console.error('Failed to initialize storage:', err);
+  console.error('[FATAL] Init failed:', err);
   process.exit(1);
 });
