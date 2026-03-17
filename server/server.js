@@ -1,7 +1,7 @@
 // Penzana del Merel — Order Logging Server
-// Zero dependencies, Node built-ins only. Stores orders in orders.json.
+// Production: Turso (libSQL) for persistent storage
+// Local dev: JSON file fallback when TURSO_URL is not set
 // Run: node server.js
-// Admin dashboard: http://localhost:3003/
 
 import http from 'node:http';
 import fs from 'node:fs';
@@ -20,9 +20,42 @@ const ALLOWED_ORIGINS = [
   'http://localhost:3000',
 ];
 
+// ---- Storage abstraction ----
+
+let db = null;
+const useTurso = !!(process.env.TURSO_URL && process.env.TURSO_AUTH_TOKEN);
+
+async function initStorage() {
+  if (useTurso) {
+    const { createClient } = await import('@libsql/client');
+    db = createClient({
+      url: process.env.TURSO_URL,
+      authToken: process.env.TURSO_AUTH_TOKEN,
+    });
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id TEXT PRIMARY KEY,
+        timestamp TEXT NOT NULL,
+        customer_name TEXT NOT NULL DEFAULT 'Anonimo',
+        order_mode TEXT NOT NULL DEFAULT 'table',
+        table_id TEXT,
+        delivery_address TEXT,
+        delivery_time TEXT,
+        items TEXT NOT NULL DEFAULT '[]',
+        total_price REAL NOT NULL DEFAULT 0,
+        pizza_count INTEGER NOT NULL DEFAULT 0,
+        notes TEXT DEFAULT ''
+      )
+    `);
+    console.log('Storage: Turso (persistent)');
+  } else {
+    console.log('Storage: JSON file (local dev)');
+  }
+}
+
 // ---- Data helpers ----
 
-function readOrders() {
+function readOrdersFile() {
   try {
     return JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf-8'));
   } catch {
@@ -30,8 +63,61 @@ function readOrders() {
   }
 }
 
-function saveOrders(orders) {
+function saveOrdersFile(orders) {
   fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2), 'utf-8');
+}
+
+function rowToOrder(row) {
+  return {
+    id: row.id,
+    timestamp: row.timestamp,
+    customerName: row.customer_name,
+    orderMode: row.order_mode,
+    tableId: row.table_id,
+    deliveryAddress: row.delivery_address,
+    deliveryTime: row.delivery_time,
+    items: JSON.parse(row.items || '[]'),
+    totalPrice: row.total_price,
+    pizzaCount: row.pizza_count,
+    notes: row.notes || '',
+  };
+}
+
+async function readOrders() {
+  if (!useTurso) return readOrdersFile();
+  const result = await db.execute('SELECT * FROM orders ORDER BY timestamp DESC');
+  return result.rows.map(rowToOrder);
+}
+
+async function saveOrder(order) {
+  if (!useTurso) {
+    const orders = readOrdersFile();
+    orders.unshift(order);
+    saveOrdersFile(orders);
+    return;
+  }
+  await db.execute({
+    sql: `INSERT INTO orders (id, timestamp, customer_name, order_mode, table_id, delivery_address, delivery_time, items, total_price, pizza_count, notes)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    args: [
+      order.id, order.timestamp, order.customerName, order.orderMode,
+      order.tableId, order.deliveryAddress, order.deliveryTime,
+      JSON.stringify(order.items), order.totalPrice, order.pizzaCount, order.notes,
+    ],
+  });
+}
+
+async function deleteOrder(id) {
+  if (!useTurso) {
+    const orders = readOrdersFile();
+    const idx = orders.findIndex(o => o.id === id);
+    if (idx === -1) return false;
+    orders.splice(idx, 1);
+    saveOrdersFile(orders);
+    return true;
+  }
+  const result = await db.execute({ sql: 'DELETE FROM orders WHERE id = ?', args: [id] });
+  return result.rowsAffected > 0;
 }
 
 function generateId() {
@@ -45,10 +131,9 @@ function setCors(req, res) {
   if (ALLOWED_ORIGINS.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   } else {
-    // Allow any origin in dev
     res.setHeader('Access-Control-Allow-Origin', '*');
   }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
@@ -77,13 +162,12 @@ const server = http.createServer(async (req, res) => {
 
   setCors(req, res);
 
-  // Preflight
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
     return res.end();
   }
 
-  // ---- POST /api/orders — Log a new order ----
+  // ---- POST /api/orders ----
   if (req.method === 'POST' && pathname === '/api/orders') {
     try {
       const data = await parseBody(req);
@@ -91,7 +175,7 @@ const server = http.createServer(async (req, res) => {
         id: generateId(),
         timestamp: new Date().toISOString(),
         customerName: data.customerName || 'Anonimo',
-        orderMode: data.orderMode || 'table', // 'table' | 'delivery'
+        orderMode: data.orderMode || 'table',
         tableId: data.tableId || null,
         deliveryAddress: data.deliveryAddress || null,
         deliveryTime: data.deliveryTime || null,
@@ -110,54 +194,59 @@ const server = http.createServer(async (req, res) => {
         notes: data.notes || '',
       };
 
-      const orders = readOrders();
-      orders.unshift(order); // newest first
-      saveOrders(orders);
-
+      await saveOrder(order);
       return sendJson(res, 201, { ok: true, id: order.id, pizzaCount: order.pizzaCount });
     } catch (err) {
       return sendJson(res, 400, { ok: false, error: err.message });
     }
   }
 
-  // ---- GET /api/orders — List all orders ----
+  // ---- GET /api/orders ----
   if (req.method === 'GET' && pathname === '/api/orders') {
-    const orders = readOrders();
-    return sendJson(res, 200, orders);
-  }
-
-  // ---- GET /api/stats — Pizza stats for pizzometro ----
-  if (req.method === 'GET' && pathname === '/api/stats') {
-    const orders = readOrders();
-    const totalPizzas = orders.reduce((s, o) => s + (o.pizzaCount || 0), 0);
-    const totalOrders = orders.length;
-
-    // Ranking by customer name
-    const byCustomer = {};
-    for (const o of orders) {
-      const key = o.customerName || 'Anonimo';
-      if (!byCustomer[key]) byCustomer[key] = { name: key, pizzas: 0, orders: 0, totalSpent: 0 };
-      byCustomer[key].pizzas += o.pizzaCount || 0;
-      byCustomer[key].orders += 1;
-      byCustomer[key].totalSpent += o.totalPrice || 0;
+    try {
+      const orders = await readOrders();
+      return sendJson(res, 200, orders);
+    } catch (err) {
+      return sendJson(res, 500, { error: err.message });
     }
-    const ranking = Object.values(byCustomer).sort((a, b) => b.pizzas - a.pizzas);
-
-    return sendJson(res, 200, { totalPizzas, totalOrders, ranking });
   }
 
-  // ---- DELETE /api/orders/:id — Remove single order ----
+  // ---- GET /api/stats ----
+  if (req.method === 'GET' && pathname === '/api/stats') {
+    try {
+      const orders = await readOrders();
+      const totalPizzas = orders.reduce((s, o) => s + (o.pizzaCount || 0), 0);
+      const totalOrders = orders.length;
+
+      const byCustomer = {};
+      for (const o of orders) {
+        const key = o.customerName || 'Anonimo';
+        if (!byCustomer[key]) byCustomer[key] = { name: key, pizzas: 0, orders: 0, totalSpent: 0 };
+        byCustomer[key].pizzas += o.pizzaCount || 0;
+        byCustomer[key].orders += 1;
+        byCustomer[key].totalSpent += o.totalPrice || 0;
+      }
+      const ranking = Object.values(byCustomer).sort((a, b) => b.pizzas - a.pizzas);
+
+      return sendJson(res, 200, { totalPizzas, totalOrders, ranking });
+    } catch (err) {
+      return sendJson(res, 500, { error: err.message });
+    }
+  }
+
+  // ---- DELETE /api/orders/:id ----
   if (req.method === 'DELETE' && pathname.startsWith('/api/orders/')) {
-    const id = pathname.split('/').pop();
-    const orders = readOrders();
-    const idx = orders.findIndex(o => o.id === id);
-    if (idx === -1) return sendJson(res, 404, { ok: false, error: 'Not found' });
-    orders.splice(idx, 1);
-    saveOrders(orders);
-    return sendJson(res, 200, { ok: true });
+    try {
+      const id = pathname.split('/').pop();
+      const deleted = await deleteOrder(id);
+      if (!deleted) return sendJson(res, 404, { ok: false, error: 'Not found' });
+      return sendJson(res, 200, { ok: true });
+    } catch (err) {
+      return sendJson(res, 500, { error: err.message });
+    }
   }
 
-  // ---- Admin dashboard (serve HTML) ----
+  // ---- Admin dashboard ----
   if (req.method === 'GET' && (pathname === '/' || pathname === '/ordini')) {
     try {
       const html = fs.readFileSync(ADMIN_FILE, 'utf-8');
@@ -169,11 +258,21 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  // 404
+  // ---- Health check ----
+  if (req.method === 'GET' && pathname === '/health') {
+    return sendJson(res, 200, { ok: true, storage: useTurso ? 'turso' : 'json' });
+  }
+
   sendJson(res, 404, { error: 'Not found' });
 });
 
-server.listen(PORT, () => {
-  console.log(`Penzana Order Server running on http://localhost:${PORT}`);
-  console.log(`Admin dashboard: http://localhost:${PORT}/ordini`);
+initStorage().then(() => {
+  server.listen(PORT, () => {
+    console.log(`Penzana Order Server running on http://localhost:${PORT}`);
+    console.log(`Admin dashboard: http://localhost:${PORT}/ordini`);
+    console.log(`Storage: ${useTurso ? 'Turso' : 'JSON file'}`);
+  });
+}).catch(err => {
+  console.error('Failed to initialize storage:', err);
+  process.exit(1);
 });
