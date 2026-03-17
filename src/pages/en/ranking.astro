@@ -1,0 +1,226 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { ORDER_API } from '../../data/site.js';
+const base = '/penzana-del-merel';
+const orderApi = ORDER_API || 'http://localhost:3003';
+---
+
+<BaseLayout
+  title="Ranking & Orders — La Penzana del Merel"
+  description="Live pizza ranking and recent orders at La Penzana del Merel in Orezzo."
+  lang="en"
+  currentPath={`${base}/en/ranking/`}
+>
+
+  <section class="hero hero-compact">
+    <div class="container">
+      <span class="hero-eyebrow">Live</span>
+      <h1>Ranking & Orders</h1>
+      <p class="hero-sub">Who eats the most pizza at La Penzana? Find out in real time.</p>
+    </div>
+  </section>
+
+  <div class="cl-tabs-wrapper">
+    <div class="container">
+      <div class="cl-tabs" role="tablist">
+        <button role="tab" class="cl-tab active" aria-selected="true" data-tab="ranking">Ranking</button>
+        <button role="tab" class="cl-tab" aria-selected="false" data-tab="orders">Recent Orders</button>
+        <button role="tab" class="cl-tab" aria-selected="false" data-tab="filo">Golden Thread</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container cl-main">
+
+    <div class="cl-panel active" id="panel-ranking">
+      <div class="cl-podium" id="podium"></div>
+      <div id="ranking-table"></div>
+    </div>
+
+    <div class="cl-panel" id="panel-orders">
+      <div class="cl-filter">
+        <select id="filter-period">
+          <option value="today">Today</option>
+          <option value="week">This week</option>
+          <option value="month">This month</option>
+          <option value="all" selected>All time</option>
+        </select>
+      </div>
+      <div id="orders-list"></div>
+    </div>
+
+    <div class="cl-panel" id="panel-filo">
+      <div id="filo-content"></div>
+    </div>
+
+    <div class="cl-empty" id="cl-offline" style="display:none">
+      <p>Order server is currently offline.</p>
+      <p style="font-size:0.85rem;color:var(--text-muted)">Make sure the server is running on <code>localhost:3003</code></p>
+    </div>
+  </div>
+
+</BaseLayout>
+
+<style>
+.cl-tabs-wrapper { position: sticky; top: 0; z-index: 20; background: var(--white); border-bottom: 2px solid var(--slate-xlight); }
+.cl-tabs { display: flex; gap: 0; }
+.cl-tab { padding: 0.75rem 1.25rem; border: none; background: none; font-size: 0.9rem; font-weight: 700; cursor: pointer; color: var(--text-muted); border-bottom: 3px solid transparent; transition: all 0.2s; font-family: var(--font-body); }
+.cl-tab.active { color: var(--blue-deep); border-bottom-color: var(--blue-deep); }
+.cl-tab:hover { color: var(--blue-mid); }
+.cl-main { padding-top: 1.5rem; padding-bottom: 3rem; }
+.cl-panel { display: none; }
+.cl-panel.active { display: block; }
+.cl-podium { display: flex; justify-content: center; align-items: flex-end; gap: 0.75rem; margin-bottom: 2rem; min-height: 200px; }
+.podium-card { text-align: center; border-radius: 12px; padding: 1.25rem 1rem 1rem; width: 140px; transition: transform 0.3s var(--ease-out); }
+.podium-card:hover { transform: translateY(-4px); }
+.podium-1 { background: linear-gradient(135deg, #fef3c7, #fde68a); border: 2px solid #d4a017; box-shadow: 0 4px 20px rgba(212,160,23,0.2); order: 2; min-height: 200px; }
+.podium-2 { background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border: 2px solid #94a3b8; order: 1; min-height: 170px; }
+.podium-3 { background: linear-gradient(135deg, #fef3e2, #fed7aa); border: 2px solid #b45309; order: 3; min-height: 150px; }
+.podium-medal { font-size: 2rem; margin-bottom: 0.25rem; }
+.podium-name { font-weight: 800; font-size: 1rem; color: var(--text); margin-bottom: 0.25rem; }
+.podium-stat { font-size: 1.5rem; font-weight: 800; color: var(--blue-deep); }
+.podium-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.rank-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.rank-table th { background: var(--blue-deep); color: var(--white); padding: 0.7rem 1rem; text-align: left; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.rank-table td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--slate-xlight); font-size: 0.9rem; }
+.rank-table tr:hover td { background: rgba(247,184,205,0.08); }
+.rank-num { font-weight: 800; color: var(--blue-deep); font-size: 1rem; }
+.rank-name { font-weight: 600; }
+.rank-bar { height: 6px; background: var(--accent-gold); border-radius: 3px; transition: width 0.6s var(--ease-out); }
+.cl-filter { margin-bottom: 1rem; }
+.cl-filter select { padding: 0.45rem 0.75rem; border: 1.5px solid var(--slate-xlight); border-radius: 6px; font-size: 0.85rem; font-family: var(--font-body); background: var(--white); }
+.order-card { background: var(--white); border: 1px solid var(--slate-xlight); border-left: 4px solid var(--blue-deep); border-radius: 6px; padding: 1rem 1.25rem; margin-bottom: 0.6rem; transition: box-shadow 0.2s; }
+.order-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.order-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem; gap: 0.5rem; flex-wrap: wrap; }
+.order-name { font-weight: 700; font-size: 1rem; color: var(--blue-deep); }
+.order-mode { font-size: 0.78rem; color: var(--text-muted); }
+.order-time { font-size: 0.78rem; color: var(--text-muted); text-align: right; }
+.order-items { font-size: 0.85rem; }
+.order-items li { list-style: none; padding: 0.1rem 0; }
+.order-items li::before { content: '\2022 '; color: var(--blue-mid); }
+.order-mods { font-size: 0.75rem; color: var(--text-muted); font-style: italic; }
+.order-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px solid var(--slate-xlight); font-weight: 700; font-size: 0.9rem; }
+.pizza-badge { background: var(--accent-gold); color: var(--blue-deep); font-size: 0.72rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 99px; }
+.filo-hero { background: linear-gradient(135deg, var(--blue-deep), var(--blue-mid)); color: var(--white); border-radius: 12px; padding: 2rem; text-align: center; margin-bottom: 1.5rem; }
+.filo-hero h2 { font-size: 1rem; opacity: 0.8; margin-bottom: 0.5rem; }
+.filo-number { font-size: 3rem; font-weight: 800; }
+.filo-sub { font-size: 0.88rem; opacity: 0.7; margin-top: 0.25rem; }
+.filo-progress { background: var(--white); border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.filo-bar-wrap { background: var(--slate-xlight); border-radius: 6px; height: 14px; overflow: hidden; margin: 0.75rem 0; }
+.filo-bar { height: 100%; background: linear-gradient(90deg, var(--accent-gold), var(--blue-mid)); border-radius: 6px; transition: width 1s var(--ease-out); }
+.filo-targets { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); }
+.cl-empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+</style>
+
+<script define:vars={{ orderApi }}>
+  window.__ORDER_API = orderApi;
+</script>
+
+<script>
+const API = (window as any).__ORDER_API || 'http://localhost:3003';
+const PIZZA_DIAMETER_CM = 33;
+let allOrders: any[] = [];
+let stats: any = {};
+
+document.querySelectorAll('.cl-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.cl-tab').forEach(t => { t.classList.remove('active'); (t as HTMLElement).setAttribute('aria-selected', 'false'); });
+    document.querySelectorAll('.cl-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    (tab as HTMLElement).setAttribute('aria-selected', 'true');
+    document.getElementById('panel-' + (tab as HTMLElement).dataset.tab)?.classList.add('active');
+  });
+});
+
+async function loadData() {
+  try {
+    const [ordersRes, statsRes] = await Promise.all([fetch(`${API}/api/orders`), fetch(`${API}/api/stats`)]);
+    allOrders = await ordersRes.json();
+    stats = await statsRes.json();
+    (document.getElementById('cl-offline') as HTMLElement).style.display = 'none';
+  } catch {
+    (document.getElementById('cl-offline') as HTMLElement).style.display = 'block';
+    return;
+  }
+  renderPodium(); renderRanking(); renderOrders(); renderFilo();
+}
+
+function renderPodium() {
+  const podium = document.getElementById('podium')!;
+  const top3 = (stats.ranking || []).slice(0, 3);
+  if (top3.length === 0) { podium.innerHTML = ''; return; }
+  const medals = ['\uD83E\uDD47', '\uD83E\uDD48', '\uD83E\uDD49'];
+  podium.innerHTML = top3.map((r: any, i: number) =>
+    `<div class="podium-card podium-${i + 1}">
+      <div class="podium-medal">${medals[i]}</div>
+      <div class="podium-name">${esc(r.name)}</div>
+      <div class="podium-stat">${r.pizzas}</div>
+      <div class="podium-label">pizzas</div>
+    </div>`
+  ).join('');
+}
+
+function renderRanking() {
+  const container = document.getElementById('ranking-table')!;
+  const ranking = stats.ranking || [];
+  if (ranking.length === 0) { container.innerHTML = '<div class="cl-empty">No orders yet. Order the first pizza!</div>'; return; }
+  const maxPizzas = ranking[0]?.pizzas || 1;
+  let html = `<table class="rank-table"><thead><tr><th>#</th><th>Name</th><th>Pizzas</th><th></th><th>Orders</th><th>Spent</th></tr></thead><tbody>`;
+  ranking.forEach((r: any, i: number) => {
+    const pct = Math.round((r.pizzas / maxPizzas) * 100);
+    html += `<tr><td><span class="rank-num">${i + 1}</span></td><td class="rank-name">${esc(r.name)}</td><td><strong>${r.pizzas}</strong></td><td style="width:30%"><div class="rank-bar" style="width:${pct}%"></div></td><td>${r.orders}</td><td>${fp(r.totalSpent)}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+function renderOrders() {
+  const container = document.getElementById('orders-list')!;
+  const filter = (document.getElementById('filter-period') as HTMLSelectElement).value;
+  const now = new Date();
+  const filtered = allOrders.filter((o: any) => {
+    const d = new Date(o.timestamp);
+    if (filter === 'today') return d.toDateString() === now.toDateString();
+    if (filter === 'week') { const w = new Date(now); w.setDate(w.getDate() - 7); return d >= w; }
+    if (filter === 'month') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    return true;
+  });
+  if (filtered.length === 0) { container.innerHTML = '<div class="cl-empty">No orders found.</div>'; return; }
+  container.innerHTML = filtered.map((o: any) => {
+    const d = new Date(o.timestamp);
+    const time = d.toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    const mode = o.orderMode === 'delivery' ? 'Delivery \u2014 ' + (o.deliveryAddress || '') : o.tableId ? o.tableId.replace('table-', 'Table ') : '';
+    const items = (o.items || []).map((it: any) => {
+      const sz = it.size ? ` (${it.size})` : '';
+      const mods: string[] = [];
+      if (it.removed?.length) mods.push('without: ' + it.removed.join(', '));
+      if (it.added?.length) mods.push('with: ' + it.added.join(', '));
+      const modsH = mods.length ? `<span class="order-mods"> \u2014 ${mods.join(' | ')}</span>` : '';
+      return `<li>${esc(it.name)}${sz} x${it.qty} \u2014 ${fp(it.price * it.qty)}${modsH}</li>`;
+    }).join('');
+    return `<div class="order-card"><div class="order-head"><div><span class="order-name">${esc(o.customerName)}</span><div class="order-mode">${mode}</div></div><div class="order-time">${time}</div></div><ul class="order-items">${items}</ul><div class="order-foot"><span>Total: ${fp(o.totalPrice)}</span>${o.pizzaCount > 0 ? `<span class="pizza-badge">${o.pizzaCount} pizzas</span>` : ''}</div></div>`;
+  }).join('');
+}
+
+document.getElementById('filter-period')?.addEventListener('change', renderOrders);
+
+function renderFilo() {
+  const container = document.getElementById('filo-content')!;
+  const totalPizzas = stats.totalPizzas || 0;
+  const totalCm = totalPizzas * PIZZA_DIAMETER_CM;
+  const meters = (totalCm / 100).toFixed(1);
+  const km = (totalCm / 100000).toFixed(4);
+  const historicalKm = 185;
+  const realKm = totalCm / 100000;
+  const pct = Math.min(100, ((historicalKm + realKm) / 800) * 100);
+  container.innerHTML = `
+    <div class="filo-hero"><h2>The Golden Thread from logged orders</h2><div class="filo-number">${meters} m</div><div class="filo-sub">${totalPizzas} pizzas ordered \u00D7 33 cm diameter</div><div class="filo-sub">${km} km added to the journey to Naples</div></div>
+    <div class="filo-progress"><strong>Progress to Naples (800 km)</strong><div class="filo-bar-wrap"><div class="filo-bar" style="width:${pct.toFixed(1)}%"></div></div><div class="filo-targets"><span>Orezzo</span><span>${pct.toFixed(1)}%</span><span>Naples</span></div></div>`;
+}
+
+function fp(n: number) { return '\u20AC' + (n || 0).toFixed(2); }
+function esc(s: string) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+loadData();
+setInterval(loadData, 30000);
+</script>
