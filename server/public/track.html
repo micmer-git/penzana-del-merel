@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Segui il tuo ordine — La Penzana del Merel</title>
+<style>
+  :root {
+    --wine: #8f0f2f;
+    --wine-light: #c2184f;
+    --rose: #f7b8cd;
+    --bg: #faf8f5;
+    --white: #fff;
+    --text: #1e1e2e;
+    --text-muted: #6b7280;
+    --slate-xlight: #e8e6e1;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --amber: #d97706;
+    --amber-bg: #fef3c7;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  header {
+    background: var(--wine);
+    color: var(--white);
+    padding: 1.2rem 1.5rem;
+    text-align: center;
+  }
+  header h1 { font-size: 1.3rem; font-weight: 700; }
+  header p { font-size: 0.85rem; opacity: 0.8; margin-top: 0.25rem; }
+
+  .container { max-width: 540px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+  /* Search form */
+  .search-box {
+    background: var(--white);
+    border: 1px solid var(--slate-xlight);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .search-box label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--slate-xlight);
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.2s;
+  }
+  .search-box input:focus {
+    outline: none;
+    border-color: var(--wine);
+  }
+  #track-code { text-transform: uppercase; font-weight: 600; letter-spacing: 0.1em; }
+  .search-btn {
+    width: 100%;
+    padding: 0.7rem;
+    background: var(--wine);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .search-btn:hover { background: var(--wine-light); }
+  .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .error-msg {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    display: none;
+  }
+
+  /* Order view */
+  .order-view { display: none; }
+  .order-view.active { display: block; }
+
+  .status-card {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--slate-xlight);
+  }
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .tracking-code {
+    font-family: monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--wine);
+  }
+  .status-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+  .status-pending { background: var(--amber-bg); color: var(--amber); }
+  .status-completed { background: var(--green-bg); color: var(--green); }
+
+  .order-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  .order-info span { display: block; margin-bottom: 0.15rem; }
+
+  .items-card {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--slate-xlight);
+  }
+  .items-card h3 {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+  }
+  .items-list { list-style: none; }
+  .items-list li {
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  .items-list li::before { content: none; }
+  .item-name { flex: 1; }
+  .item-mods { font-size: 0.78rem; color: var(--text-muted); font-style: italic; }
+  .item-price { font-weight: 600; white-space: nowrap; margin-left: 0.5rem; }
+  .order-total-row {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--slate-xlight);
+    font-size: 1rem;
+  }
+
+  /* Messages */
+  .messages-card {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--slate-xlight);
+  }
+  .messages-card h3 {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+  }
+  .msg-thread {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 0.75rem;
+  }
+  .msg-bubble {
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.4rem;
+    font-size: 0.88rem;
+    max-width: 85%;
+  }
+  .msg-customer {
+    background: var(--rose);
+    color: var(--wine);
+    margin-left: auto;
+    text-align: right;
+  }
+  .msg-pizzeria {
+    background: #f0fdf4;
+    color: #166534;
+  }
+  .msg-sender {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.15rem;
+  }
+  .msg-time {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+  }
+  .msg-empty {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 0.75rem 0;
+  }
+  .msg-input-row {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .msg-input-row input {
+    flex: 1;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--slate-xlight);
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+  .msg-input-row input:focus { outline: none; border-color: var(--wine); }
+  .msg-send-btn {
+    padding: 0.5rem 0.9rem;
+    background: var(--wine);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+  }
+  .msg-send-btn:hover { background: var(--wine-light); }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    color: var(--wine);
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .auto-refresh-note {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>La Penzana del Merel</h1>
+  <p>Segui il tuo ordine</p>
+</header>
+
+<div class="container">
+  <!-- Search form -->
+  <div id="search-section">
+    <div class="search-box">
+      <label for="track-code">Codice ordine</label>
+      <input type="text" id="track-code" placeholder="PNZ-XXXX" maxlength="8" autocomplete="off" />
+      <label for="track-phone">Numero di telefono</label>
+      <input type="tel" id="track-phone" placeholder="+39 XXX XXX XXXX" autocomplete="tel" />
+      <button class="search-btn" id="search-btn">Cerca ordine</button>
+    </div>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+
+  <!-- Order view -->
+  <div class="order-view" id="order-view">
+    <div class="status-card">
+      <div class="status-row">
+        <span class="tracking-code" id="ov-tracking"></span>
+        <span class="status-badge" id="ov-status"></span>
+      </div>
+      <div class="order-info" id="ov-info"></div>
+    </div>
+
+    <div class="items-card">
+      <h3>Il tuo ordine</h3>
+      <ul class="items-list" id="ov-items"></ul>
+      <div class="order-total-row">
+        <span>Totale</span>
+        <span id="ov-total"></span>
+      </div>
+    </div>
+
+    <div class="messages-card">
+      <h3>Messaggi</h3>
+      <div class="msg-thread" id="ov-messages"></div>
+      <div class="msg-input-row">
+        <input type="text" id="msg-input" placeholder="Scrivi un messaggio..." maxlength="500" />
+        <button class="msg-send-btn" id="msg-send-btn">Invia</button>
+      </div>
+    </div>
+
+    <span class="back-link" id="back-link">Cerca un altro ordine</span>
+    <div class="auto-refresh-note">Aggiornamento automatico ogni 30 secondi</div>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin;
+let currentTrackingId = '';
+let currentPhone = '';
+let refreshTimer = null;
+
+// Read URL params
+const urlParams = new URLSearchParams(window.location.search);
+const paramId = urlParams.get('id');
+if (paramId) {
+  document.getElementById('track-code').value = paramId.toUpperCase();
+}
+
+function formatPrice(n) {
+  return (n || 0).toFixed(2).replace('.', ',') + ' \u20AC';
+}
+
+function escapeHtml(s) {
+  return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function normalizePhone(p) {
+  return (p || '').replace(/[\s\-().]/g, '');
+}
+
+function formatTime(ts) {
+  try {
+    const d = new Date(ts);
+    return d.toLocaleString('it-IT', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+  } catch {
+    return ts || '';
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function hideError() {
+  document.getElementById('error-msg').style.display = 'none';
+}
+
+function showOrderView() {
+  document.getElementById('search-section').style.display = 'none';
+  document.getElementById('order-view').classList.add('active');
+}
+
+function showSearchView() {
+  document.getElementById('search-section').style.display = 'block';
+  document.getElementById('order-view').classList.remove('active');
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = null;
+}
+
+async function lookupOrder() {
+  hideError();
+  const code = document.getElementById('track-code').value.trim().toUpperCase();
+  const phone = normalizePhone(document.getElementById('track-phone').value);
+
+  if (!code || !phone) {
+    showError('Inserisci il codice ordine e il numero di telefono.');
+    return;
+  }
+
+  const searchBtn = document.getElementById('search-btn');
+  searchBtn.disabled = true;
+  searchBtn.textContent = 'Ricerca...';
+
+  try {
+    const resp = await fetch(`${API}/api/track/${encodeURIComponent(code)}?phone=${encodeURIComponent(phone)}`);
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      showError(data.error || 'Ordine non trovato. Verifica codice e telefono.');
+      searchBtn.disabled = false;
+      searchBtn.textContent = 'Cerca ordine';
+      return;
+    }
+
+    currentTrackingId = code;
+    currentPhone = phone;
+    renderOrder(data);
+    showOrderView();
+
+    // Auto-refresh every 30s
+    if (refreshTimer) clearInterval(refreshTimer);
+    refreshTimer = setInterval(refreshOrder, 30000);
+
+  } catch (err) {
+    showError('Errore di connessione. Riprova tra qualche istante.');
+  }
+
+  searchBtn.disabled = false;
+  searchBtn.textContent = 'Cerca ordine';
+}
+
+async function refreshOrder() {
+  if (!currentTrackingId || !currentPhone) return;
+  try {
+    const resp = await fetch(`${API}/api/track/${encodeURIComponent(currentTrackingId)}?phone=${encodeURIComponent(currentPhone)}`);
+    if (resp.ok) {
+      const data = await resp.json();
+      renderOrder(data);
+    }
+  } catch {}
+}
+
+function renderOrder(data) {
+  // Tracking ID + status
+  document.getElementById('ov-tracking').textContent = data.trackingId;
+  const statusEl = document.getElementById('ov-status');
+  if (data.status === 'completed') {
+    statusEl.textContent = 'Pronto';
+    statusEl.className = 'status-badge status-completed';
+  } else {
+    statusEl.textContent = 'In preparazione';
+    statusEl.className = 'status-badge status-pending';
+  }
+
+  // Order info
+  let infoHtml = '<span>' + formatTime(data.timestamp) + '</span>';
+  if (data.orderMode === 'delivery') {
+    infoHtml += '<span>Consegna: ' + escapeHtml(data.deliveryAddress) + '</span>';
+    if (data.deliveryTime) infoHtml += '<span>Orario: ' + escapeHtml(data.deliveryTime) + '</span>';
+  } else if (data.tableId) {
+    infoHtml += '<span>' + escapeHtml(data.tableId.replace('table-', 'Tavolo ')) + '</span>';
+  }
+  if (data.notes) infoHtml += '<span>Note: ' + escapeHtml(data.notes) + '</span>';
+  document.getElementById('ov-info').innerHTML = infoHtml;
+
+  // Items
+  const itemsHtml = (data.items || []).map(item => {
+    const size = item.size ? ' (' + escapeHtml(item.size) + ')' : '';
+    const mods = [];
+    if (item.removed && item.removed.length) mods.push('senza: ' + item.removed.map(escapeHtml).join(', '));
+    if (item.added && item.added.length) mods.push('con: ' + item.added.map(escapeHtml).join(', '));
+    const modsHtml = mods.length ? '<div class="item-mods">' + mods.join(' | ') + '</div>' : '';
+    return '<li><div class="item-name">' + escapeHtml(item.name) + size + ' x' + item.qty + modsHtml + '</div><span class="item-price">' + formatPrice(item.price * item.qty) + '</span></li>';
+  }).join('');
+  document.getElementById('ov-items').innerHTML = itemsHtml;
+
+  // Total
+  document.getElementById('ov-total').textContent = formatPrice(data.totalPrice);
+
+  // Messages
+  renderMessages(data.messages || []);
+}
+
+function renderMessages(messages) {
+  const container = document.getElementById('ov-messages');
+  if (messages.length === 0) {
+    container.innerHTML = '<div class="msg-empty">Nessun messaggio. Scrivi per comunicare con il ristorante.</div>';
+    return;
+  }
+  container.innerHTML = messages.map(m => {
+    const isCustomer = m.sender === 'customer';
+    const cls = isCustomer ? 'msg-bubble msg-customer' : 'msg-bubble msg-pizzeria';
+    const label = isCustomer ? 'Tu' : 'Ristorante';
+    return '<div class="' + cls + '">' +
+      '<div class="msg-sender">' + label + '</div>' +
+      '<div>' + escapeHtml(m.text) + '</div>' +
+      '<div class="msg-time">' + formatTime(m.created_at) + '</div>' +
+    '</div>';
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('msg-input');
+  const text = input.value.trim();
+  if (!text || !currentTrackingId || !currentPhone) return;
+
+  try {
+    const resp = await fetch(`${API}/api/track/${encodeURIComponent(currentTrackingId)}/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: currentPhone, text }),
+    });
+    if (resp.ok) {
+      input.value = '';
+      await refreshOrder();
+    }
+  } catch {}
+}
+
+// Event listeners
+document.getElementById('search-btn').addEventListener('click', lookupOrder);
+document.getElementById('track-code').addEventListener('keydown', e => { if (e.key === 'Enter') lookupOrder(); });
+document.getElementById('track-phone').addEventListener('keydown', e => { if (e.key === 'Enter') lookupOrder(); });
+document.getElementById('msg-send-btn').addEventListener('click', sendMessage);
+document.getElementById('msg-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+document.getElementById('back-link').addEventListener('click', showSearchView);
+</script>
+</body>
+</html>
