@@ -63,9 +63,10 @@ async function initStorage() {
       `);
 
       // Migrate: add tracking_id, phone, status columns if missing
-      try { await db.execute("ALTER TABLE orders ADD COLUMN tracking_id TEXT UNIQUE"); } catch {}
-      try { await db.execute("ALTER TABLE orders ADD COLUMN phone TEXT DEFAULT ''"); } catch {}
-      try { await db.execute("ALTER TABLE orders ADD COLUMN status TEXT DEFAULT 'pending'"); } catch {}
+      try { await db.execute("ALTER TABLE orders ADD COLUMN tracking_id TEXT"); console.log('[MIGRATE] Added tracking_id column'); } catch (e) { console.log('[MIGRATE] tracking_id:', e.message); }
+      try { await db.execute("ALTER TABLE orders ADD COLUMN phone TEXT DEFAULT ''"); console.log('[MIGRATE] Added phone column'); } catch (e) { console.log('[MIGRATE] phone:', e.message); }
+      try { await db.execute("ALTER TABLE orders ADD COLUMN status TEXT DEFAULT 'pending'"); console.log('[MIGRATE] Added status column'); } catch (e) { console.log('[MIGRATE] status:', e.message); }
+      try { await db.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_tracking_id ON orders(tracking_id)"); } catch {}
 
       // Create messages table
       await db.execute(`
