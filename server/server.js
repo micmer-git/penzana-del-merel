@@ -191,30 +191,6 @@ async function findOrderByTrackingId(trackingId) {
   }
 }
 
-async function findOrdersByPhone(phone) {
-  if (!useTurso) {
-    const orders = readOrdersFile();
-    return orders.filter(o => o.phone === phone).map(o => ({
-      trackingId: o.trackingId,
-      status: o.status || 'pending',
-      totalPrice: o.totalPrice,
-      createdAt: o.timestamp,
-    }));
-  }
-  try {
-    const result = await db.execute({ sql: 'SELECT * FROM orders WHERE phone = ? ORDER BY timestamp DESC', args: [phone] });
-    return result.rows.map(r => ({
-      trackingId: r.tracking_id,
-      status: r.status || 'pending',
-      totalPrice: r.total_price,
-      createdAt: r.timestamp,
-    }));
-  } catch (err) {
-    console.error('[ERR] findOrdersByPhone:', err.message);
-    return [];
-  }
-}
-
 async function updateOrderStatus(id, status) {
   if (!useTurso) {
     const orders = readOrdersFile();
@@ -439,13 +415,11 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 201, { ok: true, message: msg });
     }
 
-    // ---- GET /api/track/:trackingId?phone=XXXXX ----
+    // ---- GET /api/track/:trackingId ----
     if (req.method === 'GET' && /^\/api\/track\/[A-Z0-9-]+$/.test(pathname)) {
       const trackingId = pathname.split('/').pop();
-      const phone = url.searchParams.get('phone') || '';
       const order = await findOrderByTrackingId(trackingId);
       if (!order) return sendJson(res, 404, { ok: false, error: 'Ordine non trovato' });
-      if (!phone || order.phone !== phone) return sendJson(res, 403, { ok: false, error: 'Numero di telefono non corrispondente' });
       const messages = await getMessages(order.id);
       return sendJson(res, 200, {
         trackingId: order.trackingId,
@@ -467,20 +441,11 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'POST' && /^\/api\/track\/[A-Z0-9-]+\/messages$/.test(pathname)) {
       const trackingId = pathname.split('/')[3];
       const data = await parseBody(req);
-      if (!data.phone || !data.text || !data.text.trim()) return sendJson(res, 400, { ok: false, error: 'Phone and text required' });
+      if (!data.text || !data.text.trim()) return sendJson(res, 400, { ok: false, error: 'Text required' });
       const order = await findOrderByTrackingId(trackingId);
       if (!order) return sendJson(res, 404, { ok: false, error: 'Ordine non trovato' });
-      if (order.phone !== data.phone) return sendJson(res, 403, { ok: false, error: 'Numero di telefono non corrispondente' });
       const msg = await addMessage(order.id, 'customer', data.text.trim());
       return sendJson(res, 201, { ok: true, message: msg });
-    }
-
-    // ---- GET /api/customer-orders?phone=XXXXX ----
-    if (req.method === 'GET' && pathname === '/api/customer-orders') {
-      const phone = url.searchParams.get('phone') || '';
-      if (!phone) return sendJson(res, 400, { ok: false, error: 'Phone required' });
-      const orders = await findOrdersByPhone(phone);
-      return sendJson(res, 200, orders);
     }
 
     // ---- DELETE /api/orders/:id ----
