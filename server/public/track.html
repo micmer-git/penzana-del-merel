@@ -282,6 +282,12 @@
       <button class="search-btn" id="search-btn">Cerca</button>
     </div>
     <div class="error-msg" id="error-msg"></div>
+
+    <!-- Recent orders from localStorage -->
+    <div id="recent-orders" style="display:none;background:var(--white);border:1px solid var(--slate-xlight);border-radius:10px;padding:1.25rem;margin-top:1rem">
+      <h3 style="font-size:.82rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem">I tuoi ordini recenti</h3>
+      <div id="recent-orders-list"></div>
+    </div>
   </div>
 
   <!-- Order view -->
@@ -505,6 +511,30 @@ document.getElementById('track-code').addEventListener('keydown', e => { if (e.k
 document.getElementById('msg-send-btn').addEventListener('click', sendMessage);
 document.getElementById('msg-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
 document.getElementById('back-link').addEventListener('click', showSearchView);
+
+// Recent orders from localStorage
+(function renderRecentOrders() {
+  try {
+    const orders = JSON.parse(localStorage.getItem('myOrders') || '[]');
+    if (!orders.length) return;
+    const container = document.getElementById('recent-orders-list');
+    container.innerHTML = orders.map(o => {
+      const d = new Date(o.date);
+      const dateStr = d.toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' });
+      const timeStr = d.toLocaleTimeString('it-IT', { hour:'2-digit', minute:'2-digit' });
+      const totalStr = Number(o.total || 0).toFixed(2).replace('.', ',');
+      return `<div onclick="document.getElementById('track-code').value='${escapeHtml(o.trackingId)}';lookupOrder();" style="display:flex;justify-content:space-between;align-items:center;padding:.5rem .6rem;border-bottom:1px solid var(--slate-xlight);cursor:pointer;border-radius:6px;transition:background .15s"
+        onmouseover="this.style.background='#faf0f3'" onmouseout="this.style.background='transparent'">
+        <div>
+          <strong style="font-family:monospace;color:var(--wine);font-weight:700;letter-spacing:.08em">${escapeHtml(o.trackingId)}</strong>
+          <div style="font-size:.78rem;color:var(--text-muted)">${dateStr} ${timeStr}</div>
+        </div>
+        <div style="font-weight:600;white-space:nowrap">${totalStr} \u20AC</div>
+      </div>`;
+    }).join('');
+    document.getElementById('recent-orders').style.display = 'block';
+  } catch {}
+})();
 </script>
 </body>
 </html>
