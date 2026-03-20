@@ -279,9 +279,7 @@
     <div class="search-box">
       <label for="track-code">Codice ordine</label>
       <input type="text" id="track-code" placeholder="PNZ-XXXX" maxlength="8" autocomplete="off" />
-      <label for="track-phone">Numero di telefono</label>
-      <input type="tel" id="track-phone" placeholder="+39 XXX XXX XXXX" autocomplete="tel" />
-      <button class="search-btn" id="search-btn">Cerca ordine</button>
+      <button class="search-btn" id="search-btn">Cerca</button>
     </div>
     <div class="error-msg" id="error-msg"></div>
   </div>
@@ -322,14 +320,15 @@
 <script>
 const API = window.location.origin;
 let currentTrackingId = '';
-let currentPhone = '';
 let refreshTimer = null;
 
-// Read URL params
+// Read URL params — auto-load order if id is present
 const urlParams = new URLSearchParams(window.location.search);
 const paramId = urlParams.get('id');
 if (paramId) {
   document.getElementById('track-code').value = paramId.toUpperCase();
+  // Auto-lookup after DOM is ready
+  setTimeout(() => lookupOrder(), 100);
 }
 
 function formatPrice(n) {
@@ -338,10 +337,6 @@ function formatPrice(n) {
 
 function escapeHtml(s) {
   return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function normalizePhone(p) {
-  return (p || '').replace(/[\s\-().]/g, '');
 }
 
 function formatTime(ts) {
@@ -378,10 +373,9 @@ function showSearchView() {
 async function lookupOrder() {
   hideError();
   const code = document.getElementById('track-code').value.trim().toUpperCase();
-  const phone = normalizePhone(document.getElementById('track-phone').value);
 
-  if (!code || !phone) {
-    showError('Inserisci il codice ordine e il numero di telefono.');
+  if (!code) {
+    showError('Inserisci il codice ordine.');
     return;
   }
 
@@ -390,18 +384,17 @@ async function lookupOrder() {
   searchBtn.textContent = 'Ricerca...';
 
   try {
-    const resp = await fetch(`${API}/api/track/${encodeURIComponent(code)}?phone=${encodeURIComponent(phone)}`);
+    const resp = await fetch(`${API}/api/track/${encodeURIComponent(code)}`);
     const data = await resp.json();
 
     if (!resp.ok) {
-      showError(data.error || 'Ordine non trovato. Verifica codice e telefono.');
+      showError(data.error || 'Ordine non trovato.');
       searchBtn.disabled = false;
-      searchBtn.textContent = 'Cerca ordine';
+      searchBtn.textContent = 'Cerca';
       return;
     }
 
     currentTrackingId = code;
-    currentPhone = phone;
     renderOrder(data);
     showOrderView();
 
@@ -414,13 +407,13 @@ async function lookupOrder() {
   }
 
   searchBtn.disabled = false;
-  searchBtn.textContent = 'Cerca ordine';
+  searchBtn.textContent = 'Cerca';
 }
 
 async function refreshOrder() {
-  if (!currentTrackingId || !currentPhone) return;
+  if (!currentTrackingId) return;
   try {
-    const resp = await fetch(`${API}/api/track/${encodeURIComponent(currentTrackingId)}?phone=${encodeURIComponent(currentPhone)}`);
+    const resp = await fetch(`${API}/api/track/${encodeURIComponent(currentTrackingId)}`);
     if (resp.ok) {
       const data = await resp.json();
       renderOrder(data);
@@ -491,13 +484,13 @@ function renderMessages(messages) {
 async function sendMessage() {
   const input = document.getElementById('msg-input');
   const text = input.value.trim();
-  if (!text || !currentTrackingId || !currentPhone) return;
+  if (!text || !currentTrackingId) return;
 
   try {
     const resp = await fetch(`${API}/api/track/${encodeURIComponent(currentTrackingId)}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone: currentPhone, text }),
+      body: JSON.stringify({ text }),
     });
     if (resp.ok) {
       input.value = '';
@@ -509,7 +502,6 @@ async function sendMessage() {
 // Event listeners
 document.getElementById('search-btn').addEventListener('click', lookupOrder);
 document.getElementById('track-code').addEventListener('keydown', e => { if (e.key === 'Enter') lookupOrder(); });
-document.getElementById('track-phone').addEventListener('keydown', e => { if (e.key === 'Enter') lookupOrder(); });
 document.getElementById('msg-send-btn').addEventListener('click', sendMessage);
 document.getElementById('msg-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
 document.getElementById('back-link').addEventListener('click', showSearchView);

@@ -221,16 +221,12 @@ const menuDataJSON = JSON.stringify(
       <select id="modal-table-select" class="order-mode-input">
         <option value="">Tavolo...</option>
       </select>
-      <label class="order-mode-label">Telefono (per seguire l'ordine)</label>
-      <input id="table-phone" type="tel" class="order-mode-input" placeholder="+39 XXX XXX XXXX" />
       <button id="mode-table-confirm" class="order-mode-confirm" disabled>Conferma tavolo</button>
     </div>
     <!-- Delivery sub-form -->
     <div id="mode-delivery-form" class="order-mode-form" style="display:none">
       <label class="order-mode-label">Nome</label>
       <input id="delivery-name" type="text" class="order-mode-input" placeholder="Il tuo nome" />
-      <label class="order-mode-label">Telefono</label>
-      <input id="delivery-phone" type="tel" class="order-mode-input" placeholder="+39 XXX XXX XXXX" />
       <label class="order-mode-label">Indirizzo</label>
       <input id="delivery-address" type="text" class="order-mode-input" placeholder="Via, numero civico, città" />
       <label class="order-mode-label">Orario preferito</label>
@@ -1698,7 +1694,6 @@ cartSendBtn.addEventListener('click', async () => {
           tableId: tableId || null,
           deliveryAddress: deliveryInfo?.address || null,
           deliveryTime: deliveryInfo?.time || null,
-          phone: customerPhone || '',
           items: cart.map(e => ({
             name: e.name,
             qty: e.qty,
@@ -1723,7 +1718,7 @@ cartSendBtn.addEventListener('click', async () => {
 
   // Append tracking link to WhatsApp message if available
   if (trackingId) {
-    msg += `\n\n\uD83D\uDCE6 Segui il tuo ordine: ${ORDER_API}/track?id=${trackingId}`;
+    msg += `\n\n\uD83D\uDCE6 *Segui il tuo ordine:*\n${ORDER_API}/track?id=${trackingId}`;
   }
 
   const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
@@ -1758,14 +1753,11 @@ const modeDeliveryForm = document.getElementById('mode-delivery-form')!;
 const modalTableSelect = document.getElementById('modal-table-select') as HTMLSelectElement;
 const modeTableConfirm = document.getElementById('mode-table-confirm') as HTMLButtonElement;
 const deliveryNameInput = document.getElementById('delivery-name') as HTMLInputElement;
-const deliveryPhoneInput = document.getElementById('delivery-phone') as HTMLInputElement;
 const deliveryAddressInput = document.getElementById('delivery-address') as HTMLInputElement;
 const deliveryTimeInput = document.getElementById('delivery-time') as HTMLInputElement;
 const deliveryTimeButtons = document.querySelectorAll<HTMLButtonElement>('.delivery-time-pill');
 const modeDeliveryConfirm = document.getElementById('mode-delivery-confirm') as HTMLButtonElement;
-const tablePhoneInput = document.getElementById('table-phone') as HTMLInputElement;
 let selectedDeliveryTime = '';
-let customerPhone = '';
 
 // Populate modal table select with same options
 for (let i = 1; i <= 20; i++) {
@@ -1835,7 +1827,6 @@ modalTableSelect.addEventListener('change', () => {
 modeTableConfirm.addEventListener('click', () => {
   if (!modalTableSelect.value) return;
   orderMode = 'table';
-  customerPhone = (tablePhoneInput.value || '').replace(/[\s\-().]/g, '');
   setTable(modalTableSelect.value);
   finalizePendingEntry();
 });
@@ -1857,7 +1848,6 @@ deliveryTimeButtons.forEach(btn => {
 modeDeliveryConfirm.addEventListener('click', () => {
   if (!deliveryNameInput.value.trim() || !deliveryAddressInput.value.trim()) return;
   orderMode = 'delivery';
-  customerPhone = (deliveryPhoneInput.value || '').replace(/[\s\-().]/g, '');
   deliveryInfo = {
     name: deliveryNameInput.value.trim(),
     address: deliveryAddressInput.value.trim(),
