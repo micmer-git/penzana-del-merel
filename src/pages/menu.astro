@@ -1716,6 +1716,15 @@ cartSendBtn.addEventListener('click', async () => {
     } catch {}
   }
 
+  // Store order in localStorage for "I miei ordini" history
+  if (trackingId) {
+    try {
+      const myOrders = JSON.parse(localStorage.getItem('myOrders') || '[]');
+      myOrders.unshift({ trackingId, date: new Date().toISOString(), total: totalPrice() });
+      localStorage.setItem('myOrders', JSON.stringify(myOrders.slice(0, 50)));
+    } catch {}
+  }
+
   // Append tracking link to WhatsApp message if available
   if (trackingId) {
     msg += `\n\n\uD83D\uDCE6 *Segui il tuo ordine:*\n${ORDER_API}/track?id=${trackingId}`;
