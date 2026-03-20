@@ -14,6 +14,10 @@
     --text: #1e1e2e;
     --text-muted: #6b7280;
     --slate-xlight: #e8e6e1;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --amber: #d97706;
+    --amber-bg: #fef3c7;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -74,6 +78,7 @@
     margin-bottom: 0.75rem;
     transition: box-shadow 0.2s;
   }
+  .order-card.has-messages { border-left-color: var(--amber); }
   .order-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
   .order-header {
     display: flex;
@@ -122,6 +127,37 @@
     padding: 0.15rem 0.5rem;
     border-radius: 99px;
   }
+  .msg-badge {
+    background: var(--amber-bg);
+    color: var(--amber);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.12rem 0.45rem;
+    border-radius: 99px;
+    margin-left: 0.4rem;
+    cursor: pointer;
+  }
+  .tracking-label {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: var(--blue-mid);
+    background: var(--accent-gold);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    margin-left: 0.4rem;
+  }
+  .status-toggle {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    margin-left: 0.3rem;
+  }
+  .status-pending { background: var(--amber-bg); color: var(--amber); }
+  .status-completed { background: var(--green-bg); color: var(--green); }
   .order-notes {
     font-size: 0.8rem;
     color: var(--text-muted);
@@ -139,6 +175,75 @@
     transition: all 0.2s;
   }
   .delete-btn:hover { border-color: #dc2626; color: #dc2626; }
+
+  /* Messages section in order card */
+  .order-messages {
+    display: none;
+    margin-top: 0.6rem;
+    padding-top: 0.6rem;
+    border-top: 1px dashed var(--slate-xlight);
+  }
+  .order-messages.open { display: block; }
+  .order-messages h4 {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.4rem;
+  }
+  .admin-msg-thread {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 0.5rem;
+  }
+  .admin-msg {
+    font-size: 0.82rem;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid var(--slate-xlight);
+  }
+  .admin-msg:last-child { border-bottom: none; }
+  .admin-msg-sender {
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+  }
+  .admin-msg-sender.customer { color: var(--blue-deep); }
+  .admin-msg-sender.pizzeria { color: var(--green); }
+  .admin-msg-time { font-size: 0.68rem; color: var(--text-muted); }
+  .admin-msg-empty { font-size: 0.82rem; color: var(--text-muted); font-style: italic; }
+  .admin-reply-row {
+    display: flex;
+    gap: 0.3rem;
+  }
+  .admin-reply-row input {
+    flex: 1;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--slate-xlight);
+    border-radius: 4px;
+    font-size: 0.82rem;
+  }
+  .admin-reply-row input:focus { outline: none; border-color: var(--blue-deep); }
+  .admin-reply-btn {
+    padding: 0.35rem 0.6rem;
+    background: var(--blue-deep);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .admin-reply-btn:hover { background: var(--blue-mid); }
+  .toggle-msgs-btn {
+    background: none;
+    border: none;
+    color: var(--blue-mid);
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    margin-left: 0.3rem;
+  }
 
   /* Ranking */
   .ranking-table {
@@ -327,33 +432,54 @@ function renderOrders() {
     const date = new Date(o.timestamp);
     const timeStr = date.toLocaleString('it-IT', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
     const modeLabel = o.orderMode === 'delivery'
-      ? 'Consegna — ' + (o.deliveryAddress || '')
+      ? 'Consegna \u2014 ' + (o.deliveryAddress || '')
       : o.tableId ? o.tableId.replace('table-', 'Tavolo ') : 'Tavolo ?';
+
+    const msgCount = o.messageCount || 0;
+    const hasMsgs = msgCount > 0;
+    const cardClass = hasMsgs ? 'order-card has-messages' : 'order-card';
+
+    const trackingHtml = o.trackingId ? '<span class="tracking-label">' + escapeHtml(o.trackingId) + '</span>' : '';
+    const msgBadgeHtml = hasMsgs ? '<span class="msg-badge" data-id="' + o.id + '" title="Mostra messaggi">' + msgCount + ' msg</span>' : '';
+
+    const statusClass = (o.status === 'completed') ? 'status-toggle status-completed' : 'status-toggle status-pending';
+    const statusLabel = (o.status === 'completed') ? 'Pronto' : 'In preparazione';
+    const statusHtml = '<button class="' + statusClass + '" data-id="' + o.id + '" data-status="' + (o.status || 'pending') + '">' + statusLabel + '</button>';
 
     const itemsHtml = (o.items || []).map(item => {
       const size = item.size ? ' (' + item.size + ')' : '';
       const mods = [];
       if (item.removed && item.removed.length) mods.push('senza: ' + item.removed.join(', '));
       if (item.added && item.added.length) mods.push('con: ' + item.added.join(', '));
-      const modsHtml = mods.length ? '<span class="order-mods"> — ' + mods.join(' | ') + '</span>' : '';
-      const noteHtml = item.note ? '<span class="order-mods"> — ' + item.note + '</span>' : '';
-      return '<li>' + item.name + size + ' x' + item.qty + ' — ' + formatPrice(item.price * item.qty) + modsHtml + noteHtml + '</li>';
+      const modsHtml = mods.length ? '<span class="order-mods"> \u2014 ' + mods.join(' | ') + '</span>' : '';
+      const noteHtml = item.note ? '<span class="order-mods"> \u2014 ' + item.note + '</span>' : '';
+      return '<li>' + item.name + size + ' x' + item.qty + ' \u2014 ' + formatPrice(item.price * item.qty) + modsHtml + noteHtml + '</li>';
     }).join('');
 
     const notesHtml = o.notes ? '<div class="order-notes">Note: ' + escapeHtml(o.notes) + '</div>' : '';
 
-    return '<div class="order-card">' +
+    const toggleBtn = '<button class="toggle-msgs-btn" data-id="' + o.id + '">messaggi</button>';
+
+    return '<div class="' + cardClass + '" id="card-' + o.id + '">' +
       '<div class="order-header">' +
-        '<div><span class="order-customer">' + escapeHtml(o.customerName) + '</span>' +
+        '<div><span class="order-customer">' + escapeHtml(o.customerName) + '</span>' + trackingHtml + msgBadgeHtml + statusHtml +
         '<div style="font-size:0.78rem;color:var(--text-muted)">' + modeLabel + '</div></div>' +
         '<div class="order-meta">' + timeStr +
-        '<br><button class="delete-btn" data-id="' + o.id + '">Elimina</button></div>' +
+        '<br><button class="delete-btn" data-id="' + o.id + '">Elimina</button> ' + toggleBtn + '</div>' +
       '</div>' +
       '<ul class="order-items">' + itemsHtml + '</ul>' +
       notesHtml +
       '<div class="order-total">' +
         '<span>Totale: ' + formatPrice(o.totalPrice) + '</span>' +
         (o.pizzaCount > 0 ? '<span class="pizza-badge">' + o.pizzaCount + ' pizze</span>' : '') +
+      '</div>' +
+      '<div class="order-messages" id="msgs-' + o.id + '">' +
+        '<h4>Messaggi</h4>' +
+        '<div class="admin-msg-thread" id="thread-' + o.id + '"><div class="admin-msg-empty">Caricamento...</div></div>' +
+        '<div class="admin-reply-row">' +
+          '<input type="text" id="reply-input-' + o.id + '" placeholder="Rispondi..." maxlength="500" />' +
+          '<button class="admin-reply-btn" data-id="' + o.id + '">Invia</button>' +
+        '</div>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -366,6 +492,88 @@ function renderOrders() {
       loadData();
     });
   });
+
+  // Status toggle handlers
+  container.querySelectorAll('.status-toggle').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const currentStatus = btn.dataset.status;
+      const newStatus = currentStatus === 'pending' ? 'completed' : 'pending';
+      await fetch(API + '/api/orders/' + btn.dataset.id + '/status', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      loadData();
+    });
+  });
+
+  // Toggle messages handlers
+  container.querySelectorAll('.toggle-msgs-btn, .msg-badge').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const msgsEl = document.getElementById('msgs-' + id);
+      if (msgsEl.classList.contains('open')) {
+        msgsEl.classList.remove('open');
+      } else {
+        msgsEl.classList.add('open');
+        loadMessages(id);
+      }
+    });
+  });
+
+  // Reply handlers
+  container.querySelectorAll('.admin-reply-btn').forEach(btn => {
+    btn.addEventListener('click', () => sendAdminReply(btn.dataset.id));
+  });
+  container.querySelectorAll('.admin-reply-row input').forEach(input => {
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const id = input.id.replace('reply-input-', '');
+        sendAdminReply(id);
+      }
+    });
+  });
+}
+
+async function loadMessages(orderId) {
+  const thread = document.getElementById('thread-' + orderId);
+  try {
+    const resp = await fetch(API + '/api/orders/' + orderId + '/messages');
+    const messages = await resp.json();
+    if (messages.length === 0) {
+      thread.innerHTML = '<div class="admin-msg-empty">Nessun messaggio.</div>';
+      return;
+    }
+    thread.innerHTML = messages.map(m => {
+      const senderCls = m.sender === 'customer' ? 'customer' : 'pizzeria';
+      const label = m.sender === 'customer' ? 'Cliente' : 'Ristorante';
+      return '<div class="admin-msg">' +
+        '<span class="admin-msg-sender ' + senderCls + '">' + label + '</span> ' +
+        '<span class="admin-msg-time">' + (m.created_at || '') + '</span>' +
+        '<div>' + escapeHtml(m.text) + '</div>' +
+      '</div>';
+    }).join('');
+    thread.scrollTop = thread.scrollHeight;
+  } catch {
+    thread.innerHTML = '<div class="admin-msg-empty">Errore caricamento messaggi.</div>';
+  }
+}
+
+async function sendAdminReply(orderId) {
+  const input = document.getElementById('reply-input-' + orderId);
+  const text = input.value.trim();
+  if (!text) return;
+  try {
+    await fetch(API + '/api/orders/' + orderId + '/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    input.value = '';
+    loadMessages(orderId);
+    // Refresh to update badge count
+    setTimeout(loadData, 500);
+  } catch {}
 }
 
 document.getElementById('filter-period').addEventListener('change', renderOrders);

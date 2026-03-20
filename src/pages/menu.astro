@@ -221,12 +221,16 @@ const menuDataJSON = JSON.stringify(
       <select id="modal-table-select" class="order-mode-input">
         <option value="">Tavolo...</option>
       </select>
+      <label class="order-mode-label">Telefono (per seguire l'ordine)</label>
+      <input id="table-phone" type="tel" class="order-mode-input" placeholder="+39 XXX XXX XXXX" />
       <button id="mode-table-confirm" class="order-mode-confirm" disabled>Conferma tavolo</button>
     </div>
     <!-- Delivery sub-form -->
     <div id="mode-delivery-form" class="order-mode-form" style="display:none">
       <label class="order-mode-label">Nome</label>
       <input id="delivery-name" type="text" class="order-mode-input" placeholder="Il tuo nome" />
+      <label class="order-mode-label">Telefono</label>
+      <input id="delivery-phone" type="tel" class="order-mode-input" placeholder="+39 XXX XXX XXXX" />
       <label class="order-mode-label">Indirizzo</label>
       <input id="delivery-address" type="text" class="order-mode-input" placeholder="Via, numero civico, città" />
       <label class="order-mode-label">Orario preferito</label>
@@ -1641,7 +1645,7 @@ document.addEventListener('keydown', e => {
 });
 
 // ---- Send order via WhatsApp ----
-cartSendBtn.addEventListener('click', () => {
+cartSendBtn.addEventListener('click', async () => {
   if (cart.length === 0 || (!tableId && !deliveryInfo)) return;
 
   const ts = new Date().toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' });
@@ -1669,8 +1673,6 @@ cartSendBtn.addEventListener('click', () => {
   msg += `\n*TOTALE STIMATO: ${formatPrice(totalPrice())}*`;
   if (globalNotes) msg += `\n\n*Note generali:* ${globalNotes}`;
 
-  const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-
   // Count pizza items for pizzometro
   const pizzaCount = cart.reduce((sum, e) => {
     // Items from pizzeria section are pizzas
@@ -1679,14 +1681,15 @@ cartSendBtn.addEventListener('click', () => {
     return sum + (isPizza ? e.qty : 0);
   }, 0);
 
-  // Log order to backend (fire-and-forget, never blocks WhatsApp)
+  // Log order to backend — await response to get tracking ID
+  let trackingId = '';
   if (ORDER_API) {
     try {
       const customerName = orderMode === 'delivery' && deliveryInfo
         ? deliveryInfo.name
         : (tableId ? tableId.replace('table-', 'Tavolo ') : 'Anonimo');
 
-      fetch(`${ORDER_API}/api/orders`, {
+      const resp = await fetch(`${ORDER_API}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1695,6 +1698,7 @@ cartSendBtn.addEventListener('click', () => {
           tableId: tableId || null,
           deliveryAddress: deliveryInfo?.address || null,
           deliveryTime: deliveryInfo?.time || null,
+          phone: customerPhone || '',
           items: cart.map(e => ({
             name: e.name,
             qty: e.qty,
@@ -1709,9 +1713,20 @@ cartSendBtn.addEventListener('click', () => {
           pizzaCount,
           notes: globalNotes || '',
         }),
-      }).catch(() => {}); // silently ignore if server unreachable
+      });
+      if (resp.ok) {
+        const result = await resp.json();
+        trackingId = result.trackingId || '';
+      }
     } catch {}
   }
+
+  // Append tracking link to WhatsApp message if available
+  if (trackingId) {
+    msg += `\n\n\uD83D\uDCE6 Segui il tuo ordine: ${ORDER_API}/track?id=${trackingId}`;
+  }
+
+  const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 
   // Store WhatsApp URL and redirect to pizzometro first
   if (pizzaCount > 0) {
@@ -1743,11 +1758,14 @@ const modeDeliveryForm = document.getElementById('mode-delivery-form')!;
 const modalTableSelect = document.getElementById('modal-table-select') as HTMLSelectElement;
 const modeTableConfirm = document.getElementById('mode-table-confirm') as HTMLButtonElement;
 const deliveryNameInput = document.getElementById('delivery-name') as HTMLInputElement;
+const deliveryPhoneInput = document.getElementById('delivery-phone') as HTMLInputElement;
 const deliveryAddressInput = document.getElementById('delivery-address') as HTMLInputElement;
 const deliveryTimeInput = document.getElementById('delivery-time') as HTMLInputElement;
 const deliveryTimeButtons = document.querySelectorAll<HTMLButtonElement>('.delivery-time-pill');
 const modeDeliveryConfirm = document.getElementById('mode-delivery-confirm') as HTMLButtonElement;
+const tablePhoneInput = document.getElementById('table-phone') as HTMLInputElement;
 let selectedDeliveryTime = '';
+let customerPhone = '';
 
 // Populate modal table select with same options
 for (let i = 1; i <= 20; i++) {
@@ -1817,6 +1835,7 @@ modalTableSelect.addEventListener('change', () => {
 modeTableConfirm.addEventListener('click', () => {
   if (!modalTableSelect.value) return;
   orderMode = 'table';
+  customerPhone = (tablePhoneInput.value || '').replace(/[\s\-().]/g, '');
   setTable(modalTableSelect.value);
   finalizePendingEntry();
 });
@@ -1838,6 +1857,7 @@ deliveryTimeButtons.forEach(btn => {
 modeDeliveryConfirm.addEventListener('click', () => {
   if (!deliveryNameInput.value.trim() || !deliveryAddressInput.value.trim()) return;
   orderMode = 'delivery';
+  customerPhone = (deliveryPhoneInput.value || '').replace(/[\s\-().]/g, '');
   deliveryInfo = {
     name: deliveryNameInput.value.trim(),
     address: deliveryAddressInput.value.trim(),
