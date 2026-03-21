@@ -66,6 +66,7 @@ async function initStorage() {
       try { await db.execute("ALTER TABLE orders ADD COLUMN tracking_id TEXT"); console.log('[MIGRATE] Added tracking_id column'); } catch (e) { console.log('[MIGRATE] tracking_id:', e.message); }
       try { await db.execute("ALTER TABLE orders ADD COLUMN phone TEXT DEFAULT ''"); console.log('[MIGRATE] Added phone column'); } catch (e) { console.log('[MIGRATE] phone:', e.message); }
       try { await db.execute("ALTER TABLE orders ADD COLUMN status TEXT DEFAULT 'pending'"); console.log('[MIGRATE] Added status column'); } catch (e) { console.log('[MIGRATE] status:', e.message); }
+      try { await db.execute("ALTER TABLE orders ADD COLUMN estimated_minutes INTEGER"); console.log('[MIGRATE] Added estimated_minutes column'); } catch (e) { console.log('[MIGRATE] estimated_minutes:', e.message); }
       try { await db.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_tracking_id ON orders(tracking_id)"); } catch {}
 
       // Create messages table
@@ -144,6 +145,7 @@ function rowToOrder(row) {
     trackingId: row.tracking_id || null,
     phone: row.phone || '',
     status: row.status || 'pending',
+    estimatedMinutes: row.estimated_minutes ?? null,
   };
 }
 
@@ -192,14 +194,19 @@ async function findOrderByTrackingId(trackingId) {
   }
 }
 
-async function updateOrderStatus(id, status) {
+async function updateOrderStatus(id, status, estimatedMinutes) {
   if (!useTurso) {
     const orders = readOrdersFile();
     const order = orders.find(o => o.id === id);
     if (!order) return false;
     order.status = status;
+    if (estimatedMinutes !== undefined) order.estimatedMinutes = estimatedMinutes;
     saveOrdersFile(orders);
     return true;
+  }
+  if (estimatedMinutes !== undefined) {
+    const result = await db.execute({ sql: 'UPDATE orders SET status = ?, estimated_minutes = ? WHERE id = ?', args: [status, estimatedMinutes, id] });
+    return result.rowsAffected > 0;
   }
   const result = await db.execute({ sql: 'UPDATE orders SET status = ? WHERE id = ?', args: [status, id] });
   return result.rowsAffected > 0;
@@ -351,6 +358,7 @@ const server = http.createServer(async (req, res) => {
         notes: data.notes || '',
         phone: data.phone || '',
         status: 'pending',
+        estimatedMinutes: null,
       };
 
       await saveOrder(order);
@@ -392,10 +400,11 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'PATCH' && /^\/api\/orders\/[^/]+\/status$/.test(pathname)) {
       const id = pathname.split('/')[3];
       const data = await parseBody(req);
-      if (!data.status || !['pending', 'completed'].includes(data.status)) {
+      if (!data.status || !['pending', 'approved', 'rejected', 'completed'].includes(data.status)) {
         return sendJson(res, 400, { ok: false, error: 'Invalid status' });
       }
-      const updated = await updateOrderStatus(id, data.status);
+      const estMin = data.estimatedMinutes !== undefined ? (data.estimatedMinutes === null ? null : parseInt(data.estimatedMinutes)) : undefined;
+      const updated = await updateOrderStatus(id, data.status, estMin);
       if (!updated) return sendJson(res, 404, { ok: false, error: 'Not found' });
       return sendJson(res, 200, { ok: true });
     }
@@ -434,8 +443,24 @@ const server = http.createServer(async (req, res) => {
         totalPrice: order.totalPrice,
         timestamp: order.timestamp,
         notes: order.notes,
+        estimatedMinutes: order.estimatedMinutes ?? null,
         messages,
       });
+    }
+
+    // ---- GET /api/track/:trackingId/queue ----
+    if (req.method === 'GET' && /^\/api\/track\/[A-Z0-9-]+\/queue$/.test(pathname)) {
+      const trackingId = pathname.split('/')[3];
+      const order = await findOrderByTrackingId(trackingId);
+      if (!order) return sendJson(res, 404, { ok: false, error: 'Ordine non trovato' });
+      const orderDate = (order.timestamp || '').slice(0, 10);
+      const allToday = await readOrders();
+      const position = allToday.filter(o =>
+        (o.timestamp || '').slice(0, 10) === orderDate &&
+        (o.status === 'pending' || o.status === 'approved') &&
+        new Date(o.timestamp) < new Date(order.timestamp)
+      ).length;
+      return sendJson(res, 200, { position });
     }
 
     // ---- POST /api/track/:trackingId/messages (customer sends message) ----
