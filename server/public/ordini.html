@@ -157,7 +157,13 @@
     margin-left: 0.3rem;
   }
   .status-pending { background: var(--amber-bg); color: var(--amber); }
-  .status-completed { background: var(--green-bg); color: var(--green); }
+  .status-approved { background: var(--green-bg); color: var(--green); }
+  .status-rejected { background: #fef2f2; color: #dc2626; }
+  .status-completed { background: var(--slate-xlight); color: var(--text-muted); }
+  .est-minutes-row { display: flex; align-items: center; gap: .4rem; margin-top: .4rem; font-size: .78rem; }
+  .est-minutes-input { width: 3.5rem; padding: .2rem .4rem; border: 1px solid var(--slate-xlight); border-radius: 4px; font-size: .82rem; text-align: center; }
+  .est-minutes-btn { padding: .2rem .5rem; background: var(--blue-deep); color: var(--white); border: none; border-radius: 4px; font-size: .72rem; font-weight: 600; cursor: pointer; }
+  .est-minutes-btn:hover { background: var(--blue-mid); }
   .order-notes {
     font-size: 0.8rem;
     color: var(--text-muted);
@@ -442,9 +448,31 @@ function renderOrders() {
     const trackingHtml = o.trackingId ? '<span class="tracking-label">' + escapeHtml(o.trackingId) + '</span>' : '';
     const msgBadgeHtml = hasMsgs ? '<span class="msg-badge" data-id="' + o.id + '" title="Mostra messaggi">' + msgCount + ' msg</span>' : '';
 
-    const statusClass = (o.status === 'completed') ? 'status-toggle status-completed' : 'status-toggle status-pending';
-    const statusLabel = (o.status === 'completed') ? 'Pronto' : 'In preparazione';
-    const statusHtml = '<button class="' + statusClass + '" data-id="' + o.id + '" data-status="' + (o.status || 'pending') + '">' + statusLabel + '</button>';
+    const status = o.status || 'pending';
+    const statusLabels = { pending: 'In attesa', approved: 'Approvato', rejected: 'Rifiutato', completed: 'Completato' };
+    const statusHtml = '<button class="status-toggle status-' + status + '" data-id="' + o.id + '" data-status="' + status + '">' + (statusLabels[status] || status) + '</button>';
+
+    // Status action buttons
+    let statusActionsHtml = '';
+    if (status === 'pending') {
+      statusActionsHtml = '<button class="status-toggle status-approved" data-id="' + o.id + '" data-new-status="approved">Approva</button> '
+        + '<button class="status-toggle status-rejected" style="font-size:.68rem" data-id="' + o.id + '" data-new-status="rejected">Rifiuta</button>';
+    } else if (status === 'approved') {
+      statusActionsHtml = '<button class="status-toggle status-completed" data-id="' + o.id + '" data-new-status="completed">Completato</button> '
+        + '<button class="status-toggle status-rejected" style="font-size:.68rem" data-id="' + o.id + '" data-new-status="rejected">Rifiuta</button>';
+    } else {
+      statusActionsHtml = '<button class="status-toggle status-pending" data-id="' + o.id + '" data-new-status="pending">Riapri</button>';
+    }
+
+    // Estimated minutes
+    const estMin = o.estimatedMinutes != null ? o.estimatedMinutes : '';
+    const estMinHtml = (status === 'pending' || status === 'approved')
+      ? '<div class="est-minutes-row">'
+        + '<span>Tempo:</span>'
+        + '<input type="number" class="est-minutes-input" id="est-min-' + o.id + '" value="' + escapeHtml(String(estMin)) + '" min="1" max="180" placeholder="min" />'
+        + '<button class="est-minutes-btn" data-id="' + o.id + '">Salva</button>'
+        + '</div>'
+      : '';
 
     const itemsHtml = (o.items || []).map(item => {
       const size = item.size ? ' (' + item.size + ')' : '';
@@ -462,13 +490,14 @@ function renderOrders() {
 
     return '<div class="' + cardClass + '" id="card-' + o.id + '">' +
       '<div class="order-header">' +
-        '<div><span class="order-customer">' + escapeHtml(o.customerName) + '</span>' + trackingHtml + msgBadgeHtml + statusHtml +
+        '<div><span class="order-customer">' + escapeHtml(o.customerName) + '</span>' + trackingHtml + msgBadgeHtml + statusHtml + ' ' + statusActionsHtml +
         '<div style="font-size:0.78rem;color:var(--text-muted)">' + modeLabel + '</div></div>' +
         '<div class="order-meta">' + timeStr +
         '<br><button class="delete-btn" data-id="' + o.id + '">Elimina</button> ' + toggleBtn + '</div>' +
       '</div>' +
       '<ul class="order-items">' + itemsHtml + '</ul>' +
       notesHtml +
+      estMinHtml +
       '<div class="order-total">' +
         '<span>Totale: ' + formatPrice(o.totalPrice) + '</span>' +
         (o.pizzaCount > 0 ? '<span class="pizza-badge">' + o.pizzaCount + ' pizze</span>' : '') +
@@ -493,15 +522,33 @@ function renderOrders() {
     });
   });
 
-  // Status toggle handlers
-  container.querySelectorAll('.status-toggle').forEach(btn => {
+  // Status action handlers (buttons with data-new-status)
+  container.querySelectorAll('.status-toggle[data-new-status]').forEach(btn => {
     btn.addEventListener('click', async () => {
-      const currentStatus = btn.dataset.status;
-      const newStatus = currentStatus === 'pending' ? 'completed' : 'pending';
+      const newStatus = btn.dataset.newStatus;
       await fetch(API + '/api/orders/' + btn.dataset.id + '/status', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
+      });
+      loadData();
+    });
+  });
+
+  // Estimated minutes save handlers
+  container.querySelectorAll('.est-minutes-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const input = document.getElementById('est-min-' + id);
+      if (!input) return;
+      const val = input.value.trim();
+      const minutes = val ? parseInt(val) : null;
+      const order = allOrders.find(o => o.id === id);
+      const newStatus = order && order.status === 'pending' ? 'approved' : (order ? order.status : 'approved');
+      await fetch(API + '/api/orders/' + id + '/status', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus, estimatedMinutes: minutes }),
       });
       loadData();
     });

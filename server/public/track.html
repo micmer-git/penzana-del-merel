@@ -126,7 +126,11 @@
     font-weight: 700;
   }
   .status-pending { background: var(--amber-bg); color: var(--amber); }
-  .status-completed { background: var(--green-bg); color: var(--green); }
+  .status-approved { background: var(--green-bg); color: var(--green); }
+  .status-rejected { background: #fef2f2; color: #dc2626; }
+  .status-completed { background: var(--slate-xlight); color: var(--text-muted); }
+  .est-time-info { background: var(--green-bg); border: 1px solid var(--green); border-radius: 8px; padding: .6rem 1rem; margin-bottom: .75rem; font-size: .88rem; font-weight: 600; color: #166534; text-align: center; }
+  .queue-info { background: var(--amber-bg); border: 1px solid var(--amber); border-radius: 8px; padding: .5rem 1rem; margin-bottom: .75rem; font-size: .85rem; color: var(--text); text-align: center; }
 
   .order-info {
     font-size: 0.85rem;
@@ -297,6 +301,8 @@
         <span class="tracking-code" id="ov-tracking"></span>
         <span class="status-badge" id="ov-status"></span>
       </div>
+      <div id="ov-est-time" class="est-time-info" style="display:none"></div>
+      <div id="ov-queue" class="queue-info" style="display:none"></div>
       <div class="order-info" id="ov-info"></div>
     </div>
 
@@ -431,13 +437,21 @@ function renderOrder(data) {
   // Tracking ID + status
   document.getElementById('ov-tracking').textContent = data.trackingId;
   const statusEl = document.getElementById('ov-status');
-  if (data.status === 'completed') {
-    statusEl.textContent = 'Pronto';
-    statusEl.className = 'status-badge status-completed';
+  const statusMap = { pending: 'In attesa', approved: 'Approvato \u2713', rejected: 'Rifiutato \u2717', completed: 'Completato' };
+  statusEl.textContent = statusMap[data.status] || data.status;
+  statusEl.className = 'status-badge status-' + (data.status || 'pending');
+
+  // Estimated time
+  var estEl = document.getElementById('ov-est-time');
+  if (data.status === 'approved' && data.estimatedMinutes) {
+    estEl.textContent = 'Pronto tra circa ' + data.estimatedMinutes + ' minuti';
+    estEl.style.display = 'block';
   } else {
-    statusEl.textContent = 'In preparazione';
-    statusEl.className = 'status-badge status-pending';
+    estEl.style.display = 'none';
   }
+
+  // Queue position
+  fetchQueuePosition(data.trackingId, data.status);
 
   // Order info
   let infoHtml = '<span>' + formatTime(data.timestamp) + '</span>';
@@ -466,6 +480,31 @@ function renderOrder(data) {
 
   // Messages
   renderMessages(data.messages || []);
+}
+
+async function fetchQueuePosition(trackingId, status) {
+  var queueEl = document.getElementById('ov-queue');
+  if (status !== 'pending' && status !== 'approved') {
+    queueEl.style.display = 'none';
+    return;
+  }
+  try {
+    var r = await fetch(API + '/api/track/' + encodeURIComponent(trackingId) + '/queue');
+    if (r.ok) {
+      var data = await r.json();
+      if (data.position > 0) {
+        queueEl.textContent = 'Ci sono ' + data.position + ' ordini prima del tuo';
+        queueEl.style.display = 'block';
+      } else {
+        queueEl.textContent = 'Il tuo ordine è il prossimo!';
+        queueEl.style.display = 'block';
+      }
+    } else {
+      queueEl.style.display = 'none';
+    }
+  } catch(e) {
+    queueEl.style.display = 'none';
+  }
 }
 
 function renderMessages(messages) {
