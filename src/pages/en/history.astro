@@ -3,6 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const base = '';
 
+const pageTitle = "Our Story Since 1959 — Historic Italian Pizzeria | La Penzana del Merel";
+const pageDesc = "The story of La Penzana del Merel: from a 1959 Alpine trattoria to a beloved family pizzeria in the Italian Alps near Bergamo. Three generations of wood-fired pizza and authentic Bergamo cuisine.";
 const chapters = [
   {
     year: '1936',
@@ -76,8 +78,8 @@ const chapters = [
 ---
 
 <BaseLayout
-  title="Our Story — La Penzana del Merel"
-  description="The history of La Penzana del Merel: from the Trattoria Cima Verde in 1959 to today's family pizzeria. Bergamo roots and three generations."
+  title={pageTitle}
+  description={pageDesc}
   lang="en"
   pageType="website"
   currentPath={`${base}/en/history/`}

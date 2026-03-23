@@ -115,6 +115,81 @@ const bgImages = [
     </div>
   </div>
 
+  <!-- SEO content sections — international tourist targeting -->
+  <section class="section" style="padding-block:clamp(2rem,5vw,4rem);">
+    <div class="container">
+      <h2>Authentic Wood-Fired Pizza in the Italian Alps near Bergamo</h2>
+      <p>La Penzana del Merel is an <strong>authentic Italian pizzeria</strong> and <strong>traditional restaurant</strong> in the heart of <strong>Val Seriana</strong>, just 24 km from <strong>Bergamo</strong>, Italy. Our <strong>wood-fired oven</strong> has been burning since 1959, crafting artisan pizzas and serving classic <strong>Bergamo cuisine</strong> in the stunning setting of the Italian Alps.</p>
+
+      <h3>Best Pizza near Bergamo — Family-Run Since 1959</h3>
+      <p>Looking for the <strong>best pizza near Bergamo</strong>? La Penzana del Merel in Orezzo offers genuine <strong>wood-fired pizza</strong>, homemade <strong>casoncelli</strong> (traditional Bergamo stuffed pasta), polenta taragna, grilled meats and house desserts. We're a family-run <strong>Italian mountain restaurant</strong> beloved by locals and visitors alike.</p>
+
+      <h3>Where to Eat in Val Seriana — Bergamo Province</h3>
+      <p>If you're exploring the <strong>Val Seriana</strong> or visiting <strong>Bergamo</strong> and its surroundings, La Penzana del Merel is a must-visit. Located in the village of <strong>Orezzo</strong> at 670m altitude, surrounded by Alpine scenery, our restaurant is the perfect stop for an <strong>authentic Italian dining experience</strong> away from tourist traps.</p>
+
+      <h3>Order Online or Book a Table</h3>
+      <p>Browse our <a href="/en/menu/">full menu</a> online and order directly via WhatsApp. We accept reservations for groups, families, and special occasions. Call <a href="tel:+390357121021">+39 035 712021</a> or book through our website.</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-block:clamp(2rem,5vw,3rem); background:var(--bg-warm, #faf8f5);">
+    <div class="container">
+      <h2>Frequently Asked Questions</h2>
+      <details style="margin-bottom:1rem;">
+        <summary><strong>Where is La Penzana del Merel located?</strong></summary>
+        <p>We're at Via alla Chiesa 4, Orezzo (Gazzaniga), in the Val Seriana valley, Bergamo province, Italy. Just 24 km from Bergamo city centre and easily reachable from Bergamo Airport (Orio al Serio).</p>
+      </details>
+      <details style="margin-bottom:1rem;">
+        <summary><strong>Do you have a wood-fired oven?</strong></summary>
+        <p>Yes! Our traditional wood-fired oven has been the heart of La Penzana since 1959. Every pizza is baked in the wood-fired oven for an authentic, crispy taste you won't find elsewhere.</p>
+      </details>
+      <details style="margin-bottom:1rem;">
+        <summary><strong>What traditional dishes do you serve?</strong></summary>
+        <p>Besides our famous wood-fired pizzas, we serve casoncelli alla bergamasca (traditional Bergamo stuffed pasta), polenta taragna, grilled meats, and homemade desserts. A true taste of Bergamo mountain cuisine.</p>
+      </details>
+      <details style="margin-bottom:1rem;">
+        <summary><strong>Can I order takeaway pizza?</strong></summary>
+        <p>Yes! You can order takeaway through our online menu and pick up your pizza hot from the oven. We also deliver to nearby areas in the Val Seriana valley.</p>
+      </details>
+      <details style="margin-bottom:1rem;">
+        <summary><strong>Is La Penzana del Merel a good restaurant for tourists visiting Bergamo?</strong></summary>
+        <p>Absolutely! If you're looking for an authentic Italian dining experience outside the city, La Penzana del Merel offers genuine Bergamo cuisine in a beautiful Alpine village setting, just 30 minutes from Bergamo. Many international visitors describe it as one of the best pizza restaurants near Bergamo.</p>
+      </details>
+    </div>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Where is La Penzana del Merel located?",
+        "acceptedAnswer": { "@type": "Answer", "text": "La Penzana del Merel is at Via alla Chiesa 4, Orezzo (Gazzaniga), in the Val Seriana valley, Bergamo province, Italy. Just 24 km from Bergamo city centre and easily reachable from Bergamo Airport (Orio al Serio)." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does La Penzana del Merel have a wood-fired oven?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes! Their traditional wood-fired oven has been the heart of La Penzana since 1959. Every pizza is baked in the wood-fired oven for an authentic, crispy taste." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the best pizza restaurant near Bergamo Italy?",
+        "acceptedAnswer": { "@type": "Answer", "text": "La Penzana del Merel in Orezzo, Val Seriana, is one of the most acclaimed pizzerias near Bergamo. Family-run since 1959 with a traditional wood-fired oven, they serve authentic Italian pizza and Bergamo mountain cuisine just 30 minutes from the city." }
+      },
+      {
+        "@type": "Question",
+        "name": "What traditional Bergamo dishes does La Penzana del Merel serve?",
+        "acceptedAnswer": { "@type": "Answer", "text": "La Penzana del Merel serves casoncelli alla bergamasca (traditional stuffed pasta), polenta taragna, grilled meats (strinu), and homemade desserts, alongside their famous wood-fired pizzas." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I order takeaway pizza from La Penzana del Merel?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, you can order takeaway through their online menu at la-penzana-del-merel.pages.dev/en/menu/ and pick up your pizza. They also deliver to nearby areas in the Val Seriana valley." }
+      }
+    ]
+  })} />
+
   <script is:inline define:vars={{ whatsappNumber: WHATSAPP_NUMBER, menuPath: '/en/menu/' }}>
     const openExternalLink = (url) => {
       const link = document.createElement('a');
