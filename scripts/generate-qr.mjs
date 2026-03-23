@@ -14,7 +14,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUTPUT_DIR = join(__dirname, '..', 'public', 'qr');
-const BASE_URL = 'https://micmer-git.github.io/penzana-del-merel';
+const BASE_URL = 'https://la-penzana-del-merel.pages.dev';
 const MENU_PATH = '/menu/';
 const TABLE_COUNT = 20;
 

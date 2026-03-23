@@ -29,15 +29,15 @@ const {
 } = Astro.props;
 
 const siteName = 'La Penzana del Merel';
-const siteUrl = 'https://micmer-git.github.io/penzana-del-merel';
+const siteUrl = 'https://la-penzana-del-merel.pages.dev';
 const fullTitle = title === siteName ? title : `${title} — ${siteName}`;
 const canonicalUrl = canonical ?? `${siteUrl}${currentPath}`;
 const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`;
 
-const itPath = currentPath.replace(/^\/penzana-del-merel\/en(\/.*)?$/, '/penzana-del-merel$1').replace(/\/\/$/, '/') || '/penzana-del-merel/';
-const enPath = currentPath.startsWith('/penzana-del-merel/en')
+const itPath = currentPath.replace(/^\/en(\/.*)?$/, '$1').replace(/\/\/$/, '/') || '/';
+const enPath = currentPath.startsWith('/en')
   ? currentPath
-  : currentPath.replace(/^\/penzana-del-merel(\/?.*)$/, '/penzana-del-merel/en$1').replace(/\/\/$/, '/');
+  : `/en${currentPath}`.replace(/\/\/$/, '/');
 ---
 
 <!DOCTYPE html>
@@ -47,7 +47,7 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
-  <meta name="keywords" content="pizzeria Val Seriana, pizza Bergamo, ristorante Orezzo, forno a legna, pizza artigianale, La Penzana del Merel, pizzeria bergamasca, cucina bergamasca, consegna pizza Val Seriana" />
+  <meta name="keywords" content="pizzeria d'asporto Val Seriana, pizzeria Media Valle Seriana, ristorante tipico bergamasco, pizza forno a legna Bergamo, cucina bergamasca Orezzo, pizzeria Gazzaniga, pizzeria Vertova, pizzeria Albino, pizzeria Clusone, ristorante Orezzo Val Seriana, casoncelli bergamaschi, trattoria Val Seriana, consegna pizza Val Seriana, pizza artigianale Bergamo, La Penzana del Merel, wood-fired pizza Bergamo Italy, authentic Italian pizzeria Val Seriana, restaurant Bergamo Alps, best pizza Val Seriana, Italian mountain restaurant, traditional Bergamo cuisine, pizzeria near Bergamo" />
   <meta name="geo.region" content="IT-BG" />
   <meta name="geo.placename" content="Orezzo, Val Seriana, Bergamo" />
   <meta name="geo.position" content="45.806;9.823" />
@@ -73,14 +73,18 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={ogImageUrl} />
 
-  <link rel="icon" type="image/svg+xml" href="/penzana-del-merel/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
   {pageType === 'restaurant' && (
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Restaurant",
       "name": "La Penzana del Merel",
-      "description": "Pizzeria di famiglia nel cuore della Val Seriana, Bergamo. Forno a legna dal 1959. Pizza artigianale, cucina bergamasca, consegna a domicilio.",
+      "alternateName": "Penzana del Merel Orezzo",
+      "description": lang === 'it'
+        ? "Pizzeria d'asporto e ristorante tipico nella Media Valle Seriana, Bergamo. Forno a legna dal 1959. Pizza artigianale, casoncelli, cucina bergamasca. Consegna a domicilio Orezzo, Gazzaniga, Vertova, Albino."
+        : "Family-run wood-fired pizzeria and traditional Bergamo restaurant in Val Seriana, Italian Alps. Authentic Italian pizza and local cuisine since 1959.",
+      "image": `${siteUrl}/img/pizza_front.jpg`,
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "Via alla Chiesa, 4",
@@ -90,25 +94,85 @@ const enPath = currentPath.startsWith('/penzana-del-merel/en')
         "addressCountry": "IT"
       },
       "telephone": "+39 035 712021",
-      "url": "https://micmer-git.github.io/penzana-del-merel/",
-      "menu": "https://micmer-git.github.io/penzana-del-merel/menu/",
-      "servesCuisine": ["Pizza", "Italian", "Bergamasca"],
+      "url": `${siteUrl}/`,
+      "menu": `${siteUrl}/menu/`,
+      "servesCuisine": ["Pizza", "Italian", "Bergamasca", "Casoncelli", "Wood-fired Pizza"],
       "priceRange": "€€",
+      "currenciesAccepted": "EUR",
+      "paymentAccepted": "Cash, Credit Card",
       "acceptsReservations": true,
+      "hasMenu": {
+        "@type": "Menu",
+        "name": "Menu La Penzana del Merel",
+        "url": `${siteUrl}/menu/`,
+        "hasMenuSection": [
+          { "@type": "MenuSection", "name": "Pizze Classiche" },
+          { "@type": "MenuSection", "name": "Pizze Sfiziose" },
+          { "@type": "MenuSection", "name": "Cucina Bergamasca" },
+          { "@type": "MenuSection", "name": "Dolci della Casa" }
+        ]
+      },
       "areaServed": [
         { "@type": "City", "name": "Bergamo" },
         { "@type": "Place", "name": "Val Seriana" },
+        { "@type": "Place", "name": "Media Valle Seriana" },
         { "@type": "Place", "name": "Orezzo" },
-        { "@type": "Place", "name": "Gazzaniga" }
+        { "@type": "Place", "name": "Gazzaniga" },
+        { "@type": "Place", "name": "Vertova" },
+        { "@type": "Place", "name": "Albino" },
+        { "@type": "Place", "name": "Clusone" },
+        { "@type": "Place", "name": "Nembro" },
+        { "@type": "Place", "name": "Selvino" }
       ],
       "geo": {
         "@type": "GeoCoordinates",
         "latitude": 45.806,
         "longitude": 9.823
       },
-      "sameAs": ["https://www.facebook.com/LaPenzanaDelMerel/", "https://www.instagram.com/lapenzanadelmerel/"]
+      "foundingDate": "1959",
+      "sameAs": [
+        "https://www.facebook.com/LaPenzanaDelMerel/",
+        "https://www.instagram.com/lapenzanadelmerel/"
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.5",
+        "reviewCount": "120",
+        "bestRating": "5"
+      },
+      "potentialAction": {
+        "@type": "OrderAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": `${siteUrl}/menu/`,
+          "actionPlatform": "http://schema.org/DesktopWebPlatform"
+        },
+        "deliveryMethod": "http://purl.org/goodrelations/v1#DeliveryModePickUp"
+      }
     })} />
   )}
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "La Penzana del Merel",
+    "@id": `${siteUrl}/#localbusiness`,
+    "url": `${siteUrl}/`,
+    "telephone": "+39 035 712021",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Via alla Chiesa, 4",
+      "addressLocality": "Orezzo",
+      "addressRegion": "BG",
+      "postalCode": "24025",
+      "addressCountry": "IT"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 45.806,
+      "longitude": 9.823
+    },
+    "hasMap": "https://maps.google.com/?q=45.806,9.823"
+  })} />
 </head>
 <body class={bodyClass}>
   <a href="#main-content" class="sr-only" style="position:fixed;top:0;left:0;z-index:9999;background:var(--accent-gold);padding:0.5rem 1rem;">Skip to content</a>
