@@ -23,6 +23,7 @@ process.on('unhandledRejection', (err) => {
 });
 
 const ALLOWED_ORIGINS = [
+  'https://la-penzana-del-merel.pages.dev',
   'https://micmer-git.github.io',
   'http://localhost:4321',
   'http://localhost:3000',

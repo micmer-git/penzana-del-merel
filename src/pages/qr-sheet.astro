@@ -7,7 +7,7 @@ const tables = Array.from({ length: 20 }, (_, i) => ({
   label: `Tavolo ${String(i + 1).padStart(2, '0')}`,
 }));
 
-const BASE_URL = 'https://micmer-git.github.io/penzana-del-merel';
+const BASE_URL = 'https://la-penzana-del-merel.pages.dev';
 const MENU_PATH = '/menu/';
 ---
 
@@ -47,7 +47,7 @@ const MENU_PATH = '/menu/';
   <div class="qr-sheet-grid">
     {tables.map(table => {
       const url = `${BASE_URL}${MENU_PATH}?table=${table.id}`;
-      const qrSrc = `/penzana-del-merel/qr/${table.id}.svg`;
+      const qrSrc = `/qr/${table.id}.svg`;
       return (
         <div class="qr-card">
           <img

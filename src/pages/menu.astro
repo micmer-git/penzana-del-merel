@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { MENU, SECTIONS, COPERTO, SECTION_QUOTES } from '../data/menu.js';
 import { WHATSAPP_NUMBER, ORDER_API } from '../data/site.js';
-const base = '/penzana-del-merel';
+const base = '';
 const waNumber = WHATSAPP_NUMBER;
 const orderApi = ORDER_API || null;
 
@@ -1749,7 +1749,7 @@ cartSendBtn.addEventListener('click', async () => {
   // Store WhatsApp URL and redirect to pizzometro first
   if (pizzaCount > 0) {
     sessionStorage.setItem('pz_wa_url', waUrl);
-    const base = document.querySelector('base')?.href?.replace(/\/$/, '') || '/penzana-del-merel';
+    const base = document.querySelector('base')?.href?.replace(/\/$/, '') || '';
     window.location.href = `${base}/pizzometro/?addedPizzas=${pizzaCount}`;
   } else {
     // No pizzas, just open WhatsApp directly

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { WHATSAPP_NUMBER } from '../../data/site.js';
-const base = '/penzana-del-merel';
+const base = '';
 const menuPath = `${base}/en/menu/`;
 const bgImages = [
   `${base}/img/pizza_front_2_example.png`,
@@ -12,8 +12,8 @@ const bgImages = [
 ---
 
 <BaseLayout
-  title="La Penzana del Merel — Family Pizzeria in Orezzo, Valle Seriana"
-  description="La Penzana del Merel is a family-run pizzeria in Orezzo (BG), in the heart of Valle Seriana near Bergamo. Tradition, wood-fired oven, genuine flavours since 1959."
+  title="La Penzana del Merel — Wood-Fired Pizza & Traditional Restaurant | Bergamo Alps, Italy"
+  description="Authentic wood-fired pizzeria and traditional Bergamo restaurant in Val Seriana, Italian Alps. Family-run since 1959. Artisan pizza, casoncelli, local cuisine. Best pizza near Bergamo. Delivery available."
   lang="en"
   pageType="restaurant"
   currentPath={`${base}/en/`}
@@ -115,7 +115,7 @@ const bgImages = [
     </div>
   </div>
 
-  <script is:inline define:vars={{ whatsappNumber: WHATSAPP_NUMBER, menuPath: '/penzana-del-merel/en/menu/' }}>
+  <script is:inline define:vars={{ whatsappNumber: WHATSAPP_NUMBER, menuPath: '/en/menu/' }}>
     const openExternalLink = (url) => {
       const link = document.createElement('a');
       link.href = url;
