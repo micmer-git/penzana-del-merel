@@ -4,15 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Segui il tuo ordine — La Penzana del Merel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --wine: #8f0f2f;
     --wine-light: #c2184f;
     --rose: #f7b8cd;
-    --bg: #faf8f5;
+    --bg: #fff0f3;
     --white: #fff;
-    --text: #1e1e2e;
-    --text-muted: #6b7280;
+    --text: #0f172a;
+    --text-muted: #475569;
     --slate-xlight: #e8e6e1;
     --green: #16a34a;
     --green-bg: #dcfce7;
@@ -21,7 +24,7 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--bg);
     color: var(--text);
     line-height: 1.5;
@@ -33,7 +36,7 @@
     padding: 1.2rem 1.5rem;
     text-align: center;
   }
-  header h1 { font-size: 1.3rem; font-weight: 700; }
+  header h1 { font-size: 1.3rem; font-weight: 700; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
   header p { font-size: 0.85rem; opacity: 0.8; margin-top: 0.25rem; }
 
   .container { max-width: 540px; margin: 0 auto; padding: 1.5rem 1rem; }
@@ -146,6 +149,7 @@
     border: 1px solid var(--slate-xlight);
   }
   .items-card h3 {
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.82rem;
     color: var(--text-muted);
     text-transform: uppercase;
@@ -166,6 +170,7 @@
   .order-total-row {
     display: flex;
     justify-content: space-between;
+    font-family: 'Oswald', sans-serif;
     font-weight: 700;
     padding-top: 0.5rem;
     margin-top: 0.5rem;
@@ -182,6 +187,7 @@
     border: 1px solid var(--slate-xlight);
   }
   .messages-card h3 {
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.82rem;
     color: var(--text-muted);
     text-transform: uppercase;
