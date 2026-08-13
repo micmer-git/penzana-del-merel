@@ -76,5 +76,103 @@ const menuPath = lang === 'it' ? `${base}/menu/` : `${base}/en/menu/`;
       </div>
     </div>
     <div class="footer-copy">{c.credits}</div>
+    <div class="footer-dev">
+      <button id="dev-contact-btn" class="dev-btn">
+        sviluppato da <span style="font-weight:700; text-decoration:underline; text-underline-offset:2px;">micmer</span>
+      </button>
+    </div>
   </div>
 </footer>
+
+<div id="dev-modal" style="position:fixed; inset:0; z-index:200; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s;">
+  <div style="position:absolute; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);" id="dev-backdrop"></div>
+  <div id="dev-content" style="position:relative; background:#f5f5f5; width:100%; max-width:420px; margin:0 auto; padding:28px 24px; border-radius:16px 16px 0 0; transform:translateY(100%); transition:transform 0.3s ease-out;">
+    <button id="dev-close" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:20px; cursor:pointer; color:#666;">✕</button>
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+      <div style="width:40px; height:40px; background:rgba(0,166,80,0.1); border-radius:10px; display:flex; align-items:center; justify-content:center;">
+        <span style="font-size:18px;">💻</span>
+      </div>
+      <div>
+        <h3 style="font-size:16px; font-weight:700; color:#191919; margin:0;">Vuoi un sito come questo?</h3>
+        <p style="font-size:11px; color:#999; margin:2px 0 0;">Siti web per pizzerie e ristoranti</p>
+      </div>
+    </div>
+    <form id="dev-form" style="display:flex; flex-direction:column; gap:10px;">
+      <input type="email" name="email" required placeholder="La tua email" style="width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:10px; font-size:14px; outline:none; box-sizing:border-box;" />
+      <textarea name="messaggio" rows="3" placeholder="Messaggio (opzionale)" style="width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:10px; font-size:14px; outline:none; resize:none; box-sizing:border-box;"></textarea>
+      <button type="submit" style="width:100%; padding:14px; background:#00A650; color:white; border:none; border-radius:100px; font-size:14px; font-weight:700; cursor:pointer; transition:background 0.2s;">Invia richiesta</button>
+    </form>
+    <div id="dev-success" style="display:none; text-align:center; padding:20px 0;">
+      <div style="font-size:32px; margin-bottom:8px;">✓</div>
+      <p style="font-weight:700; color:#00A650; margin:0 0 4px;">Messaggio inviato!</p>
+      <p style="font-size:12px; color:#999;">Ti risponderò il prima possibile.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .footer-dev {
+    text-align: center;
+    padding-top: 1rem;
+  }
+  .dev-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.18);
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0;
+  }
+  .dev-btn:hover { color: rgba(255,255,255,0.5); }
+</style>
+
+<script>
+(() => {
+  const btn = document.getElementById('dev-contact-btn');
+  const modal = document.getElementById('dev-modal');
+  const content = document.getElementById('dev-content');
+  const close = document.getElementById('dev-close');
+  const backdrop = document.getElementById('dev-backdrop');
+  const form = document.getElementById('dev-form');
+  const success = document.getElementById('dev-success');
+  if (!btn || !modal) return;
+
+  function open() {
+    modal.style.opacity = '1';
+    modal.style.pointerEvents = 'auto';
+    setTimeout(() => { content.style.transform = 'translateY(0)'; }, 10);
+  }
+  function shut() {
+    content.style.transform = 'translateY(100%)';
+    setTimeout(() => { modal.style.opacity = '0'; modal.style.pointerEvents = 'none'; }, 300);
+  }
+
+  btn.addEventListener('click', open);
+  close.addEventListener('click', shut);
+  backdrop.addEventListener('click', shut);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const payload = { _type: 'dev-contact', source: document.title };
+    for (const [k, v] of fd.entries()) payload[k] = v;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Invio...';
+    try {
+      await fetch('https://recastello-forms.micmer-recastello.workers.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      form.style.display = 'none';
+      success.style.display = 'block';
+    } catch (err) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Invia richiesta';
+    }
+  });
+})();
+</script>

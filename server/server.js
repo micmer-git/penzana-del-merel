@@ -364,6 +364,20 @@ const server = http.createServer(async (req, res) => {
 
       await saveOrder(order);
       console.log(`[ORDER] ${order.customerName} — ${order.pizzaCount} pizzas — ${order.trackingId}`);
+
+      // Non-blocking: notify Mission Control
+      fetch('https://recastello-forms.micmer-recastello.workers.dev/pizza-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pizzeria: 'La Penzana del Merel',
+          orderId: order.id || order.trackingId,
+          items: order.pizzaCount || 0,
+          table: order.tableId || 'asporto',
+          timestamp: new Date().toISOString()
+        })
+      }).catch(() => {}); // fire-and-forget
+
       return sendJson(res, 201, { ok: true, id: order.id, trackingId: order.trackingId, pizzaCount: order.pizzaCount });
     }
 
