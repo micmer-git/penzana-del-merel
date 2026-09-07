@@ -57,8 +57,9 @@ const orderApi = ORDER_API || 'http://localhost:3003';
     </div>
 
     <div class="cl-empty" id="cl-offline" style="display:none">
-      <p>Il server ordini non e raggiungibile al momento.</p>
-      <p style="font-size:0.85rem;color:var(--text-muted)">Assicurati che il server sia attivo su <code>localhost:3003</code></p>
+      <p class="cl-offline-title">La classifica è in pausa.</p>
+      <p>Si aggiorna solo mentre il registro degli ordini è acceso in pizzeria: fuori dagli orari di servizio non c’è niente da contare.</p>
+      <p class="cl-offline-note">Riprova più tardi — i conteggi non si perdono, restano nel registro.</p>
     </div>
   </div>
 
@@ -282,6 +283,13 @@ const orderApi = ORDER_API || 'http://localhost:3003';
   padding: 3rem 1rem;
   color: var(--text-muted);
 }
+.cl-offline-title { font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+.cl-empty p { max-width: 34ch; margin-left: auto; margin-right: auto; }
+.cl-offline-note { font-size: 0.85rem; margin-top: 0.75rem; }
+/* Col registro spento le tre schede sono scatole vuote sopra la spiegazione:
+   meglio toglierle e lasciare solo la frase che dice cosa sta succedendo. */
+body.cl-offline-mode .cl-panel,
+body.cl-offline-mode .cl-tabs-wrapper { display: none; }
 </style>
 
 <script define:vars={{ orderApi }}>
@@ -315,8 +323,10 @@ async function loadData() {
     allOrders = await ordersRes.json();
     stats = await statsRes.json();
     (document.getElementById('cl-offline') as HTMLElement).style.display = 'none';
+    document.body.classList.remove('cl-offline-mode');
   } catch {
     (document.getElementById('cl-offline') as HTMLElement).style.display = 'block';
+    document.body.classList.add('cl-offline-mode');
     return;
   }
   renderPodium();

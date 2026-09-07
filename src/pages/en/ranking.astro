@@ -54,8 +54,9 @@ const orderApi = ORDER_API || 'http://localhost:3003';
     </div>
 
     <div class="cl-empty" id="cl-offline" style="display:none">
-      <p>Order server is currently offline.</p>
-      <p style="font-size:0.85rem;color:var(--text-muted)">Make sure the server is running on <code>localhost:3003</code></p>
+      <p class="cl-offline-title">The ranking is paused.</p>
+      <p>It only updates while the order register is running at the pizzeria: outside service hours there is nothing to count.</p>
+      <p class="cl-offline-note">Check back later — no tallies are lost, they stay in the register.</p>
     </div>
   </div>
 
@@ -110,6 +111,11 @@ const orderApi = ORDER_API || 'http://localhost:3003';
 .filo-bar { height: 100%; background: linear-gradient(90deg, var(--accent-gold), var(--blue-mid)); border-radius: 6px; transition: width 1s var(--ease-out); }
 .filo-targets { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); }
 .cl-empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+.cl-offline-title { font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+.cl-empty p { max-width: 34ch; margin-left: auto; margin-right: auto; }
+.cl-offline-note { font-size: 0.85rem; margin-top: 0.75rem; }
+body.cl-offline-mode .cl-panel,
+body.cl-offline-mode .cl-tabs-wrapper { display: none; }
 </style>
 
 <script define:vars={{ orderApi }}>
@@ -138,8 +144,10 @@ async function loadData() {
     allOrders = await ordersRes.json();
     stats = await statsRes.json();
     (document.getElementById('cl-offline') as HTMLElement).style.display = 'none';
+    document.body.classList.remove('cl-offline-mode');
   } catch {
     (document.getElementById('cl-offline') as HTMLElement).style.display = 'block';
+    document.body.classList.add('cl-offline-mode');
     return;
   }
   renderPodium(); renderRanking(); renderOrders(); renderFilo();
